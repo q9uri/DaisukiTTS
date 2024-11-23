@@ -3,7 +3,7 @@
     <QCard class="q-py-sm q-px-md dialog-card">
       <QCardSection>
         <div class="text-h5">アップデートのお知らせ</div>
-        <div class="text-body2 text-grey-8">
+        <div class="text-body2 text-grey q-mt-sm">
           公式サイトから最新バージョンをダウンロードできます。
         </div>
       </QCardSection>
@@ -54,7 +54,7 @@
         />
         <QBtn
           padding="xs md"
-          label="公式サイトを開く"
+          label="公式サイトからダウンロード"
           unelevated
           color="primary"
           textColor="display-on-primary"

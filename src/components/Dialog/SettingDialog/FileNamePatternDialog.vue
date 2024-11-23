@@ -7,7 +7,7 @@
     <QCard class="q-pa-md dialog-card">
       <QCardSection>
         <div class="text-h5">書き出しファイル名パターン</div>
-        <div class="text-body2 text-grey-8 q-mt-sm">
+        <div class="text-body2 text-grey q-mt-sm">
           「$キャラ$」のようなタグを使って書き出すファイル名をカスタマイズできます
         </div>
       </QCardSection>
