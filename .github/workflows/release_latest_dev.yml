@@ -4,12 +4,12 @@ name: Release Latest Dev Build
 # バージョン（タグ）は最新リリースのバージョンを`X.Y.Z`としたときの`X.Y+1.0-dev`。
 
 on:
-  # push:
-  #   branches:
-  #     - master
-  #   paths-ignore:
-  #     - "docs/**"
-  #     - "tests/**"
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - "docs/**"
+      - "tests/**"
   workflow_dispatch:
 
 jobs:

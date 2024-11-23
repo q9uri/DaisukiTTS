@@ -1,7 +1,7 @@
 name: Test
 
 on:
-  # push:
+  push:
   pull_request:
     branches:
       - "**"
@@ -9,7 +9,7 @@ on:
 
 env:
   AIVISSPEECH_ENGINE_REPO: "Aivis-Project/AivisSpeech-Engine"
-  AIVISSPEECH_ENGINE_VERSION: "1.0.0-preview.2"
+  AIVISSPEECH_ENGINE_VERSION: "1.0.0"
 
 defaults:
   run:
