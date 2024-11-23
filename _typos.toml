@@ -15,4 +15,5 @@ extend-exclude = [
     "*.svg",
     "public/res/macos-big-sur-software-update-rosetta-alert.jpg", # macos-big-surは正しい固有名詞
     "public/licenses.json",
+    "README.md",
 ]
