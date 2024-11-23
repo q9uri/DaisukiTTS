@@ -356,7 +356,7 @@ const installModel = async () => {
       });
     } else {
       // assert characterInfo !== undefined エラーを無視
-      if (error.message === 'assert characterInfo !== undefined') {
+      if (error instanceof Error && error.message === 'assert characterInfo !== undefined') {
         // インストール成功時の処理を実行
         await store.dispatch("LOAD_CHARACTER", { engineId: store.getters.DEFAULT_ENGINE_ID });
         await store.dispatch("LOAD_DEFAULT_STYLE_IDS");
@@ -409,7 +409,7 @@ const unInstallAivmModel = async () => {
         });
       } else {
         // assert characterInfo !== undefined エラーを無視
-        if (error.message === 'assert characterInfo !== undefined') {
+        if (error instanceof Error && error.message === 'assert characterInfo !== undefined') {
           // アンインストール成功時の処理を実行
           await store.dispatch("LOAD_CHARACTER", { engineId: store.getters.DEFAULT_ENGINE_ID });
           await store.dispatch("LOAD_DEFAULT_STYLE_IDS");
