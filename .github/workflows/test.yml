@@ -9,7 +9,7 @@ on:
 
 env:
   AIVISSPEECH_ENGINE_REPO: "Aivis-Project/AivisSpeech-Engine"
-  AIVISSPEECH_ENGINE_VERSION: "1.0.0"
+  AIVISSPEECH_ENGINE_VERSION: "1.1.0-dev"
 
 defaults:
   run:
