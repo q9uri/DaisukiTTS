@@ -106,7 +106,7 @@
                               @click="toggleAudio(speaker.uuid, style.localId, voiceSampleIndex, sample.audio)"
                             >
                               <QIcon
-                                :name="audioPlaying[`${style.localId}-${voiceSampleIndex}`] ? 'sym_r_stop' : 'sym_r_volume_up'"
+                                :name="audioPlaying[`${speaker.uuid}-${style.localId}-${voiceSampleIndex}`] ? 'sym_r_stop' : 'sym_r_volume_up'"
                                 size="25px"
                                 color="white"
                               />

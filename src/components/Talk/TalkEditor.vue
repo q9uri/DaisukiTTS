@@ -559,7 +559,7 @@ watch(
       if (!altPort) return;
 
       store.dispatch("SHOW_NOTIFY_AND_NOT_SHOW_AGAIN_BUTTON", {
-        message: `${altPort.from}番ポートが使用中であるため ${engineName} は、${altPort.to}番ポートで起動しました。`,
+        message: `${altPort.from} 番ポートは使用中のため、${engineName} を ${altPort.to} 番ポートで起動しました。`,
         icon: "sym_r_compare_arrows",
         tipName: "engineStartedOnAltPort",
       });
@@ -583,7 +583,7 @@ const loadDraggedFile = (event: { dataTransfer: DataTransfer | null }) => {
       store.dispatch("SHOW_ALERT_DIALOG", {
         title: "対応していないファイルです",
         message:
-          "テキストファイル (.txt) とAivisSpeechプロジェクトファイル (.aisp) に対応しています。",
+          "テキストファイル (.txt) と AivisSpeech プロジェクトファイル (.aisp) に対応しています。",
       });
   }
 };
