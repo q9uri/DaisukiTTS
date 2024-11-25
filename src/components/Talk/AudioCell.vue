@@ -350,7 +350,12 @@ const paste = async (options?: { text?: string }) => {
       NEW_LINE: (text) => text.split(/[\r\n]/),
       OFF: (text) => [text],
     };
-    const texts = textSplitter[textSplitType.value](text);
+    let texts = textSplitter[textSplitType.value](text);
+
+    // 空行や空白のみの行を除去し、各行の前後の空白文字を除去
+    texts = texts
+      .filter((text) => text.trim() !== "")
+      .map((text) => text.trim());
 
     if (texts.length >= 2 && texts.some((text) => text !== "")) {
       await putMultilineText(texts);
