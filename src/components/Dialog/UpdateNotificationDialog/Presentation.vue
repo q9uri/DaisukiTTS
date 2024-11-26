@@ -2,9 +2,9 @@
   <QDialog v-model="modelValueComputed">
     <QCard class="q-py-sm q-px-md dialog-card">
       <QCardSection>
-        <div class="text-h5">アップデートのお知らせ</div>
+        <div class="text-h5">アップデートがあります</div>
         <div class="text-body2 text-grey q-mt-sm">
-          公式サイトから最新バージョンをダウンロードできます。
+          公式サイトから AivisSpeech の最新バージョンをダウンロードできます。
         </div>
       </QCardSection>
 
@@ -40,7 +40,7 @@
           class="q-mt-sm"
           @click="closeUpdateNotificationDialog()"
         />
-        <QBtn
+        <!-- <QBtn
           padding="xs md"
           label="このバージョンをスキップ"
           unelevated
@@ -51,10 +51,10 @@
             emit('skipThisVersionClick', props.latestVersion);
             closeUpdateNotificationDialog();
           "
-        />
+        /> -->
         <QBtn
           padding="xs md"
-          label="公式サイトからダウンロード"
+          label="最新バージョンをダウンロード"
           unelevated
           color="primary"
           textColor="display-on-primary"
