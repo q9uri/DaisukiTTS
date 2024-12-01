@@ -57,12 +57,12 @@ export const actionPostfixSelectNthCharacter = "番目の話者を選択";
 // ホットキーを追加したときは設定のマイグレーションが必要
 export const defaultHotkeySettings: HotkeySettingType[] = [
   {
-    action: "音声書き出し",
-    combination: HotkeyCombination(!isMac ? "Ctrl E" : "Meta E"),
-  },
-  {
     action: "選択音声を書き出し",
     combination: HotkeyCombination("E"),
+  },
+  {
+    action: "音声書き出し",
+    combination: HotkeyCombination(!isMac ? "Ctrl E" : "Meta E"),
   },
   {
     action: "音声をつなげて書き出し",
@@ -426,8 +426,8 @@ export type MorphableTargetInfoTable = Record<
 >;
 
 export const hotkeyActionNameSchema = z.enum([
-  "音声書き出し",
   "選択音声を書き出し",
+  "音声書き出し",
   "音声をつなげて書き出し",
   "再生/停止",
   "連続再生/停止",

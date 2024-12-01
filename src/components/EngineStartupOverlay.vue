@@ -14,7 +14,7 @@
   >
     <div>
       <QSpinner color="primary" size="2.5rem" />
-      <div class="q-mt-sm">
+      <div style="margin-top: 12px">
         {{
           allEngineState === "STARTING"
             ? "音声合成エンジン起動中..."
@@ -28,14 +28,14 @@
         （初回のみ、セットアップのため起動に数分ほどかかります）<br />
         <QBtn
           v-if="isMultipleEngine"
-          class="q-mt-sm"
+          class="q-mt-sm q-mr-sm"
           outline
           :disable="reloadingLocked"
           @click="reloadAppWithMultiEngineOffMode"
         >
           マルチエンジンをオフにして再読み込みする</QBtn
         >
-        <QBtn v-else class="q-mt-sm" outline @click="openQa">Q&A を見る</QBtn>
+        <QBtn class="q-mt-sm" outline @click="openQa">Q&A を見る</QBtn>
       </template>
     </div>
   </div>
@@ -123,7 +123,7 @@ const openQa = () => {
     color: colors.$display;
     background: colors.$background;
     border-radius: 6px;
-    padding: 14px;
+    padding: 16px 20px;
   }
 }
 </style>

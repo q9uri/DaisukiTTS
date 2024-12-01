@@ -262,10 +262,10 @@ const setHotkeyDialogOpened = () => {
 
 const resetHotkey = async (action: string) => {
   const result = await store.actions.SHOW_CONFIRM_DIALOG({
-    title: "ショートカットキーを初期値に戻します",
-    message: `${action}のショートカットキーを初期値に戻します。\n本当に戻しますか？`,
-    actionName: "初期値に戻す",
-    cancel: "初期値に戻さない",
+    title: "ショートカットキーをリセット",
+    message: `「${action}」のショートカットキーをデフォルトに戻します。\nよろしいですか？`,
+    actionName: "リセット",
+    cancel: "キャンセル",
   });
   if (result === "OK") {
     void window.backend

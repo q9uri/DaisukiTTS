@@ -226,8 +226,8 @@ const applyDefaultSetting = async () => {
   const result = await store.actions.SHOW_CONFIRM_DIALOG({
     title: "ツールバーの順序をリセット",
     message: "ツールバーの順序をデフォルトに戻します。\nよろしいですか？",
-    actionName: "はい",
-    cancel: "いいえ",
+    actionName: "リセット",
+    cancel: "キャンセル",
   });
   if (result === "OK") {
     toolbarButtons.value = [...defaultSetting];

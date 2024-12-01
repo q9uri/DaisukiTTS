@@ -120,6 +120,19 @@ img {
   .q-layout-container {
     box-shadow: none;
   }
+
+  .q-loading__box {
+    padding: 16px 20px !important;
+    .q-spinner {
+      width: 2.5rem !important;
+      height: 2.5rem !important;
+    }
+    .q-loading__message {
+      margin-top: 12px !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+    }
+  }
 }
 
 .transparent-backdrop > .q-dialog__backdrop {

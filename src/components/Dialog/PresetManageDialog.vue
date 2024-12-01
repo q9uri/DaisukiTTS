@@ -1,8 +1,8 @@
 <template>
   <QDialog :modelValue="props.openDialog" @update:modelValue="updateOpenDialog">
-    <QCard class="setting-card q-pa-md dialog-card">
+    <QCard class="setting-card q-pa-sm dialog-card">
       <QCardSection>
-        <div class="text-h5">プリセット管理</div>
+        <div class="text-h6">プリセット管理</div>
       </QCardSection>
       <QCardActions class="q-px-md q-py-sm">
         <div class="full-width row wrap justify-between">

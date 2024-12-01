@@ -867,7 +867,7 @@ app.on("ready", async () => {
           message: `設定ファイルの読み込みに失敗しました。${app.getPath(
             "userData",
           )} にある config.json の名前を変えることで解決することがあります（ただし設定がすべてリセットされます）。設定ファイルがあるフォルダを開きますか？`,
-          buttons: ["いいえ", "はい"],
+          buttons: ["キャンセル", "設定ファイルがあるフォルダを開く"],
           noLink: true,
           cancelId: 0,
         })

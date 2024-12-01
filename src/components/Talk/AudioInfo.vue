@@ -90,7 +90,7 @@
 
       <!-- プリセット登録ダイアログ -->
       <QDialog v-model="showsPresetNameDialog" @beforeHide="closeAllDialog">
-        <QCard style="min-width: 350px">
+        <QCard class="q-pa-sm" style="min-width: 350px">
           <QCardSection>
             <div class="text-h6">プリセット登録</div>
           </QCardSection>
@@ -112,14 +112,22 @@
               />
             </QCardSection>
 
-            <QCardActions align="right">
+            <QCardActions style="padding-top: 12px !important" align="right">
               <QBtn
                 v-close-popup
                 flat
                 label="キャンセル"
                 @click="closeAllDialog"
               />
-              <QBtn flat type="submit" label="確定" />
+              <QBtn
+                outline
+                label="確定"
+                color="display"
+                textColor="display"
+                class="text-no-wrap text-bold q-mr-sm"
+                :style="{ padding: '0px 16px !important' }"
+                type="submit"
+              />
             </QCardActions>
           </QForm>
         </QCard>
@@ -127,13 +135,13 @@
 
       <!-- プリセット再登録ダイアログ -->
       <QDialog v-model="showsPresetRewriteDialog" @beforeHide="closeAllDialog">
-        <QCard>
+        <QCard class="q-pa-sm">
           <QCardSection class="q-pb-none">
             <div class="text-h6">プリセットの再登録</div>
           </QCardSection>
           <QCardSection>
             <QList>
-              <QItem clickable class="no-margin" @click="updatePreset(true)">
+              <QItem clickable class="no-margin q-px-none" @click="updatePreset(true)">
                 <QItemSection avatar>
                   <QAvatar icon="sym_r_arrow_forward" textColor="blue" />
                 </QItemSection>
@@ -141,7 +149,7 @@
                   プリセットを再登録し、このプリセットが設定されたテキスト欄全てに再適用する
                 </QItemSection>
               </QItem>
-              <QItem clickable class="no-margin" @click="updatePreset(false)">
+              <QItem clickable class="no-margin q-px-none" @click="updatePreset(false)">
                 <QItemSection avatar>
                   <QAvatar icon="sym_r_arrow_forward" textColor="blue" />
                 </QItemSection>
@@ -150,7 +158,7 @@
               <QItem
                 v-close-popup
                 clickable
-                class="no-margin"
+                class="no-margin q-px-none"
                 @click="closeAllDialog"
               >
                 <QItemSection avatar>

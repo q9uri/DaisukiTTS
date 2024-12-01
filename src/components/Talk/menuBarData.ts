@@ -11,17 +11,17 @@ export const useMenuBarData = () => {
   const fileSubMenuData = computed<MenuItemData[]>(() => [
     {
       type: "button",
-      label: "音声書き出し",
+      label: "選択音声を書き出し",
       onClick: () => {
-        void store.actions.SHOW_GENERATE_AND_SAVE_ALL_AUDIO_DIALOG();
+        void store.actions.SHOW_GENERATE_AND_SAVE_SELECTED_AUDIO_DIALOG();
       },
       disableWhenUiLocked: true,
     },
     {
       type: "button",
-      label: "選択音声を書き出し",
+      label: "音声書き出し",
       onClick: () => {
-        void store.actions.SHOW_GENERATE_AND_SAVE_SELECTED_AUDIO_DIALOG();
+        void store.actions.SHOW_GENERATE_AND_SAVE_ALL_AUDIO_DIALOG();
       },
       disableWhenUiLocked: true,
     },

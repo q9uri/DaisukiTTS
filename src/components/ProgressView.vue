@@ -11,7 +11,7 @@
         font-size="12px"
         color="primary"
         size="xl"
-        :thickness="0.3"
+        :thickness="0.25"
       >
         {{ formattedProgress }}%
       </QCircularProgress>
@@ -20,8 +20,8 @@
         indeterminate
         color="primary"
         rounded
-        :thickness="0.3"
         size="xl"
+        :thickness="0.25"
       />
       <div class="q-mt-md">音声合成中...</div>
     </div>
@@ -86,9 +86,8 @@ const formattedProgress = computed(() =>
   > div {
     color: colors.$display;
     background: colors.$background;
-    width: 200px;
     border-radius: 6px;
-    padding: 14px 48px;
+    padding: 16px 32px;
   }
 }
 </style>

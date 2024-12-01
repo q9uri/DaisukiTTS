@@ -35,9 +35,9 @@
         </QHeader>
         <QPage class="row">
           <div v-if="uiLockedState" class="ui-lock-popup">
-            <div class="q-pa-md">
+            <div>
               <QSpinner color="primary" size="2.5rem" />
-              <div class="q-mt-sm">
+              <div style="margin-top: 12px">
                 <template v-if="uiLockedState === 'addingEngine'">
                   音声合成エンジンを追加しています...
                 </template>
@@ -775,6 +775,7 @@ function findDefaultEngineId() {
     color: colors.$display;
     background: colors.$background;
     border-radius: 6px;
+    padding: 16px 20px;
   }
 }
 </style>

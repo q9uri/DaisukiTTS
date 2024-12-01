@@ -10,7 +10,7 @@
     :persistent
     @hide="onDialogHide"
   >
-    <QCard class="q-py-sm q-px-md dialog-card">
+    <QCard class="q-py-sm q-px-sm dialog-card">
       <QCardSection class="message-dialog-title">
         <QIcon
           v-if="props.type !== 'none'"
@@ -24,13 +24,14 @@
       <QCardSection class="q-py-none message">
         {{ props.message }}
       </QCardSection>
-      <QCardActions align="right">
+      <QCardActions style="padding-top: 12px !important" align="right">
         <QBtn
-          unelevated
+          outline
           :label="props.ok"
-          color="toolbar-button"
-          textColor="toolbar-button-display"
+          color="display"
+          textColor="display"
           class="text-no-wrap text-bold q-mr-sm"
+          :style="{ padding: '0px 16px !important' }"
           @click="onOk"
         />
       </QCardActions>

@@ -161,19 +161,19 @@ const { registerHotkeyWithCleanup } = useHotkeyManager();
 
 registerHotkeyWithCleanup({
   editor: "talk",
-  name: "音声書き出し",
+  name: "選択音声を書き出し",
   callback: () => {
     if (!uiLocked.value) {
-      void store.actions.SHOW_GENERATE_AND_SAVE_ALL_AUDIO_DIALOG();
+      void store.actions.SHOW_GENERATE_AND_SAVE_SELECTED_AUDIO_DIALOG();
     }
   },
 });
 registerHotkeyWithCleanup({
   editor: "talk",
-  name: "選択音声を書き出し",
+  name: "音声書き出し",
   callback: () => {
     if (!uiLocked.value) {
-      void store.actions.SHOW_GENERATE_AND_SAVE_SELECTED_AUDIO_DIALOG();
+      void store.actions.SHOW_GENERATE_AND_SAVE_ALL_AUDIO_DIALOG();
     }
   },
 });

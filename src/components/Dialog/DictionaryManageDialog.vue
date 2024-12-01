@@ -36,7 +36,7 @@
           <div v-if="loadingDictState" class="loading-dict">
             <div>
               <QSpinner color="primary" size="2.5rem" />
-              <div class="q-mt-sm">
+              <div style="margin-top: 12px">
                 <template v-if="loadingDictState === 'loading'"
                   >読み込み中...</template
                 >
@@ -771,7 +771,7 @@ const {
     color: colors.$display;
     background: colors.$background;
     border-radius: 6px;
-    padding: 14px;
+    padding: 16px 20px;
   }
 }
 

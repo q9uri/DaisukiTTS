@@ -423,7 +423,7 @@
               </QCardActions>
               <ToggleCell
                 title="マルチエンジン機能"
-                description="複数の VOICEVOX 準拠音声合成エンジンを利用可能にします。"
+                description="複数の VOICEVOX API 互換音声合成エンジンを利用可能にします。"
                 :modelValue="enableMultiEngine"
                 @update:modelValue="setEnableMultiEngine"
               />

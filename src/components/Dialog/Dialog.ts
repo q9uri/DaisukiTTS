@@ -295,7 +295,7 @@ const showWriteErrorDialog = ({
   if (mediaType === "text") {
     // テキスト書き出し時のエラーを出力
     void actions.SHOW_ALERT_DIALOG({
-      title: "テキストの書き出しに失敗しました。",
+      title: "テキストの書き出しに失敗しました",
       message:
         "書き込みエラーによって失敗しました。空き容量があることや、書き込み権限があることをご確認ください。",
     });
@@ -311,7 +311,7 @@ const showWriteErrorDialog = ({
 
     // 音声書き出し時のエラーを出力
     void actions.SHOW_ALERT_DIALOG({
-      title: "書き出しに失敗しました。",
+      title: "書き出しに失敗しました",
       message: result.errorMessage ?? defaultErrorMessages[result.result] ?? "",
     });
   }
