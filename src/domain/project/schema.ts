@@ -7,6 +7,7 @@ import {
   presetKeySchema,
   speakerIdSchema,
   styleIdSchema,
+  trackIdSchema,
 } from "@/type/preload";
 
 // トーク系のスキーマ
@@ -33,6 +34,7 @@ const audioQuerySchema = z.object({
   tempoDynamicsScale: z.number().optional(), // AivisSpeech 固有のフィールド
   pitchScale: z.number(),
   volumeScale: z.number(),
+  pauseLengthScale: z.number(),
   prePhonemeLength: z.number(),
   postPhonemeLength: z.number(),
   outputSamplingRate: z.union([z.number(), z.literal("engineDefault")]),
@@ -85,11 +87,17 @@ export const singerSchema = z.object({
 });
 
 export const trackSchema = z.object({
+  name: z.string(),
   singer: singerSchema.optional(),
   keyRangeAdjustment: z.number(), // 音域調整量
   volumeRangeAdjustment: z.number(), // 声量調整量
   notes: z.array(noteSchema),
   pitchEditData: z.array(z.number()), // 値の単位はHzで、データが無いところはVALUE_INDICATING_NO_DATAの値
+
+  solo: z.boolean(),
+  mute: z.boolean(),
+  gain: z.number(),
+  pan: z.number(),
 });
 
 // プロジェクトファイルのスキーマ
@@ -105,7 +113,8 @@ export const projectSchema = z.object({
     tpqn: z.number(),
     tempos: z.array(tempoSchema),
     timeSignatures: z.array(timeSignatureSchema),
-    tracks: z.array(trackSchema),
+    tracks: z.record(trackIdSchema, trackSchema),
+    trackOrder: z.array(trackIdSchema),
   }),
 });
 

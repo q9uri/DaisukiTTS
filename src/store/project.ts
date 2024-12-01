@@ -1,5 +1,4 @@
-import { getBaseName } from "./utility";
-import { createPartialStore, Dispatch } from "./vuex";
+import { createPartialStore, DotNotationDispatch } from "./vuex";
 import { createUILockAction } from "@/store/ui";
 import {
   AllActions,
@@ -7,7 +6,8 @@ import {
   ProjectStoreState,
   ProjectStoreTypes,
 } from "@/store/type";
-
+import { TrackId } from "@/type/preload";
+import path from "@/helpers/path";
 import { getValueOrThrow, ResultError } from "@/type/result";
 import { LatestProjectType } from "@/domain/project/schema";
 import {
@@ -17,20 +17,26 @@ import {
 import {
   createDefaultTempo,
   createDefaultTimeSignature,
+  createDefaultTrack,
   DEFAULT_TPQN,
 } from "@/sing/domain";
 import { EditorType } from "@/type/preload";
 import { IsEqual } from "@/type/utility";
+import {
+  showAlertDialog,
+  showQuestionDialog,
+} from "@/components/Dialog/Dialog";
+import { uuid4 } from "@/helpers/random";
 
 export const projectStoreState: ProjectStoreState = {
   savedLastCommandIds: { talk: null, song: null },
 };
 
 const applyTalkProjectToStore = async (
-  dispatch: Dispatch<AllActions>,
+  actions: DotNotationDispatch<AllActions>,
   talkProject: LatestProjectType["talk"],
 ) => {
-  await dispatch("REMOVE_ALL_AUDIO_ITEM");
+  await actions.REMOVE_ALL_AUDIO_ITEM();
 
   const { audioItems, audioKeys } = talkProject;
 
@@ -41,44 +47,40 @@ const applyTalkProjectToStore = async (
     // valueがundefinedにならないことを検証したあとであれば、
     // このif文に引っかかることはないはずである
     if (audioItem == undefined) throw new Error("audioItem == undefined");
-    prevAudioKey = await dispatch("REGISTER_AUDIO_ITEM", {
+    prevAudioKey = await actions.REGISTER_AUDIO_ITEM({
       prevAudioKey,
       audioItem,
     });
   }
 };
 
+/*
 const applySongProjectToStore = async (
-  dispatch: Dispatch<AllActions>,
+  actions: DotNotationDispatch<AllActions>,
   songProject: LatestProjectType["song"],
 ) => {
-  const { tpqn, tempos, timeSignatures, tracks } = songProject;
-  // TODO: マルチトラック対応
-  await dispatch("SET_SINGER", {
-    singer: tracks[0].singer,
-  });
-  await dispatch("SET_KEY_RANGE_ADJUSTMENT", {
-    keyRangeAdjustment: tracks[0].keyRangeAdjustment,
-  });
-  await dispatch("SET_VOLUME_RANGE_ADJUSTMENT", {
-    volumeRangeAdjustment: tracks[0].volumeRangeAdjustment,
-  });
-  await dispatch("SET_TPQN", { tpqn });
-  await dispatch("SET_TEMPOS", { tempos });
-  await dispatch("SET_TIME_SIGNATURES", { timeSignatures });
-  await dispatch("SET_NOTES", { notes: tracks[0].notes });
-  await dispatch("CLEAR_PITCH_EDIT_DATA"); // FIXME: SET_PITCH_EDIT_DATAがセッターになれば不要
-  await dispatch("SET_PITCH_EDIT_DATA", {
-    data: tracks[0].pitchEditData,
-    startFrame: 0,
+  const { tpqn, tempos, timeSignatures, tracks, trackOrder } = songProject;
+
+  await actions.SET_TPQN({ tpqn });
+  await actions.SET_TEMPOS({ tempos });
+  await actions.SET_TIME_SIGNATURES({ timeSignatures });
+  await actions.SET_TRACKS({
+    tracks: new Map(
+      trackOrder.map((trackId) => {
+        const track = tracks[trackId];
+        if (!track) throw new Error("track == undefined");
+        return [trackId, track];
+      }),
+    ),
   });
 };
+*/
 
 export const projectStore = createPartialStore<ProjectStoreTypes>({
   PROJECT_NAME_WITH_EXT: {
     getter(state) {
       return state.projectFilePath
-        ? getBaseName(state.projectFilePath)
+        ? path.basename(state.projectFilePath)
         : undefined;
     },
   },
@@ -86,7 +88,7 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
   PROJECT_NAME: {
     getter(state) {
       return state.projectFilePath
-        ? getBaseName(state.projectFilePath).replace(".aisp", "")
+        ? path.basename(state.projectFilePath, ".aisp")
         : undefined;
     },
   },
@@ -101,55 +103,54 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
     action: createUILockAction(
       async (context, { confirm }: { confirm?: boolean }) => {
         if (confirm !== false && context.getters.IS_EDITED) {
-          const result = await context.dispatch(
-            "SAVE_OR_DISCARD_PROJECT_FILE",
-            {},
-          );
+          const result = await context.actions.SAVE_OR_DISCARD_PROJECT_FILE({});
           if (result == "canceled") {
             return;
           }
         }
 
         // トークプロジェクトの初期化
-        await context.dispatch("REMOVE_ALL_AUDIO_ITEM");
+        await context.actions.REMOVE_ALL_AUDIO_ITEM();
 
-        const audioItem: AudioItem = await context.dispatch(
-          "GENERATE_AUDIO_ITEM",
+        const audioItem: AudioItem = await context.actions.GENERATE_AUDIO_ITEM(
           {},
         );
-        await context.dispatch("REGISTER_AUDIO_ITEM", {
+        await context.actions.REGISTER_AUDIO_ITEM({
           audioItem,
         });
 
         // ソングプロジェクトの初期化
-        await context.dispatch("SET_TPQN", { tpqn: DEFAULT_TPQN });
-        await context.dispatch("SET_TEMPOS", {
+        await context.actions.SET_TPQN({ tpqn: DEFAULT_TPQN });
+        await context.actions.SET_TEMPOS({
           tempos: [createDefaultTempo(0)],
         });
-        await context.dispatch("SET_TIME_SIGNATURES", {
+        await context.actions.SET_TIME_SIGNATURES({
           timeSignatures: [createDefaultTimeSignature(1)],
         });
-        await context.dispatch("SET_NOTES", { notes: [] });
-        await context.dispatch("SET_SINGER", { withRelated: true });
-        await context.dispatch("CLEAR_PITCH_EDIT_DATA");
+        const trackId = TrackId(uuid4());
+        await context.actions.SET_TRACKS({
+          tracks: new Map([[trackId, createDefaultTrack()]]),
+        });
+        await context.actions.SET_NOTES({ notes: [], trackId });
+        await context.actions.SET_SINGER({ withRelated: true, trackId });
+        await context.actions.CLEAR_PITCH_EDIT_DATA({ trackId });
 
-        context.commit("SET_PROJECT_FILEPATH", { filePath: undefined });
-        context.commit("RESET_SAVED_LAST_COMMAND_IDS");
-        context.commit("CLEAR_COMMANDS");
+        context.mutations.SET_PROJECT_FILEPATH({ filePath: undefined });
+        void context.actions.CLEAR_UNDO_HISTORY();
       },
     ),
   },
 
   PARSE_PROJECT_FILE: {
-    async action({ dispatch, getters }, { projectJson }) {
-      const projectData = JSON.parse(projectJson);
+    async action({ actions, getters }, { projectJson }) {
+      const projectData: unknown = JSON.parse(projectJson);
 
       const characterInfos = getters.USER_ORDERED_CHARACTER_INFOS("talk");
       if (characterInfos == undefined)
         throw new Error("characterInfos == undefined");
 
       const parsedProjectData = await migrateProjectFileObject(projectData, {
-        fetchMoraData: (payload) => dispatch("FETCH_MORA_DATA", payload),
+        fetchMoraData: (payload) => actions.FETCH_MORA_DATA(payload),
         voices: characterInfos.flatMap((characterInfo) =>
           characterInfo.metas.styles.map((style) => ({
             engineId: style.engineId,
@@ -170,7 +171,7 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
      */
     action: createUILockAction(
       async (
-        { dispatch, commit, getters },
+        { actions, mutations, getters },
         { filePath, confirm }: { filePath?: string; confirm?: boolean },
       ) => {
         if (!filePath) {
@@ -190,17 +191,17 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
             .readFile({ filePath })
             .then(getValueOrThrow);
 
-          await dispatch("APPEND_RECENTLY_USED_PROJECT", {
+          await actions.APPEND_RECENTLY_USED_PROJECT({
             filePath,
           });
 
           const text = new TextDecoder("utf-8").decode(buf).trim();
-          const parsedProjectData = await dispatch("PARSE_PROJECT_FILE", {
+          const parsedProjectData = await actions.PARSE_PROJECT_FILE({
             projectJson: text,
           });
 
           if (confirm !== false && getters.IS_EDITED) {
-            const result = await dispatch("SAVE_OR_DISCARD_PROJECT_FILE", {
+            const result = await actions.SAVE_OR_DISCARD_PROJECT_FILE({
               additionalMessage:
                 "プロジェクトをロードすると現在のプロジェクトは破棄されます。",
             });
@@ -209,12 +210,11 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
             }
           }
 
-          await applyTalkProjectToStore(dispatch, parsedProjectData.talk);
-          // await applySongProjectToStore(dispatch, parsedProjectData.song);
+          await applyTalkProjectToStore(actions, parsedProjectData.talk);
+          // await applySongProjectToStore(actions, parsedProjectData.song);
 
-          commit("SET_PROJECT_FILEPATH", { filePath });
-          commit("RESET_SAVED_LAST_COMMAND_IDS");
-          commit("CLEAR_COMMANDS");
+          mutations.SET_PROJECT_FILEPATH({ filePath });
+          void actions.CLEAR_UNDO_HISTORY();
           return true;
         } catch (err) {
           window.backend.logError(err);
@@ -227,7 +227,7 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
               return "ファイルフォーマットが正しくありません。";
             return err.message;
           })();
-          await window.backend.showMessageDialog({
+          await showAlertDialog({
             type: "error",
             title: "エラー",
             message: `プロジェクトファイルの読み込みに失敗しました。\n${message}`,
@@ -272,14 +272,14 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
             context.state.projectFilePath &&
             context.state.projectFilePath != filePath
           ) {
-            await window.backend.showMessageDialog({
+            await showAlertDialog({
               type: "info",
               title: "保存",
               message: `編集中のプロジェクトが ${filePath} に切り替わりました。`,
             });
           }
 
-          await context.dispatch("APPEND_RECENTLY_USED_PROJECT", {
+          await context.actions.APPEND_RECENTLY_USED_PROJECT({
             filePath,
           });
           const appInfos = await window.backend.getAppInfos();
@@ -290,6 +290,7 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
             tempos,
             timeSignatures,
             tracks,
+            trackOrder,
           } = context.state;
           const projectData: LatestProjectType = {
             appVersion: appInfos.version,
@@ -303,7 +304,8 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
               tpqn,
               tempos,
               timeSignatures,
-              tracks,
+              tracks: Object.fromEntries(tracks),
+              trackOrder,
             },
           };
 
@@ -316,9 +318,8 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
               buffer: buf,
             })
             .then(getValueOrThrow);
-          context.commit("SET_PROJECT_FILEPATH", { filePath });
-          context.commit(
-            "SET_SAVED_LAST_COMMAND_IDS",
+          context.mutations.SET_PROJECT_FILEPATH({ filePath });
+          context.mutations.SET_SAVED_LAST_COMMAND_IDS(
             context.getters.LAST_COMMAND_IDS,
           );
           return true;
@@ -329,7 +330,7 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
             if (!(err instanceof Error)) return "エラーが発生しました。";
             return err.message;
           })();
-          await window.backend.showMessageDialog({
+          await showAlertDialog({
             type: "error",
             title: "エラー",
             message: `プロジェクトファイルの保存に失敗しました。\n${message}`,
@@ -346,23 +347,22 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
    * 保存に失敗した場合はキャンセル扱いになる。
    */
   SAVE_OR_DISCARD_PROJECT_FILE: {
-    action: createUILockAction(async ({ dispatch }, { additionalMessage }) => {
+    action: createUILockAction(async ({ actions }, { additionalMessage }) => {
       let message = "プロジェクトの変更が保存されていません。";
       if (additionalMessage) {
         message += "\n" + additionalMessage;
       }
       message += "\n変更を保存しますか？";
 
-      const result: number = await window.backend.showQuestionDialog({
+      const result: number = await showQuestionDialog({
         type: "info",
         title: "警告",
         message,
-        buttons: ["保存", "破棄", "キャンセル"],
-        cancelId: 2,
-        defaultId: 2,
+        buttons: ["キャンセル", "破棄", "保存"],
+        cancel: 0,
       });
-      if (result == 0) {
-        const saved = await dispatch("SAVE_PROJECT_FILE", {
+      if (result == 2) {
+        const saved = await actions.SAVE_PROJECT_FILE({
           overwrite: true,
         });
         return saved ? "saved" : "canceled";
@@ -399,6 +399,13 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
   RESET_SAVED_LAST_COMMAND_IDS: {
     mutation(state) {
       state.savedLastCommandIds = { talk: null, song: null };
+    },
+  },
+
+  CLEAR_UNDO_HISTORY: {
+    action({ mutations }) {
+      mutations.RESET_SAVED_LAST_COMMAND_IDS();
+      mutations.CLEAR_COMMANDS();
     },
   },
 });

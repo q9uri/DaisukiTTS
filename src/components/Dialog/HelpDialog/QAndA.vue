@@ -16,7 +16,7 @@ const qAndA = ref("");
 const md = useMarkdownIt();
 
 onMounted(async () => {
-  qAndA.value = md.render(await store.dispatch("GET_Q_AND_A_TEXT"));
+  qAndA.value = md.render(await store.actions.GET_Q_AND_A_TEXT());
 });
 </script>
 

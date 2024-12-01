@@ -84,11 +84,10 @@
 import { computed, ref } from "vue";
 import type { Component } from "vue";
 import HelpPolicy from "./HelpPolicy.vue";
-import LibraryPolicy from "./LibraryPolicy.vue";
+import LibraryPolicy from "./HelpLibraryPolicySection.vue";
 import HowToUse from "./HowToUse.vue";
 import OssLicense from "./OssLicense.vue";
 import UpdateInfo from "./UpdateInfo.vue";
-import OssCommunityInfo from "./OssCommunityInfo.vue";
 import QAndA from "./QAndA.vue";
 import ContactInfo from "./ContactInfo.vue";
 import { UpdateInfo as UpdateInfoObject, UrlString } from "@/type/preload";
@@ -102,6 +101,7 @@ type PageItem = {
   parent?: string;
   component: Component;
   props?: Record<string, unknown>;
+  shouldShowOpenLogDirectoryButton?: boolean;
 };
 type PageSeparator = {
   type: "separator";
@@ -126,7 +126,7 @@ const store = useStore();
 const { warn } = createLogger("HelpDialog");
 
 const updateInfos = ref<UpdateInfoObject[]>();
-store.dispatch("GET_UPDATE_INFOS").then((obj) => (updateInfos.value = obj));
+void store.actions.GET_UPDATE_INFOS().then((obj) => (updateInfos.value = obj));
 
 if (!import.meta.env.VITE_LATEST_UPDATE_INFOS_URL) {
   throw new Error(
@@ -140,10 +140,24 @@ const newUpdateResult = useFetchNewUpdateInfos(
 
 // エディタのOSSライセンス取得
 const licenses = ref<Record<string, string>[]>();
-store.dispatch("GET_OSS_LICENSES").then((obj) => (licenses.value = obj));
+void store.actions.GET_OSS_LICENSES().then((obj) => (licenses.value = obj));
 
 const policy = ref<string>();
-store.dispatch("GET_POLICY_TEXT").then((obj) => (policy.value = obj));
+void store.actions.GET_POLICY_TEXT().then((obj) => (policy.value = obj));
+
+const howToUse = ref<string>();
+void store.actions.GET_HOW_TO_USE_TEXT().then((obj) => (howToUse.value = obj));
+
+const ossCommunityInfos = ref<string>();
+void store.actions
+  .GET_OSS_COMMUNITY_INFOS()
+  .then((obj) => (ossCommunityInfos.value = obj));
+
+const qAndA = ref<string>();
+void store.actions.GET_Q_AND_A_TEXT().then((obj) => (qAndA.value = obj));
+
+const contact = ref<string>();
+void store.actions.GET_CONTACT_TEXT().then((obj) => (contact.value = obj));
 
 const pagedata = computed(() => {
   const data: PageData[] = [
@@ -251,7 +265,15 @@ const pagedata = computed(() => {
 
 const selectedPageIndex = ref(0);
 
-const openLogDirectory = window.backend.openLogDirectory;
+// const selectedPage = computed(() => {
+//   if (pagedata.value[selectedPageIndex.value].type == "item") {
+//     return pagedata.value[selectedPageIndex.value] as PageItem;
+//   } else {
+//     throw new Error("selectedPageにはPageItem型の値を指定してください。");
+//   }
+// });
+
+const openLogDirectory = () => window.backend.openLogDirectory();
 </script>
 
 <style scoped lang="scss">

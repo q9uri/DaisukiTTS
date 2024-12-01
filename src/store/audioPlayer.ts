@@ -4,6 +4,7 @@
 import { createPartialStore } from "./vuex";
 import { AudioPlayerStoreState, AudioPlayerStoreTypes } from "./type";
 import { AudioKey } from "@/type/preload";
+import { showAlertDialog } from "@/components/Dialog/Dialog";
 
 // ユニットテストが落ちるのを回避するための遅延読み込み
 const getAudioElement = (() => {
@@ -89,7 +90,7 @@ export const audioPlayerStore = createPartialStore<AudioPlayerStoreTypes>({
 
   PLAY_AUDIO_PLAYER: {
     async action(
-      { state, commit },
+      { state, mutations },
       { offset, audioKey }: { offset?: number; audioKey?: AudioKey },
     ) {
       const audioElement = getAudioElement();
@@ -102,25 +103,25 @@ export const audioPlayerStore = createPartialStore<AudioPlayerStoreTypes>({
       if (audioElement.setSinkId) {
         audioElement
           .setSinkId(state.savingSetting.audioOutputDevice)
-          .catch((err) => {
+          .catch((err: unknown) => {
             const stop = () => {
               audioElement.pause();
               audioElement.removeEventListener("canplay", stop);
             };
             audioElement.addEventListener("canplay", stop);
-            window.backend.showMessageDialog({
+            void showAlertDialog({
               type: "error",
               title: "エラー",
               message: "再生デバイスが見つかりません",
             });
-            throw new Error(err);
+            throw err;
           });
       }
 
       // 再生終了時にresolveされるPromiseを返す
       const played = async () => {
         if (audioKey) {
-          commit("SET_AUDIO_NOW_PLAYING", { audioKey, nowPlaying: true });
+          mutations.SET_AUDIO_NOW_PLAYING({ audioKey, nowPlaying: true });
         }
       };
       audioElement.addEventListener("play", played);
@@ -135,11 +136,11 @@ export const audioPlayerStore = createPartialStore<AudioPlayerStoreTypes>({
         audioElement.removeEventListener("play", played);
         audioElement.removeEventListener("pause", paused);
         if (audioKey) {
-          commit("SET_AUDIO_NOW_PLAYING", { audioKey, nowPlaying: false });
+          mutations.SET_AUDIO_NOW_PLAYING({ audioKey, nowPlaying: false });
         }
       });
 
-      audioElement.play();
+      void audioElement.play();
 
       return audioPlayPromise;
     },

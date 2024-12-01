@@ -148,9 +148,7 @@ watch([() => props.modelValue], async ([newValue]) => {
     speakerWithMultipleStyles.value = store.state.userCharacterOrder
       .map((speakerUuid) => characterInfosMap.value[speakerUuid])
       .filter((characterInfo) => characterInfo != undefined)
-      .filter(
-        (characterInfo) => characterInfo.metas.styles.length > 1,
-      ) as CharacterInfo[];
+      .filter((characterInfo) => characterInfo.metas.styles.length > 1);
     // FIXME: エンジン未起動状態でデフォルトスタイル選択ダイアログを開くと
     // 未起動エンジンのキャラのデフォルトスタイルが消えてしまう
     selectedStyleIndexes.value = Object.fromEntries(
@@ -179,8 +177,7 @@ watch([() => props.modelValue], async ([newValue]) => {
 const isHoverableItem = ref(true);
 
 const closeDialog = () => {
-  store.dispatch(
-    "SET_DEFAULT_STYLE_IDS",
+  void store.actions.SET_DEFAULT_STYLE_IDS(
     Object.entries(selectedStyleIndexes.value).map(
       ([speakerUuidStr, styleIndex]) => {
         const speakerUuid = SpeakerId(speakerUuidStr);
@@ -271,6 +268,7 @@ const openStyleSelectDialog = (characterInfo: CharacterInfo) => {
           height: 100px;
           clip-path: vars.$squircle;
           background-color: var(--color-splitter);
+          border-radius: 5px;
         }
         .style-select-container {
           display: flex;

@@ -210,7 +210,7 @@ const toDialogClosedState = () => {
 // API インスタンスを取得する関数
 // VOICEVOX のお作法ではこうやらないと API を呼べないっぽい…
 const getApiInstance = async () => {
-  return await store.dispatch("INSTANTIATE_ENGINE_CONNECTOR", { engineId: store.getters.DEFAULT_ENGINE_ID });
+  return await store.actions.INSTANTIATE_ENGINE_CONNECTOR({ engineId: store.getters.DEFAULT_ENGINE_ID });
 };
 
 // インストール済み AIVM 音声合成モデルの情報
@@ -223,7 +223,7 @@ const aivmCount = computed(() => Object.keys(aivmInfoDict.value).length);
 const getAivmInfos = async () => {
   // 初回のみ読み込み中のローディングを表示する
   if (Object.keys(aivmInfoDict.value).length === 0) {
-    store.dispatch("SHOW_LOADING_SCREEN", {
+    void store.actions.SHOW_LOADING_SCREEN({
       message: "読み込み中...",
     });
   }
@@ -238,14 +238,14 @@ const getAivmInfos = async () => {
     activeAivmUuid.value = Object.values(aivmInfoDict.value)[0].manifest.uuid;
   }
   if (Object.keys(aivmInfoDict.value).length > 0) {
-    store.dispatch("HIDE_ALL_LOADING_SCREEN");
+    void store.actions.HIDE_ALL_LOADING_SCREEN();
   }
 };
 
 // ダイヤログが開かれた時
 watch(engineManageDialogOpenedComputed, () => {
   if (engineManageDialogOpenedComputed.value) {
-    getAivmInfos();
+    void getAivmInfos();
     installMethod.value = 'file';
     selectedFile.value = null;
     installUrl.value = '';
@@ -297,7 +297,7 @@ const toggleAudio = (speakerUuid: string, styleLocalId: number, sampleIndex: num
     audioPlaying.value[key] = false;
   } else {
     stopAllAudio();
-    audioElements[key].play();
+    void audioElements[key].play();
     audioPlaying.value[key] = true;
   }
 };
@@ -325,7 +325,7 @@ const cancelInstall = () => {
 
 // 音声合成モデルをインストールする
 const installModel = async () => {
-  store.dispatch("SHOW_LOADING_SCREEN", {
+  void store.actions.SHOW_LOADING_SCREEN({
     message: "インストール中...",
   });
   try {
@@ -337,11 +337,11 @@ const installModel = async () => {
     }
     // インストール成功時の処理
     // 話者・スタイル一覧を再読み込み
-    await store.dispatch("LOAD_CHARACTER", { engineId: store.getters.DEFAULT_ENGINE_ID });
-    await store.dispatch("LOAD_DEFAULT_STYLE_IDS");
+    await store.actions.LOAD_CHARACTER({ engineId: store.getters.DEFAULT_ENGINE_ID });
+    await store.actions.LOAD_DEFAULT_STYLE_IDS();
     // プリセットを再作成
-    await store.dispatch("CREATE_ALL_DEFAULT_PRESET");
-    store.dispatch("SHOW_ALERT_DIALOG", {
+    await store.actions.CREATE_ALL_DEFAULT_PRESET();
+    void store.actions.SHOW_ALERT_DIALOG({
       title: "インストール完了",
       message: "音声合成モデルが正常にインストールされました。",
     });
@@ -349,7 +349,7 @@ const installModel = async () => {
   } catch (error) {
     console.error(error);
     if (error instanceof ResponseError) {
-      store.dispatch("SHOW_ALERT_DIALOG", {
+      void store.actions.SHOW_ALERT_DIALOG({
         title: "インストール失敗",
         message: `音声合成モデルのインストールに失敗しました。
           (HTTP Error ${error.response.status} / ${await error.response.text()})`,
@@ -358,19 +358,20 @@ const installModel = async () => {
       // assert characterInfo !== undefined エラーを無視
       if (error instanceof Error && error.message === 'assert characterInfo !== undefined') {
         // インストール成功時の処理を実行
-        await store.dispatch("LOAD_CHARACTER", { engineId: store.getters.DEFAULT_ENGINE_ID });
-        await store.dispatch("LOAD_DEFAULT_STYLE_IDS");
-        await store.dispatch("CREATE_ALL_DEFAULT_PRESET");
+        await store.actions.LOAD_CHARACTER({ engineId: store.getters.DEFAULT_ENGINE_ID });
+        await store.actions.LOAD_DEFAULT_STYLE_IDS();
+        await store.actions.CREATE_ALL_DEFAULT_PRESET();
       } else {
-        store.dispatch("SHOW_ALERT_DIALOG", {
+        void store.actions.SHOW_ALERT_DIALOG({
           title: "インストール失敗",
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
           message: `音声合成モデルのインストールに失敗しました。(${error})`,
         });
       }
     }
   } finally {
-    store.dispatch("HIDE_ALL_LOADING_SCREEN");
-    getAivmInfos();  // 再取得
+    await store.actions.HIDE_ALL_LOADING_SCREEN();
+    void getAivmInfos();  // 再取得
   }
 };
 
@@ -379,15 +380,14 @@ const unInstallAivmModel = async () => {
   if (activeAivmUuid.value == null) {
     throw new Error("aivm model is not selected");
   }
-  const result = await store.dispatch("SHOW_CONFIRM_DIALOG", {
+  const result = await store.actions.SHOW_CONFIRM_DIALOG({
     title: "アンインストールの確認",
-    message: `本当に音声合成モデル「${activeAivmInfo.value?.manifest.name}」をアンインストールしますか？<br>
-              アンインストールすると、この音声合成モデル内の話者/スタイルは再度インストールするまで使えなくなります。`,
+    message: '本当に音声合成モデル「${activeAivmInfo.value?.manifest.name}」をアンインストールしますか？\n' +
+             'アンインストールすると、この音声合成モデル内の話者/スタイルは再度インストールするまで使えなくなります。',
     actionName: "アンインストール",
-    html: true,
   });
   if (result === "OK") {
-    store.dispatch("SHOW_LOADING_SCREEN", {
+    void store.actions.SHOW_LOADING_SCREEN({
       message: "アンインストールしています...",
     });
     try {
@@ -395,14 +395,14 @@ const unInstallAivmModel = async () => {
         instance.invoke("uninstallAivmAivmModelsAivmUuidUninstallDelete")({ aivmUuid: activeAivmUuid.value! }))
       // アンインストール成功時の処理
       // 話者・スタイル一覧を再読み込み
-      await store.dispatch("LOAD_CHARACTER", { engineId: store.getters.DEFAULT_ENGINE_ID });
-      await store.dispatch("LOAD_DEFAULT_STYLE_IDS");
+      await store.actions.LOAD_CHARACTER({ engineId: store.getters.DEFAULT_ENGINE_ID });
+      await store.actions.LOAD_DEFAULT_STYLE_IDS();
       // プリセットを再作成
-      await store.dispatch("CREATE_ALL_DEFAULT_PRESET");
+      await store.actions.CREATE_ALL_DEFAULT_PRESET();
     } catch (error) {
       console.error(error);
       if (error instanceof ResponseError) {
-        store.dispatch("SHOW_ALERT_DIALOG", {
+        void store.actions.SHOW_ALERT_DIALOG({
           title: "アンインストール失敗",
           message: `音声合成モデル「${activeAivmInfo.value?.manifest.name}」のアンインストールに失敗しました。
             (HTTP Error ${error.response.status} / ${await error.response.text()})`,
@@ -411,19 +411,20 @@ const unInstallAivmModel = async () => {
         // assert characterInfo !== undefined エラーを無視
         if (error instanceof Error && error.message === 'assert characterInfo !== undefined') {
           // アンインストール成功時の処理を実行
-          await store.dispatch("LOAD_CHARACTER", { engineId: store.getters.DEFAULT_ENGINE_ID });
-          await store.dispatch("LOAD_DEFAULT_STYLE_IDS");
-          await store.dispatch("CREATE_ALL_DEFAULT_PRESET");
+          await store.actions.LOAD_CHARACTER({ engineId: store.getters.DEFAULT_ENGINE_ID });
+          await store.actions.LOAD_DEFAULT_STYLE_IDS();
+          await store.actions.CREATE_ALL_DEFAULT_PRESET();
         } else {
-          store.dispatch("SHOW_ALERT_DIALOG", {
+          void store.actions.SHOW_ALERT_DIALOG({
             title: "アンインストール失敗",
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             message: `音声合成モデル「${activeAivmInfo.value?.manifest.name}」のアンインストールに失敗しました。(${error})`,
           });
         }
       }
     } finally {
-      store.dispatch("HIDE_ALL_LOADING_SCREEN");
-      getAivmInfos();  // 再取得
+      await store.actions.HIDE_ALL_LOADING_SCREEN();
+      void getAivmInfos();  // 再取得
     }
   }
 };

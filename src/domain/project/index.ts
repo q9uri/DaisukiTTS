@@ -1,20 +1,16 @@
 /**
  * プロジェクトファイル関連のコード
  */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import semver from "semver";
 
 import { LatestProjectType, projectSchema } from "./schema";
 import { AccentPhrase } from "@/openapi";
 import { EngineId, StyleId, Voice } from "@/type/preload";
-import {
-  DEFAULT_BEAT_TYPE,
-  DEFAULT_BEATS,
-  DEFAULT_BPM,
-  DEFAULT_TPQN,
-} from "@/sing/domain";
 
-const DEFAULT_SAMPLING_RATE = 44100;
+// const DEFAULT_SAMPLING_RATE = 44100;
 
 /**
  * プロジェクトファイルのフォーマットエラー
@@ -71,6 +67,7 @@ const validateTalkProject = (talkProject: LatestProjectType["talk"]) => {
   }
 };
 
+// TODO: マイグレーション（とファイルの最初のeslint-disable）を別ファイルに移す
 /**
  * プロジェクトファイルのマイグレーション
  */
@@ -86,6 +83,7 @@ export const migrateProjectFileObject = async (
     voices: Voice[];
   },
 ) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { fetchMoraData, voices } = DI;
 
   // appVersion Validation check
@@ -108,6 +106,7 @@ export const migrateProjectFileObject = async (
   };
 
   // Migration
+  /*
   const engineId = EngineId("074fc39e-678b-4c13-8916-ffca8d505d1d");
 
   if (semver.satisfies(projectAppVersion, "<0.4", semverSatisfiesOptions)) {
@@ -121,6 +120,7 @@ export const migrateProjectFileObject = async (
     for (const audioItemsKey in projectData.audioItems) {
       if (projectData.audioItems[audioItemsKey].query != null) {
         projectData.audioItems[audioItemsKey].query.volumeScale = 1;
+        projectData.audioItems[audioItemsKey].query.pauseLengthScale = 1;
         projectData.audioItems[audioItemsKey].query.prePhonemeLength = 0.1;
         projectData.audioItems[audioItemsKey].query.postPhonemeLength = 0.1;
         projectData.audioItems[audioItemsKey].query.outputSamplingRate =
@@ -280,6 +280,38 @@ export const migrateProjectFileObject = async (
     // ピッチ編集値の追加
     for (const track of projectData.song.tracks) {
       track.pitchEditData = [];
+    }
+  }
+
+  if (semver.satisfies(projectAppVersion, "<0.20.0", semverSatisfiesOptions)) {
+    // tracks: Track[] -> tracks: Record<TrackId, Track> + trackOrder: TrackId[]
+    const newTracks: Record<TrackId, unknown> = {};
+    for (const track of projectData.song.tracks) {
+      track.name = DEFAULT_TRACK_NAME;
+      track.solo = false;
+      track.mute = false;
+      track.gain = 1;
+      track.pan = 0;
+      newTracks[TrackId(uuid4())] = track;
+    }
+    projectData.song.tracks = newTracks;
+    projectData.song.trackOrder = Object.keys(newTracks);
+  }
+
+  if (semver.satisfies(projectAppVersion, "<0.22.0", semverSatisfiesOptions)) {
+    // 文内無音倍率の追加
+    for (const audioItemsKey in projectData.talk.audioItems) {
+      projectData.talk.audioItems[audioItemsKey].query.pauseLengthScale = 1;
+    }
+  }
+  */
+
+  // ----- 以下は AivisSpeech 固有のマイグレーション処理 -----
+
+  if (semver.satisfies(projectAppVersion, "<1.1.0", semverSatisfiesOptions)) {
+    // 文内無音倍率の追加
+    for (const audioItemsKey in projectData.talk.audioItems) {
+      projectData.talk.audioItems[audioItemsKey].query.pauseLengthScale = 1;
     }
   }
 

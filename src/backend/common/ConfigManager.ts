@@ -1,22 +1,20 @@
 import semver from "semver";
 import AsyncLock from "async-lock";
+import log from "electron-log/main";
 import {
-  AcceptTermsStatus,
   ConfigType,
-  EngineId,
   configSchema,
-  DefaultStyleId,
   defaultHotkeySettings,
   HotkeySettingType,
   ExperimentalSettingType,
   HotkeyCombination,
-  VoiceId,
-  PresetKey,
 } from "@/type/preload";
+import { ensureNotNullish } from "@/helpers/errorHelper";
 
 const lockKey = "save";
 
 const migrations: [string, (store: Record<string, unknown>) => unknown][] = [
+  /*
   [
     ">=0.13",
     (config) => {
@@ -38,9 +36,7 @@ const migrations: [string, (store: Record<string, unknown>) => unknown][] = [
       if (import.meta.env.VITE_DEFAULT_ENGINE_INFOS == undefined) {
         throw new Error("VITE_DEFAULT_ENGINE_INFOS == undefined");
       }
-      const engineId = EngineId(
-        JSON.parse(import.meta.env.VITE_DEFAULT_ENGINE_INFOS)[0].uuid,
-      );
+      const engineId = loadEnvEngineInfos()[0].uuid;
       if (engineId == undefined)
         throw new Error("VITE_DEFAULT_ENGINE_INFOS[0].uuid == undefined");
       const prevDefaultStyleIds = config.defaultStyleIds as DefaultStyleId[];
@@ -83,6 +79,7 @@ const migrations: [string, (store: Record<string, unknown>) => unknown][] = [
           "enableMultiEngine",
         )
       ) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const enableMultiEngine: boolean =
           // @ts-expect-error 削除されたパラメータ。
           config.experimentalSetting.enableMultiEngine;
@@ -144,13 +141,12 @@ const migrations: [string, (store: Record<string, unknown>) => unknown][] = [
     (config) => {
       // ピッチ表示機能の設定をピッチ編集機能に引き継ぐ
       const experimentalSetting =
-        config.experimentalSetting as ExperimentalSettingType & {
-          showPitchInSongEditor?: boolean; // FIXME: TypeScript 5.4.5ならこの型の結合は不要
-        };
+        config.experimentalSetting as ExperimentalSettingType;
       if (
         "showPitchInSongEditor" in experimentalSetting &&
         typeof experimentalSetting.showPitchInSongEditor === "boolean"
       ) {
+        // @ts-expect-error 削除されたパラメータ。
         experimentalSetting.enablePitchEditInSongEditor =
           experimentalSetting.showPitchInSongEditor;
         delete experimentalSetting.showPitchInSongEditor;
@@ -222,6 +218,98 @@ const migrations: [string, (store: Record<string, unknown>) => unknown][] = [
         presets.keys = newPresetKeys;
       })();
 
+      // ピッチ編集機能を実験的機能から通常機能に
+      const experimentalSetting =
+        config.experimentalSetting as ExperimentalSettingType;
+      if (
+        "enablePitchEditInSongEditor" in experimentalSetting &&
+        typeof experimentalSetting.enablePitchEditInSongEditor === "boolean"
+      ) {
+        delete experimentalSetting.enablePitchEditInSongEditor;
+      }
+
+      return config;
+    },
+  ],
+  [
+    ">=0.21",
+    (config) => {
+      // プリセット機能を実験的機能から通常機能に
+      const experimentalSetting =
+        config.experimentalSetting as ExperimentalSettingType;
+      if ("enablePreset" in experimentalSetting) {
+        config.enablePreset = experimentalSetting.enablePreset;
+        delete experimentalSetting.enablePreset;
+      }
+      if ("shouldApplyDefaultPresetOnVoiceChanged" in experimentalSetting) {
+        config.shouldApplyDefaultPresetOnVoiceChanged =
+          experimentalSetting.shouldApplyDefaultPresetOnVoiceChanged;
+        delete experimentalSetting.shouldApplyDefaultPresetOnVoiceChanged;
+      }
+
+      // 書き出しテンプレートから拡張子を削除
+      const savingSetting = config.savingSetting as { fileNamePattern: string };
+      savingSetting.fileNamePattern = savingSetting.fileNamePattern.replace(
+        ".wav",
+        "",
+      );
+
+      // マルチトラック機能を実験的機能じゃなくす
+      if ("enableMultiTrack" in experimentalSetting) {
+        delete experimentalSetting.enableMultiTrack;
+      }
+
+      return config;
+    },
+  ],
+  [
+    ">=0.22",
+    (config) => {
+      // プリセットに文内無音倍率を追加
+      const presets = config.presets as ConfigType["presets"];
+      for (const preset of Object.values(presets.items)) {
+        if (preset == undefined) throw new Error("preset == undefined");
+        preset.pauseLengthScale = 1;
+      }
+    },
+  ],
+  */
+  // ----- 以下は AivisSpeech 固有のマイグレーション処理 -----
+  [
+    ">=1.1",
+    (config) => {
+      // プリセット機能を実験的機能から通常機能に
+      const experimentalSetting =
+        config.experimentalSetting as ExperimentalSettingType;
+      if ("enablePreset" in experimentalSetting) {
+        config.enablePreset = experimentalSetting.enablePreset;
+        delete experimentalSetting.enablePreset;
+      }
+      if ("shouldApplyDefaultPresetOnVoiceChanged" in experimentalSetting) {
+        config.shouldApplyDefaultPresetOnVoiceChanged =
+          experimentalSetting.shouldApplyDefaultPresetOnVoiceChanged;
+        delete experimentalSetting.shouldApplyDefaultPresetOnVoiceChanged;
+      }
+
+      // 書き出しテンプレートから拡張子を削除
+      const savingSetting = config.savingSetting as { fileNamePattern: string };
+      savingSetting.fileNamePattern = savingSetting.fileNamePattern.replace(
+        ".wav",
+        "",
+      );
+
+      // マルチトラック機能を実験的機能じゃなくす
+      if ("enableMultiTrack" in experimentalSetting) {
+        delete experimentalSetting.enableMultiTrack;
+      }
+
+      // プリセットに文内無音倍率を追加
+      const presets = config.presets as ConfigType["presets"];
+      for (const preset of Object.values(presets.items)) {
+        if (preset == undefined) throw new Error("preset == undefined");
+        preset.pauseLengthScale = 1;
+      }
+
       return config;
     },
   ],
@@ -266,7 +354,9 @@ export abstract class BaseConfigManager {
       const version = data.__internal__.migrations.version;
       for (const [versionRange, migration] of migrations) {
         if (!semver.satisfies(version, versionRange)) {
+          log.info(`Migrating ${version} to ${versionRange} ...`);
           migration(data);
+          log.info(`Migrated ${version} to ${versionRange} successfully.`);
         }
       }
       this.config = this.migrateHotkeySettings(configSchema.parse(data));
@@ -291,7 +381,7 @@ export abstract class BaseConfigManager {
   }
 
   private _save() {
-    this.lock.acquire(lockKey, async () => {
+    void this.lock.acquire(lockKey, async () => {
       await this.save({
         ...configSchema.parse({
           ...this.config,
@@ -337,15 +427,16 @@ export abstract class BaseConfigManager {
           action: defaultHotkey.action,
           combination: COMBINATION_IS_NONE,
         };
-        return loadedHotkey || hotkeyWithoutCombination;
+        return loadedHotkey ?? hotkeyWithoutCombination;
       },
     );
     const migratedHotkeys = hotkeysWithoutNewCombination.map((hotkey) => {
       if (hotkey.combination === COMBINATION_IS_NONE) {
-        const newHotkey =
+        const newHotkey = ensureNotNullish(
           defaultHotkeySettings.find(
             (defaultHotkey) => defaultHotkey.action === hotkey.action,
-          ) || hotkey; // ここの find が undefined を返すケースはないが、ts のエラーになるので入れた
+          ),
+        );
         const combinationExists = hotkeysWithoutNewCombination.some(
           (hotkey) => hotkey.combination === newHotkey.combination,
         );

@@ -133,6 +133,8 @@ const emit = defineEmits<{
   (e: "update:selectedStyleIndex", value: number): void;
 }>();
 
+// const $q = useQuasar();
+
 const store = useStore();
 
 const isOpenComputed = computed({
@@ -193,7 +195,7 @@ const play = (
   if (index >= voiceSamplePaths.length) return;
 
   audio.src = voiceSamplePaths[index];
-  audio.play();
+  void audio.play();
   playing.value = { speakerUuid, styleId, index };
 };
 const stop = () => {
@@ -209,7 +211,7 @@ const closeDialog = () => {
   const defaultStyleIds = JSON.parse(
     JSON.stringify(store.state.defaultStyleIds),
   ) as DefaultStyleId[];
-  store.dispatch("SET_DEFAULT_STYLE_IDS", [
+  void store.actions.SET_DEFAULT_STYLE_IDS([
     ...defaultStyleIds.filter(
       (defaultStyleId) =>
         defaultStyleId.speakerUuid !== props.characterInfo.metas.speakerUuid,
@@ -309,6 +311,7 @@ const closeDialog = () => {
             height: 100px;
             clip-path: vars.$squircle;
             background-color: var(--color-splitter);
+            border-radius: 5px;
           }
           .voice-samples {
             display: flex;

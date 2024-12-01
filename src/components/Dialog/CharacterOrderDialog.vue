@@ -102,6 +102,8 @@ const emit = defineEmits<{
   (event: "update:modelValue", value: boolean): void;
 }>();
 
+// const $q = useQuasar();
+
 const store = useStore();
 
 const modelValueComputed = computed({
@@ -119,7 +121,7 @@ const characterInfosMap = computed(() => {
 
 // 新しいキャラクター
 const newCharacters = ref<SpeakerId[]>([]);
-const hasNewCharacter = computed(() => newCharacters.value.length > 0);
+// const hasNewCharacter = computed(() => newCharacters.value.length > 0);
 
 // サンプルボイス一覧のキャラクター順番
 const sampleCharacterOrder = ref<SpeakerId[]>([]);
@@ -143,7 +145,7 @@ watch(
   async (newValue, oldValue) => {
     if (!oldValue && newValue) {
       // 新しいキャラクター
-      newCharacters.value = await store.dispatch("GET_NEW_CHARACTERS");
+      newCharacters.value = await store.actions.GET_NEW_CHARACTERS();
 
       // サンプルの順番、新しいキャラクターは上に
       sampleCharacterOrder.value = [
@@ -161,7 +163,7 @@ watch(
       // FIXME: 不明なキャラを無視しているので、不明キャラの順番が保存時にリセットされてしまう
       characterOrder.value = store.state.userCharacterOrder
         .map((speakerUuid) => characterInfosMap.value[speakerUuid])
-        .filter((info) => info != undefined) as CharacterInfo[];
+        .filter((info) => info != undefined);
 
       // 含まれていないキャラクターを足す
       const notIncludesCharacterInfos = props.characterInfos.filter(
@@ -205,7 +207,7 @@ const play = (
   if (index >= voiceSamplePaths.length) return;
 
   audio.src = voiceSamplePaths[index];
-  audio.play();
+  void audio.play();
   playing.value = { speakerUuid, styleId, index };
 };
 const stop = () => {
@@ -238,8 +240,7 @@ const togglePlayOrStop = (
 const characterOrderDragging = ref(false);
 
 const closeDialog = () => {
-  store.dispatch(
-    "SET_USER_CHARACTER_ORDER",
+  void store.actions.SET_USER_CHARACTER_ORDER(
     characterOrder.value.map((info) => info.metas.speakerUuid),
   );
   stop();

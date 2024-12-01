@@ -14,7 +14,7 @@ const store = useStore();
 const howToUse = ref("");
 const md = useMarkdownIt();
 onMounted(async () => {
-  howToUse.value = md.render(await store.dispatch("GET_HOW_TO_USE_TEXT"));
+  howToUse.value = md.render(await store.actions.GET_HOW_TO_USE_TEXT());
 });
 </script>
 

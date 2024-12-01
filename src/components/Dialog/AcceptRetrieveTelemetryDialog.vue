@@ -84,7 +84,7 @@ const modelValueComputed = computed({
 });
 
 const handler = (acceptRetrieveTelemetry: boolean) => {
-  store.dispatch("SET_ACCEPT_RETRIEVE_TELEMETRY", {
+  void store.actions.SET_ACCEPT_RETRIEVE_TELEMETRY({
     acceptRetrieveTelemetry: acceptRetrieveTelemetry ? "Accepted" : "Refused",
   });
 
@@ -95,7 +95,7 @@ const md = useMarkdownIt();
 const privacyPolicy = ref("");
 onMounted(async () => {
   privacyPolicy.value = md.render(
-    await store.dispatch("GET_PRIVACY_POLICY_TEXT"),
+    await store.actions.GET_PRIVACY_POLICY_TEXT(),
   );
 });
 </script>

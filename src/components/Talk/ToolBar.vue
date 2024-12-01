@@ -101,24 +101,24 @@ registerHotkeyWithCleanup({
       if (nowPlayingContinuously.value) {
         stop();
       } else {
-        playContinuously();
+        void playContinuously();
       }
     }
   },
 });
 
 const undo = () => {
-  store.dispatch("UNDO", { editor });
+  void store.actions.UNDO({ editor });
 };
 const redo = () => {
-  store.dispatch("REDO", { editor });
+  void store.actions.REDO({ editor });
 };
 const playContinuously = async () => {
   try {
-    await store.dispatch("PLAY_CONTINUOUSLY_AUDIO");
+    await store.actions.PLAY_CONTINUOUSLY_AUDIO();
   } catch (e) {
     const msg = handlePossiblyNotMorphableError(e);
-    store.dispatch("SHOW_ALERT_DIALOG", {
+    void store.actions.SHOW_ALERT_DIALOG({
       title: "再生に失敗しました",
       message: msg ?? "音声合成エンジンの再起動をお試しください。",
     });
@@ -128,19 +128,19 @@ const play = async () => {
   if (activeAudioKey.value == undefined)
     throw new Error("activeAudioKey is undefined");
   try {
-    await store.dispatch("PLAY_AUDIO", {
+    await store.actions.PLAY_AUDIO({
       audioKey: activeAudioKey.value,
     });
   } catch (e) {
     const msg = handlePossiblyNotMorphableError(e);
-    store.dispatch("SHOW_ALERT_DIALOG", {
+    void store.actions.SHOW_ALERT_DIALOG({
       title: "再生に失敗しました",
       message: msg ?? "音声合成エンジンの再起動をお試しください。",
     });
   }
 };
 const stop = () => {
-  store.dispatch("STOP_AUDIO");
+  void store.actions.STOP_AUDIO();
 };
 const generateAndSaveSelectedAudio = async () => {
   if (activeAudioKey.value == undefined)
@@ -153,35 +153,35 @@ const generateAndSaveSelectedAudio = async () => {
   ) {
     await multiGenerateAndSaveAudioWithDialog({
       audioKeys: selectedAudioKeys,
-      dispatch: store.dispatch,
+      actions: store.actions,
       disableNotifyOnGenerate: store.state.confirmedTips.notifyOnGenerate,
     });
   } else {
     await generateAndSaveOneAudioWithDialog({
       audioKey: activeAudioKey.value,
       disableNotifyOnGenerate: store.state.confirmedTips.notifyOnGenerate,
-      dispatch: store.dispatch,
+      actions: store.actions,
     });
   }
 };
 const generateAndSaveAllAudio = async () => {
   await multiGenerateAndSaveAudioWithDialog({
     audioKeys: store.state.audioKeys,
-    dispatch: store.dispatch,
+    actions: store.actions,
     disableNotifyOnGenerate: store.state.confirmedTips.notifyOnGenerate,
   });
 };
 const generateAndConnectAndSaveAudio = async () => {
   await generateAndConnectAndSaveAudioWithDialog({
-    dispatch: store.dispatch,
+    actions: store.actions,
     disableNotifyOnGenerate: store.state.confirmedTips.notifyOnGenerate,
   });
 };
 const saveProject = async () => {
-  await store.dispatch("SAVE_PROJECT_FILE", { overwrite: true });
+  await store.actions.SAVE_PROJECT_FILE({ overwrite: true });
 };
 const importTextFile = () => {
-  store.dispatch("COMMAND_IMPORT_FROM_FILE", {});
+  void store.actions.COMMAND_IMPORT_FROM_FILE({});
 };
 
 const usableButtons: Record<

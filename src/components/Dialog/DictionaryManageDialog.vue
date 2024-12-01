@@ -78,7 +78,7 @@
 
           <!-- 右側のpane -->
           <div
-            v-if="wordEditing"
+            v-show="wordEditing"
             class="col-8 no-wrap text-no-wrap word-editor"
           >
             <div class="row q-pl-md q-pr-md q-mt-lg">
@@ -90,9 +90,18 @@
                 label="単語"
                 placeholder="単語を入力"
                 :disable="uiLocked"
+                @focus="clearSurfaceInputSelection()"
                 @blur="setSurface(surface)"
                 @keydown.enter="yomiFocus"
-              />
+              >
+                <ContextMenu
+                  ref="surfaceContextMenu"
+                  :header="surfaceContextMenuHeader"
+                  :menudata="surfaceContextMenudata"
+                  @beforeShow="startSurfaceContextMenuOperation()"
+                  @beforeHide="endSurfaceContextMenuOperation()"
+                />
+              </QInput>
             </div>
             <div class="row q-pl-md q-pr-md q-pt-md">
               <QInput
@@ -104,12 +113,20 @@
                 placeholder="読みを入力"
                 :error="!isOnlyHiraOrKana"
                 :disable="uiLocked"
+                @focus="clearYomiInputSelection()"
                 @blur="setYomi(yomi)"
                 @keydown.enter="setYomiWhenEnter"
               >
                 <template #error>
                   読みに使える文字はひらがなとカタカナのみです。
                 </template>
+                <ContextMenu
+                  ref="yomiContextMenu"
+                  :header="yomiContextMenuHeader"
+                  :menudata="yomiContextMenudata"
+                  @beforeShow="startYomiContextMenuOperation()"
+                  @beforeHide="endYomiContextMenuOperation()"
+                />
               </QInput>
             </div>
             <div class="row q-pl-md q-mt-lg text-h6">アクセント調整</div>
@@ -248,6 +265,8 @@
 import { computed, ref, watch } from "vue";
 import { QInput } from "quasar";
 import AudioAccent from "@/components/Talk/AudioAccent.vue";
+import ContextMenu from "@/components/Menu/ContextMenu/Container.vue";
+import { useRightClickContextMenu } from "@/composables/useRightClickContextMenu";
 import { useStore } from "@/store";
 import type { FetchAudioResult } from "@/store/type";
 import { AccentPhrase, UserDictWord } from "@/openapi";
@@ -293,10 +312,10 @@ const loadingDictProcess = async () => {
   loadingDictState.value = "loading";
   try {
     userDict.value = await createUILockAction(
-      store.dispatch("LOAD_ALL_USER_DICT"),
+      store.actions.LOAD_ALL_USER_DICT(),
     );
   } catch {
-    const result = await store.dispatch("SHOW_ALERT_DIALOG", {
+    const result = await store.actions.SHOW_ALERT_DIALOG({
       title: "辞書の取得に失敗しました",
       message: "音声合成エンジンの再起動をお試しください。",
     });
@@ -306,9 +325,9 @@ const loadingDictProcess = async () => {
   }
   loadingDictState.value = "synchronizing";
   try {
-    await createUILockAction(store.dispatch("SYNC_ALL_USER_DICT"));
+    await createUILockAction(store.actions.SYNC_ALL_USER_DICT());
   } catch {
-    await store.dispatch("SHOW_ALERT_DIALOG", {
+    await store.actions.SHOW_ALERT_DIALOG({
       title: "辞書の同期に失敗しました",
       message: "音声合成エンジンの再起動をお試しください。",
     });
@@ -332,7 +351,7 @@ const yomiFocus = (event?: KeyboardEvent) => {
 };
 const setYomiWhenEnter = (event?: KeyboardEvent) => {
   if (event && event.isComposing) return;
-  setYomi(yomi.value);
+  void setYomi(yomi.value);
 };
 
 const selectedId = ref("");
@@ -395,7 +414,7 @@ const setYomi = async (text: string, changeWord?: boolean) => {
     text = convertLongVowel(text);
     accentPhrase.value = (
       await createUILockAction(
-        store.dispatch("FETCH_ACCENT_PHRASES", {
+        store.actions.FETCH_ACCENT_PHRASES({
           text: text + "ガ'",
           engineId,
           styleId,
@@ -419,7 +438,7 @@ const changeAccent = async (_: number, accent: number) => {
     accentPhrase.value.accent = accent;
     accentPhrase.value = (
       await createUILockAction(
-        store.dispatch("FETCH_MORA_DATA", {
+        store.actions.FETCH_MORA_DATA({
           accentPhrases: [accentPhrase.value],
           engineId,
           styleId,
@@ -433,7 +452,7 @@ const play = async () => {
   if (!accentPhrase.value) return;
 
   nowGenerating.value = true;
-  const audioItem = await store.dispatch("GENERATE_AUDIO_ITEM", {
+  const audioItem = await store.actions.GENERATE_AUDIO_ITEM({
     text: yomi.value,
     voice: voiceComputed.value,
   });
@@ -445,13 +464,13 @@ const play = async () => {
 
   let fetchAudioResult: FetchAudioResult;
   try {
-    fetchAudioResult = await store.dispatch("FETCH_AUDIO_FROM_AUDIO_ITEM", {
+    fetchAudioResult = await store.actions.FETCH_AUDIO_FROM_AUDIO_ITEM({
       audioItem,
     });
   } catch (e) {
     window.backend.logError(e);
     nowGenerating.value = false;
-    store.dispatch("SHOW_ALERT_DIALOG", {
+    void store.actions.SHOW_ALERT_DIALOG({
       title: "生成に失敗しました",
       message: "音声合成エンジンの再起動をお試しください。",
     });
@@ -461,11 +480,11 @@ const play = async () => {
   const { blob } = fetchAudioResult;
   nowGenerating.value = false;
   nowPlaying.value = true;
-  await store.dispatch("PLAY_AUDIO_BLOB", { audioBlob: blob });
+  await store.actions.PLAY_AUDIO_BLOB({ audioBlob: blob });
   nowPlaying.value = false;
 };
 const stop = () => {
-  store.dispatch("STOP_AUDIO");
+  void store.actions.STOP_AUDIO();
 };
 
 // accent phraseにあるaccentと実際に登録するアクセントには差が生まれる
@@ -517,10 +536,10 @@ const saveWord = async () => {
   const accent = computeRegisteredAccent();
   if (selectedId.value) {
     try {
-      store.dispatch("SHOW_LOADING_SCREEN", {
+      void store.actions.SHOW_LOADING_SCREEN({
         message: "変更を保存しています...",
       });
-      await store.dispatch("REWRITE_WORD", {
+      await store.actions.REWRITE_WORD({
         wordUuid: selectedId.value,
         surface: surface.value,
         pronunciation: yomi.value,
@@ -528,24 +547,24 @@ const saveWord = async () => {
         priority: wordPriority.value,
       });
     } catch {
-      store.dispatch("SHOW_ALERT_DIALOG", {
+      void store.actions.SHOW_ALERT_DIALOG({
         title: "単語の更新に失敗しました",
         message: "音声合成エンジンの再起動をお試しください。",
       });
       return;
     } finally {
-      store.dispatch("HIDE_ALL_LOADING_SCREEN");
+      await store.actions.HIDE_ALL_LOADING_SCREEN();
     }
     await loadingDictProcess();
     selectWord(selectedId.value);
     editWord();
   } else {
     try {
-      store.dispatch("SHOW_LOADING_SCREEN", {
+      void store.actions.SHOW_LOADING_SCREEN({
         message: "単語を辞書に追加しています...",
       });
       await createUILockAction(
-        store.dispatch("ADD_WORD", {
+        store.actions.ADD_WORD({
           surface: surface.value,
           pronunciation: yomi.value,
           accentType: accent,
@@ -553,13 +572,13 @@ const saveWord = async () => {
         }),
       );
     } catch {
-      store.dispatch("SHOW_ALERT_DIALOG", {
+      void store.actions.SHOW_ALERT_DIALOG({
         title: "単語の登録に失敗しました",
         message: "音声合成エンジンの再起動をお試しください。",
       });
       return;
     } finally {
-      store.dispatch("HIDE_ALL_LOADING_SCREEN");
+      await store.actions.HIDE_ALL_LOADING_SCREEN();
     }
     await loadingDictProcess();
     toInitialState();
@@ -567,36 +586,36 @@ const saveWord = async () => {
 };
 const isDeletable = computed(() => !!selectedId.value);
 const deleteWord = async () => {
-  const result = await store.dispatch("SHOW_WARNING_DIALOG", {
+  const result = await store.actions.SHOW_WARNING_DIALOG({
     title: "登録された単語を削除しますか？",
     message: "削除された単語は元に戻せません。",
     actionName: "削除",
   });
   if (result === "OK") {
     try {
-      store.dispatch("SHOW_LOADING_SCREEN", {
+      void store.actions.SHOW_LOADING_SCREEN({
         message: "単語を辞書から削除しています...",
       });
       await createUILockAction(
-        store.dispatch("DELETE_WORD", {
+        store.actions.DELETE_WORD({
           wordUuid: selectedId.value,
         }),
       );
     } catch {
-      store.dispatch("SHOW_ALERT_DIALOG", {
+      void store.actions.SHOW_ALERT_DIALOG({
         title: "単語の削除に失敗しました",
         message: "音声合成エンジンの再起動をお試しください。",
       });
       return;
     } finally {
-      store.dispatch("HIDE_ALL_LOADING_SCREEN");
+      await store.actions.HIDE_ALL_LOADING_SCREEN();
     }
     await loadingDictProcess();
     toInitialState();
   }
 };
 const resetWord = async () => {
-  const result = await store.dispatch("SHOW_WARNING_DIALOG", {
+  const result = await store.actions.SHOW_WARNING_DIALOG({
     title: "単語の変更をリセットしますか？",
     message: "単語の変更は破棄されてリセットされます。",
     actionName: "リセット",
@@ -608,7 +627,7 @@ const resetWord = async () => {
 };
 const discardOrNotDialog = async (okCallback: () => void) => {
   if (isWordChanged.value) {
-    const result = await store.dispatch("SHOW_WARNING_DIALOG", {
+    const result = await store.actions.SHOW_WARNING_DIALOG({
       title: "単語の追加・変更を破棄しますか？",
       message: "破棄すると、単語の追加・変更はリセットされます。",
       actionName: "破棄",
@@ -625,7 +644,7 @@ const newWord = () => {
   isNewWordEditing.value = true;
   selectedId.value = "";
   surface.value = "";
-  setYomi("");
+  void setYomi("");
   wordPriority.value = defaultDictPriority;
   editWord();
 };
@@ -635,7 +654,7 @@ const editWord = () => {
 const selectWord = (id: string) => {
   selectedId.value = id;
   surface.value = userDict.value[id].surface;
-  setYomi(userDict.value[id].yomi, true);
+  void setYomi(userDict.value[id].yomi, true);
   wordPriority.value = userDict.value[id].priority;
   toWordSelectedState();
 };
@@ -653,7 +672,7 @@ const toInitialState = () => {
   wordEditing.value = false;
   selectedId.value = "";
   surface.value = "";
-  setYomi("");
+  void setYomi("");
   wordPriority.value = defaultDictPriority;
 
   // 辞書の最初の項目を選択する
@@ -676,6 +695,25 @@ const toWordEditingState = () => {
 const toDialogClosedState = () => {
   dictionaryManageDialogOpenedComputed.value = false;
 };
+
+const surfaceContextMenu = ref<InstanceType<typeof ContextMenu>>();
+const yomiContextMenu = ref<InstanceType<typeof ContextMenu>>();
+
+const {
+  contextMenuHeader: surfaceContextMenuHeader,
+  contextMenudata: surfaceContextMenudata,
+  startContextMenuOperation: startSurfaceContextMenuOperation,
+  clearInputSelection: clearSurfaceInputSelection,
+  endContextMenuOperation: endSurfaceContextMenuOperation,
+} = useRightClickContextMenu(surfaceContextMenu, surfaceInput, surface);
+
+const {
+  contextMenuHeader: yomiContextMenuHeader,
+  contextMenudata: yomiContextMenudata,
+  startContextMenuOperation: startYomiContextMenuOperation,
+  clearInputSelection: clearYomiInputSelection,
+  endContextMenuOperation: endYomiContextMenuOperation,
+} = useRightClickContextMenu(yomiContextMenu, yomiInput, yomi);
 </script>
 
 <style lang="scss">

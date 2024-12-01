@@ -71,11 +71,11 @@ const modelValueComputed = computed({
 });
 
 const handler = (acceptTerms: boolean) => {
-  store.dispatch("SET_ACCEPT_TERMS", {
+  void store.actions.SET_ACCEPT_TERMS({
     acceptTerms: acceptTerms ? "Accepted" : "Rejected",
   });
   !acceptTerms
-    ? store.dispatch("CHECK_EDITED_AND_NOT_SAVE", { closeOrReload: "close" })
+    ? void store.actions.CHECK_EDITED_AND_NOT_SAVE({ closeOrReload: "close" })
     : undefined;
 
   modelValueComputed.value = false;
@@ -84,7 +84,7 @@ const handler = (acceptTerms: boolean) => {
 const md = useMarkdownIt();
 const terms = ref("");
 onMounted(async () => {
-  terms.value = md.render(await store.dispatch("GET_POLICY_TEXT"));
+  terms.value = md.render(await store.actions.GET_POLICY_TEXT());
 });
 </script>
 

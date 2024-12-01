@@ -86,7 +86,8 @@ import { computed, nextTick, ref, watch } from "vue";
 import AccentPhrase from "./AccentPhrase.vue";
 import ToolTip from "@/components/ToolTip.vue";
 import { useStore } from "@/store";
-import { AudioKey, isMac } from "@/type/preload";
+import { AudioKey } from "@/type/preload";
+import { isMac } from "@/helpers/platform";
 import { EngineManifest } from "@/openapi/models";
 import { useShiftKey, useAltKey } from "@/composables/useModifierKey";
 import { useHotkeyManager } from "@/plugins/hotkeyPlugin";
@@ -115,67 +116,69 @@ registerHotkeyWithCleanup({
   name: "再生/停止",
   callback: () => {
     if (!nowPlaying.value && !nowGenerating.value && !uiLocked.value) {
-      play();
+      void play();
     } else {
       stop();
     }
   },
 });
-// registerHotkeyWithCleanup({
-//   editor: "talk",
-//   name: "アクセント欄を表示",
-//   callback: () => {
-//     selectedDetail.value = "accent";
-//   },
-// });
-// registerHotkeyWithCleanup({
-//   editor: "talk",
-//   name: "イントネーション欄を表示",
-//   callback: () => {
-//     if (supportedFeatures.value?.adjustMoraPitch) {
-//       selectedDetail.value = "pitch";
-//     }
-//   },
-// });
-// registerHotkeyWithCleanup({
-//   editor: "talk",
-//   name: "長さ欄を表示",
-//   callback: () => {
-//     if (supportedFeatures.value?.adjustPhonemeLength) {
-//       selectedDetail.value = "length";
-//     }
-//   },
-// });
-// registerHotkeyWithCleanup({
-//   editor: "talk",
-//   name: "全体のイントネーションをリセット",
-//   callback: () => {
-//     if (!uiLocked.value && store.getters.ACTIVE_AUDIO_KEY) {
-//       const audioKeys = store.state.experimentalSetting.enableMultiSelect
-//         ? store.getters.SELECTED_AUDIO_KEYS
-//         : [store.getters.ACTIVE_AUDIO_KEY];
-//       store.dispatch("COMMAND_MULTI_RESET_MORA_PITCH_AND_LENGTH", {
-//         audioKeys,
-//       });
-//     }
-//   },
-// });
-// registerHotkeyWithCleanup({
-//   editor: "talk",
-//   name: "選択中のアクセント句のイントネーションをリセット",
-//   callback: () => {
-//     if (
-//       !uiLocked.value &&
-//       store.getters.ACTIVE_AUDIO_KEY &&
-//       store.getters.AUDIO_PLAY_START_POINT != undefined
-//     ) {
-//       store.dispatch("COMMAND_RESET_SELECTED_MORA_PITCH_AND_LENGTH", {
-//         audioKey: store.getters.ACTIVE_AUDIO_KEY,
-//         accentPhraseIndex: store.getters.AUDIO_PLAY_START_POINT,
-//       });
-//     }
-//   },
-// });
+/*
+registerHotkeyWithCleanup({
+  editor: "talk",
+  name: "アクセント欄を表示",
+  callback: () => {
+    selectedDetail.value = "accent";
+  },
+});
+registerHotkeyWithCleanup({
+  editor: "talk",
+  name: "イントネーション欄を表示",
+  callback: () => {
+    if (supportedFeatures.value?.adjustMoraPitch) {
+      selectedDetail.value = "pitch";
+    }
+  },
+});
+registerHotkeyWithCleanup({
+  editor: "talk",
+  name: "長さ欄を表示",
+  callback: () => {
+    if (supportedFeatures.value?.adjustPhonemeLength) {
+      selectedDetail.value = "length";
+    }
+  },
+});
+registerHotkeyWithCleanup({
+  editor: "talk",
+  name: "全体のイントネーションをリセット",
+  callback: () => {
+    if (!uiLocked.value && store.getters.ACTIVE_AUDIO_KEY) {
+      const audioKeys = store.state.experimentalSetting.enableMultiSelect
+        ? store.getters.SELECTED_AUDIO_KEYS
+        : [store.getters.ACTIVE_AUDIO_KEY];
+      void store.actions.COMMAND_MULTI_RESET_MORA_PITCH_AND_LENGTH({
+        audioKeys,
+      });
+    }
+  },
+});
+registerHotkeyWithCleanup({
+  editor: "talk",
+  name: "選択中のアクセント句のイントネーションをリセット",
+  callback: () => {
+    if (
+      !uiLocked.value &&
+      store.getters.ACTIVE_AUDIO_KEY &&
+      store.getters.AUDIO_PLAY_START_POINT != undefined
+    ) {
+      void store.actions.COMMAND_RESET_SELECTED_MORA_PITCH_AND_LENGTH({
+        audioKey: store.getters.ACTIVE_AUDIO_KEY,
+        accentPhraseIndex: store.getters.AUDIO_PLAY_START_POINT,
+      });
+    }
+  },
+});
+*/
 
 // detail selector
 type DetailTypes = "accent" | "pitch" | "length";
@@ -212,7 +215,7 @@ const startPoint = computed({
     return store.getters.AUDIO_PLAY_START_POINT;
   },
   set: (startPoint) => {
-    store.dispatch("SET_AUDIO_PLAY_START_POINT", { startPoint });
+    void store.actions.SET_AUDIO_PLAY_START_POINT({ startPoint });
   },
 });
 // アクティブ(再生されている状態)なアクセント句
@@ -244,21 +247,21 @@ watch(accentPhrases, async () => {
 // audio play
 const play = async () => {
   try {
-    await store.dispatch("PLAY_AUDIO", {
+    await store.actions.PLAY_AUDIO({
       audioKey: props.activeAudioKey,
     });
   } catch (e) {
     const msg = handlePossiblyNotMorphableError(e);
     // AivisSpeech Engine から音声合成エラーが返された
     if (e instanceof Error && e.message === "Response returned an error code") {
-      store.dispatch("SHOW_ALERT_DIALOG", {
+      void store.actions.SHOW_ALERT_DIALOG({
         title: "音声合成に失敗しました",
         message:
           msg ??
           "現在のテキストや読み方では音声合成できない可能性があります。テキストや読み方を変更して再度お試しください。",
       });
     } else {
-      store.dispatch("SHOW_ALERT_DIALOG", {
+      void store.actions.SHOW_ALERT_DIALOG({
         title: "再生に失敗しました",
         message: msg ?? "音声合成エンジンの再起動をお試しください。",
       });
@@ -267,7 +270,7 @@ const play = async () => {
 };
 
 const stop = () => {
-  store.dispatch("STOP_AUDIO");
+  void store.actions.STOP_AUDIO();
 };
 
 const nowPlaying = computed(() => store.getters.NOW_PLAYING);
@@ -324,7 +327,7 @@ watch(nowPlaying, async (newState) => {
     // 現在再生されているaudio elementのロードが完了しないと
     // GET_AUDIO_PLAY_OFFSETS 側で近似する音素長を算出するために必要な音声長が取得できないので待機
     await store.getters.WAIT_FOR_AUDIO_LOAD;
-    const accentPhraseOffsets = await store.dispatch("GET_AUDIO_PLAY_OFFSETS", {
+    const accentPhraseOffsets = await store.actions.GET_AUDIO_PLAY_OFFSETS({
       audioKey: props.activeAudioKey,
     });
     // 現在再生されているaudio elementの再生時刻を描画毎に取得(監視)し、

@@ -16,7 +16,7 @@ const contact = ref("");
 const md = useMarkdownIt();
 
 onMounted(async () => {
-  contact.value = md.render(await store.dispatch("GET_CONTACT_TEXT"));
+  contact.value = md.render(await store.actions.GET_CONTACT_TEXT());
 });
 </script>
 

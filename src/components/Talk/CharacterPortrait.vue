@@ -91,7 +91,7 @@ const isInitializingSpeaker = computed(() => {
   );
 });
 
-const isMultipleEngine = computed(() => store.state.engineIds.length > 1);
+// const isMultipleEngine = computed(() => store.state.engineIds.length > 1);
 </script>
 
 <style scoped lang="scss">

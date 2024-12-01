@@ -1,6 +1,10 @@
 @use "./variables" as vars;
 @use "./colors" as colors;
-@import "./fonts";
+@use "./v2/variables" as vars-v2;
+@use "./v2/colors" as colors-v2;
+@use "./v2/sing-colors"; // ソング用カラー
+@use "./v2/cursor"; // カーソル
+@use "fonts";
 
 :root {
   color-scheme: dark;
@@ -14,11 +18,15 @@
 // 優先度を強引に上げる
 body:not(#dummy) {
   user-select: none;
-  border-left: solid #{vars.$window-border-width} #{colors.$splitter};
-  border-right: solid #{vars.$window-border-width} #{colors.$splitter};
-  border-bottom: solid #{vars.$window-border-width} #{colors.$splitter};
   color: colors.$display;
   background: colors.$background;
+
+  // Storybookでは枠線を付けない
+  &:not(.sb-show-main) {
+    border-left: solid #{vars.$window-border-width} #{colors.$splitter};
+    border-right: solid #{vars.$window-border-width} #{colors.$splitter};
+    border-bottom: solid #{vars.$window-border-width} #{colors.$splitter};
+  }
 }
 
 body {
@@ -34,14 +42,6 @@ code, kbd, pre, samp {
 
 img {
   pointer-events: none;
-}
-
-// detailsタグのスタイル
-details {
-  summary {
-    display: list-item;
-    cursor: pointer;
-  }
 }
 
 // スクロールバーのデザイン
@@ -343,4 +343,10 @@ details {
 
 .bg-surface-darken {
   background: rgba(colors.$surface-rgb, 0.45);
+}
+
+// ダイアログのサイズ
+.dialog-card {
+  width: 700px;
+  max-width: 80vw;
 }

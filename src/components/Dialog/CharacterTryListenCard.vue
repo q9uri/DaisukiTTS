@@ -200,6 +200,7 @@ const rollStyleIndex = (speakerUuid: SpeakerId, diff: number) => {
       height: 100px;
       clip-path: vars.$squircle;
       background-color: var(--color-splitter);
+      border-radius: 5px;
     }
     .style-select-container {
       display: flex;

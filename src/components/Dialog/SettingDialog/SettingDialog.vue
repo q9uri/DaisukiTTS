@@ -98,25 +98,20 @@
               <ToggleCell
                 title="プリセット機能"
                 description="プリセット機能を有効にします。パラメータを登録したり適用したりできます。"
-                :modelValue="experimentalSetting.enablePreset"
+                :modelValue="enablePreset"
                 @update:modelValue="changeEnablePreset"
               />
               <QSlideTransition>
                 <!-- q-slide-transitionはheightだけをアニメーションするのでdivで囲う -->
-                <div v-show="experimentalSetting.enablePreset">
+                <div v-show="enablePreset">
                   <ToggleCell
                     title="スタイル変更時にデフォルトプリセットを適用"
                     description="話者やスタイルの変更時にデフォルトプリセットを自動的に適用します。"
                     class="in-slide-transition-workaround"
                     :modelValue="
-                      experimentalSetting.shouldApplyDefaultPresetOnVoiceChanged
+                      shouldApplyDefaultPresetOnVoiceChanged
                     "
-                    @update:modelValue="
-                      changeExperimentalSetting(
-                        'shouldApplyDefaultPresetOnVoiceChanged',
-                        $event,
-                      )
-                    "
+                    @update:modelValue="changeShouldApplyDefaultPresetOnVoiceChanged"
                   />
                 </div>
               </QSlideTransition>
@@ -224,7 +219,7 @@
                   :disable="isDefaultConfirmedTips"
                   @click="
                     () => {
-                      store.dispatch('RESET_CONFIRMED_TIPS');
+                      store.actions.RESET_CONFIRMED_TIPS();
                       hasResetConfirmedTips = true;
                     }
                   "
@@ -299,9 +294,24 @@
                 </QToggle>
               </QCardActions>
 
-              <FileNamePatternDialog
-                v-model:open-dialog="showsFilePatternEditDialog"
-              />
+              <FileNameTemplateDialog
+                  v-model:open-dialog="showAudioFilePatternEditDialog"
+                  :savedTemplate="audioFileNamePattern"
+                  :defaultTemplate="DEFAULT_AUDIO_FILE_NAME_TEMPLATE"
+                  :availableTags="[
+                    'index',
+                    'characterName',
+                    'styleName',
+                    'text',
+                    'date',
+                    'projectName',
+                  ]"
+                  :fileNameBuilder="buildAudioFileNameFromRawData"
+                  extension=".wav"
+                  @update:template="
+                    handleSavingSettingChange('fileNamePattern', $event)
+                  "
+                />
 
               <QCardActions class="q-px-md bg-surface-darken">
                 <div>書き出しファイル名パターン</div>
@@ -330,7 +340,7 @@
                   color="background"
                   textColor="display"
                   class="text-no-wrap q-mr-sm"
-                  @click="showsFilePatternEditDialog = true"
+                  @click="showAudioFilePatternEditDialog = true"
                 />
               </QCardActions>
 
@@ -535,12 +545,15 @@
 
 <script setup lang="ts">
 import { computed, ref, watchEffect } from "vue";
-import FileNamePatternDialog from "./FileNamePatternDialog.vue";
+import FileNameTemplateDialog from "./FileNameTemplateDialog.vue";
 import ToggleCell from "./ToggleCell.vue";
 import ButtonToggleCell from "./ButtonToggleCell.vue";
 import { useStore } from "@/store";
 import {
-  isProduction,
+  DEFAULT_AUDIO_FILE_NAME_TEMPLATE,
+  buildAudioFileNameFromRawData,
+} from "@/store/utility";
+import {
   SavingSetting,
   EngineSettingType,
   ExperimentalSettingType,
@@ -549,19 +562,9 @@ import {
   EngineId,
 } from "@/type/preload";
 import { createLogger } from "@/domain/frontend/log";
+import { useRootMiscSetting } from "@/composables/useRootMiscSetting";
 
 type SamplingRateOption = EngineSettingType["outputSamplingRate"];
-
-// ルート直下にある雑多な設定値を簡単に扱えるようにする
-const useRootMiscSetting = <T extends keyof RootMiscSettingType>(key: T) => {
-  const state = computed(() => store.state[key]);
-  const setter = (value: RootMiscSettingType[T]) => {
-    // Vuexの型処理でUnionが解かれてしまうのを迂回している
-    // FIXME: このワークアラウンドをなくす
-    store.dispatch("SET_ROOT_MISC_SETTING", { key: key as never, value });
-  };
-  return [state, setter] as const;
-};
 
 const props = defineProps<{
   modelValue: boolean;
@@ -583,7 +586,7 @@ const engineUseGpu = computed({
     return store.state.engineSettings[selectedEngineId.value].useGpu;
   },
   set: (mode: boolean) => {
-    changeUseGpu(mode);
+    void changeUseGpu(mode);
   },
 });
 const engineIds = computed(() => store.state.engineIds);
@@ -592,7 +595,7 @@ const inheritAudioInfoMode = computed(() => store.state.inheritAudioInfo);
 const activePointScrollMode = computed({
   get: () => store.state.activePointScrollMode,
   set: (activePointScrollMode: ActivePointScrollMode) => {
-    store.dispatch("SET_ACTIVE_POINT_SCROLL_MODE", {
+    void store.actions.SET_ACTIVE_POINT_SCROLL_MODE({
       activePointScrollMode,
     });
   },
@@ -607,49 +610,76 @@ const isDefaultConfirmedTips = computed(() => {
   return Object.values(confirmedTips).every((v) => !v);
 });
 
+// ソング：元に戻すトラック操作
+// const undoableTrackOperationsLabels = {
+//   soloAndMute: "ミュート・ソロ",
+//   panAndGain: "パン・音量",
+// };
+// const undoableTrackOperations = computed({
+//   get: () => store.state.undoableTrackOperations,
+//   set: (undoableTrackOperations) => {
+//     void store.actions.SET_ROOT_MISC_SETTING({
+//       key: "undoableTrackOperations",
+//       value: undoableTrackOperations,
+//     });
+//   },
+// });
+
 // 外観
-const currentThemeNameComputed = computed({
-  get: () => store.state.themeSetting.currentTheme,
-  set: (currentTheme: string) => {
-    store.dispatch("SET_THEME_SETTING", { currentTheme: currentTheme });
-  },
-});
+// const currentThemeNameComputed = computed({
+//   get: () => store.state.currentTheme,
+//   set: (currentTheme: string) => {
+//     void store.actions.SET_CURRENT_THEME_SETTING({ currentTheme });
+//   },
+// });
 
-const availableThemeNameComputed = computed(() => {
-  return [...store.state.themeSetting.availableThemes]
-    .sort((a, b) => a.order - b.order)
-    .map((theme) => {
-      return { label: theme.displayName, value: theme.name };
-    });
-});
+// const availableThemeNameComputed = computed(() => {
+//   return [...store.state.availableThemes]
+//     .sort((a, b) => a.order - b.order)
+//     .map((theme) => {
+//       return { label: theme.displayName, value: theme.name };
+//     });
+// });
 
-const [editorFont, changeEditorFont] = useRootMiscSetting("editorFont");
+// const [editorFont, changeEditorFont] = useRootMiscSetting(store, "editorFont");
 
-const [enableMultiEngine, setEnableMultiEngine] =
-  useRootMiscSetting("enableMultiEngine");
+const [enableMultiEngine, setEnableMultiEngine] = useRootMiscSetting(
+  store,
+  "enableMultiEngine",
+);
 
-const [showTextLineNumber, changeShowTextLineNumber] =
-  useRootMiscSetting("showTextLineNumber");
+const [showTextLineNumber, changeShowTextLineNumber] = useRootMiscSetting(
+  store,
+  "showTextLineNumber",
+);
 
 const [showAddAudioItemButton, changeShowAddAudioItemButton] =
-  useRootMiscSetting("showAddAudioItemButton");
+  useRootMiscSetting(store, "showAddAudioItemButton");
 
-const [enableMemoNotation, changeEnableMemoNotation] =
-  useRootMiscSetting("enableMemoNotation");
+const [enableMemoNotation, changeEnableMemoNotation] = useRootMiscSetting(
+  store,
+  "enableMemoNotation",
+);
 
-const [enableRubyNotation, changeEnableRubyNotation] =
-  useRootMiscSetting("enableRubyNotation");
+const [enableRubyNotation, changeEnableRubyNotation] = useRootMiscSetting(
+  store,
+  "enableRubyNotation",
+);
+
+const [enablePreset, _changeEnablePreset] = useRootMiscSetting(
+  store,
+  "enablePreset",
+);
+
+const [
+  shouldApplyDefaultPresetOnVoiceChanged,
+  changeShouldApplyDefaultPresetOnVoiceChanged,
+] = useRootMiscSetting(store, "shouldApplyDefaultPresetOnVoiceChanged");
 
 const canSetAudioOutputDevice = computed(() => {
   return !!HTMLAudioElement.prototype.setSinkId;
 });
-const currentAudioOutputDeviceComputed = computed<
-  | {
-      key: string;
-      label: string;
-    }
-  | undefined
->({
+const currentAudioOutputDeviceComputed = computed<string | undefined>({
   get: () => {
     // 再生デバイスが見つからなかったらデフォルト値に戻す
     // FIXME: watchなどにしてgetter内で操作しないようにする
@@ -657,7 +687,7 @@ const currentAudioOutputDeviceComputed = computed<
       (device) => device.key === store.state.savingSetting.audioOutputDevice,
     );
     if (device) {
-      return device;
+      return device.key;
     } else if (store.state.savingSetting.audioOutputDevice !== "default") {
       handleSavingSettingChange("audioOutputDevice", "default");
     }
@@ -665,7 +695,7 @@ const currentAudioOutputDeviceComputed = computed<
   },
   set: (device) => {
     if (device) {
-      handleSavingSettingChange("audioOutputDevice", device.key);
+      handleSavingSettingChange("audioOutputDevice", device);
     }
   },
 });
@@ -684,7 +714,7 @@ if (navigator.mediaDevices) {
     "devicechange",
     updateAudioOutputDevices,
   );
-  updateAudioOutputDevices();
+  void updateAudioOutputDevices();
 } else {
   warn("navigator.mediaDevices is not available.");
 }
@@ -692,7 +722,7 @@ if (navigator.mediaDevices) {
 const acceptRetrieveTelemetryComputed = computed({
   get: () => store.state.acceptRetrieveTelemetry == "Accepted",
   set: (acceptRetrieveTelemetry: boolean) => {
-    store.dispatch("SET_ACCEPT_RETRIEVE_TELEMETRY", {
+    void store.actions.SET_ACCEPT_RETRIEVE_TELEMETRY({
       acceptRetrieveTelemetry: acceptRetrieveTelemetry ? "Accepted" : "Refused",
     });
 
@@ -700,41 +730,41 @@ const acceptRetrieveTelemetryComputed = computed({
       return;
     }
 
-    store.dispatch("SHOW_ALERT_DIALOG", {
+    void store.actions.SHOW_ALERT_DIALOG({
       title: "ソフトウェア利用状況のデータ収集の無効化",
       message:
-        "ソフトウェア利用状況のデータ収集を完全に無効にするには、AivisSpeech を再起動する必要があります",
+        "ソフトウェア利用状況のデータ収集を完全に無効にするには、AivisSpeech を再起動する必要があります。",
       ok: "OK",
     });
   },
 });
 
 const changeUseGpu = async (useGpu: boolean) => {
-  store.dispatch("SHOW_LOADING_SCREEN", {
-    message: "起動モードを変更中です",
+  void store.actions.SHOW_LOADING_SCREEN({
+    message: "起動モードを変更中です...",
   });
 
-  await store.dispatch("CHANGE_USE_GPU", {
+  await store.actions.CHANGE_USE_GPU({
     useGpu,
     engineId: selectedEngineId.value,
   });
 
-  store.dispatch("HIDE_ALL_LOADING_SCREEN");
+  void store.actions.HIDE_ALL_LOADING_SCREEN();
 };
 
 const changeinheritAudioInfo = async (inheritAudioInfo: boolean) => {
   if (store.state.inheritAudioInfo === inheritAudioInfo) return;
-  store.dispatch("SET_INHERIT_AUDIOINFO", { inheritAudioInfo });
+  void store.actions.SET_INHERIT_AUDIOINFO({ inheritAudioInfo });
 };
 
 const changeEnablePreset = (value: boolean) => {
   if (value) {
     // プリセット機能をONにしたときは「デフォルトプリセットを自動で適用」もONにする
-    changeExperimentalSetting("enablePreset", true);
-    changeExperimentalSetting("shouldApplyDefaultPresetOnVoiceChanged", true);
+    _changeEnablePreset(true);
+    changeShouldApplyDefaultPresetOnVoiceChanged(true);
   } else {
-    changeExperimentalSetting("enablePreset", false);
-    changeExperimentalSetting("shouldApplyDefaultPresetOnVoiceChanged", false);
+    _changeEnablePreset(false);
+    changeShouldApplyDefaultPresetOnVoiceChanged(false);
   }
 };
 
@@ -742,7 +772,7 @@ const changeExperimentalSetting = async (
   key: keyof ExperimentalSettingType,
   data: boolean,
 ) => {
-  store.dispatch("SET_EXPERIMENTAL_SETTING", {
+  void store.actions.SET_EXPERIMENTAL_SETTING({
     experimentalSetting: { ...experimentalSetting.value, [key]: data },
   });
 };
@@ -753,6 +783,19 @@ const engineUseGpuOptions = [
   { label: "CPU", value: false },
   { label: "GPU", value: true },
 ];
+
+const audioFileNamePattern = computed(
+  () => store.state.savingSetting.fileNamePattern,
+);
+// const songTrackFileNamePattern = computed(
+//   () => store.state.savingSetting.songTrackFileNamePattern,
+// );
+// const audioFileNamePatternWithExt = computed(() =>
+//   audioFileNamePattern.value ? audioFileNamePattern.value + ".wav" : "",
+// );
+// const songTrackFileNamePatternWithExt = computed(() =>
+//   songTrackFileNamePattern.value ? songTrackFileNamePattern.value + ".wav" : "",
+// );
 
 const gpuSwitchEnabled = (engineId: EngineId) => {
   // CPU版でもGPUモードからCPUモードに変更できるようにする
@@ -779,7 +822,7 @@ const handleSavingSettingChange = (
   key: keyof SavingSetting,
   data: string | boolean | number,
 ) => {
-  store.dispatch("SET_SAVING_SETTING", {
+  void store.actions.SET_SAVING_SETTING({
     data: { ...savingSetting.value, [key]: data },
   });
 };
@@ -791,11 +834,10 @@ const outputSamplingRate = computed({
   },
   set: async (outputSamplingRate: SamplingRateOption) => {
     if (outputSamplingRate !== "engineDefault") {
-      const result = await store.dispatch("SHOW_CONFIRM_DIALOG", {
+      const result = await store.actions.SHOW_CONFIRM_DIALOG({
         title: "出力サンプリングレートを変更します",
         message:
-          "出力サンプリングレートを変更しても、音声の品質は上がりません。また、音声の生成処理に若干時間がかかる場合があります。<br />それでも変更しますか？",
-        html: true,
+          "出力サンプリングレートを変更しても、音声の品質は上がりません。また、音声の生成処理に若干時間がかかる場合があります。\nそれでも変更しますか？",
         actionName: "変更する",
         cancel: "変更しない",
       });
@@ -804,7 +846,7 @@ const outputSamplingRate = computed({
       }
     }
 
-    store.dispatch("SET_ENGINE_SETTING", {
+    void store.actions.SET_ENGINE_SETTING({
       engineId: selectedEngineId.value,
       engineSetting: {
         ...store.state.engineSettings[selectedEngineId.value],
@@ -843,10 +885,13 @@ watchEffect(async () => {
   }
 });
 
-const [splitTextWhenPaste, changeSplitTextWhenPaste] =
-  useRootMiscSetting("splitTextWhenPaste");
+const [splitTextWhenPaste, changeSplitTextWhenPaste] = useRootMiscSetting(
+  store,
+  "splitTextWhenPaste",
+);
 
-const showsFilePatternEditDialog = ref(false);
+const showAudioFilePatternEditDialog = ref(false);
+// const showSongTrackAudioFilePatternEditDialog = ref(false);
 
 const selectedEngineIdRaw = ref<EngineId | undefined>(undefined);
 const selectedEngineId = computed({
