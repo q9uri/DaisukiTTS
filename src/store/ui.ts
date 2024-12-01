@@ -492,6 +492,7 @@ export const uiStore = createPartialStore<UiStoreTypes>({
       const activeAudioKey = getters.ACTIVE_AUDIO_KEY;
       if (activeAudioKey == undefined) {
         void actions.SHOW_ALERT_DIALOG({
+          type: "warning-light",
           title: "テキスト欄が選択されていません",
           message: "音声を書き出したいテキスト欄を選択してください。",
         });

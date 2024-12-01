@@ -365,7 +365,7 @@ export const settingStore = createPartialStore<SettingStoreTypes>({
             title: "対応する GPU デバイスが見つかりません",
             message:
               "GPU モードの利用には対応する GPU デバイスが必要です。\n" +
-              "このまま GPU モードに変更すると音声合成エンジンエラーが発生する可能性があります。本当に変更しますか？",
+              "このまま GPU モードに変更すると、音声合成エンジンでエラーが発生する可能性があります。本当に変更しますか？",
             buttons: ["変更しない", "変更する"],
             cancel: 0,
           });

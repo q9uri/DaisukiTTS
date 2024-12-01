@@ -316,6 +316,7 @@ const loadingDictProcess = async () => {
     );
   } catch {
     const result = await store.actions.SHOW_ALERT_DIALOG({
+      type: "error",
       title: "辞書の取得に失敗しました",
       message: "音声合成エンジンの再起動をお試しください。",
     });
@@ -328,6 +329,7 @@ const loadingDictProcess = async () => {
     await createUILockAction(store.actions.SYNC_ALL_USER_DICT());
   } catch {
     await store.actions.SHOW_ALERT_DIALOG({
+      type: "error",
       title: "辞書の同期に失敗しました",
       message: "音声合成エンジンの再起動をお試しください。",
     });
@@ -471,7 +473,8 @@ const play = async () => {
     window.backend.logError(e);
     nowGenerating.value = false;
     void store.actions.SHOW_ALERT_DIALOG({
-      title: "生成に失敗しました",
+      type: "error",
+      title: "音声の生成に失敗しました",
       message: "音声合成エンジンの再起動をお試しください。",
     });
     return;
@@ -548,6 +551,7 @@ const saveWord = async () => {
       });
     } catch {
       void store.actions.SHOW_ALERT_DIALOG({
+        type: "error",
         title: "単語の更新に失敗しました",
         message: "音声合成エンジンの再起動をお試しください。",
       });
@@ -573,6 +577,7 @@ const saveWord = async () => {
       );
     } catch {
       void store.actions.SHOW_ALERT_DIALOG({
+        type: "error",
         title: "単語の登録に失敗しました",
         message: "音声合成エンジンの再起動をお試しください。",
       });
@@ -603,6 +608,7 @@ const deleteWord = async () => {
       );
     } catch {
       void store.actions.SHOW_ALERT_DIALOG({
+        type: "error",
         title: "単語の削除に失敗しました",
         message: "音声合成エンジンの再起動をお試しください。",
       });

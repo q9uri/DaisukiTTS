@@ -274,7 +274,7 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
           ) {
             await showAlertDialog({
               type: "info",
-              title: "保存",
+              title: "プロジェクトファイルの保存先の変更",
               message: `編集中のプロジェクトが ${filePath} に切り替わりました。`,
             });
           }
@@ -356,7 +356,7 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
 
       const result: number = await showQuestionDialog({
         type: "warning",
-        title: "警告",
+        title: '変更の保存確認',
         message,
         buttons: ["キャンセル", "破棄", "保存"],
         cancel: 0,

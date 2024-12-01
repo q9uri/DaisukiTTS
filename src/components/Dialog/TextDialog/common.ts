@@ -29,8 +29,9 @@ export const getColor = (dialogType: DialogType) => {
     case "warning-light":
       return "warning-light";
     case "question":
-    case "info":
       return "warning-light";
+    case "info":
+      return "primary";
     case "none":
       return "display";
     default:

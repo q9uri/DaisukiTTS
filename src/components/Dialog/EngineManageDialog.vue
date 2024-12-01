@@ -488,6 +488,7 @@ const getEngineDirValidationMessage = (result: EngineDirValidationResult) => {
 
 const addEngine = async () => {
   const result = await store.actions.SHOW_WARNING_DIALOG({
+    type: "warning-light",
     title: "音声合成エンジン追加の確認",
     message:
       "この操作はコンピュータに損害を与える可能性があります。音声合成エンジンの配布元が信頼できない場合は追加しないでください。",
@@ -589,6 +590,7 @@ const restartSelectedEngine = () => {
 
 const requireReload = async (message: string) => {
   const result = await store.actions.SHOW_WARNING_DIALOG({
+    type: "warning-light",
     title: "再読み込みが必要です",
     message: message,
     actionName: "再読み込み",

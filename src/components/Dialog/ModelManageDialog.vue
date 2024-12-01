@@ -350,6 +350,7 @@ const installModel = async () => {
     console.error(error);
     if (error instanceof ResponseError) {
       void store.actions.SHOW_ALERT_DIALOG({
+        type: "error",
         title: "インストール失敗",
         message: `音声合成モデルのインストールに失敗しました。
           (HTTP Error ${error.response.status} / ${await error.response.text()})`,
@@ -363,6 +364,7 @@ const installModel = async () => {
         await store.actions.CREATE_ALL_DEFAULT_PRESET();
       } else {
         void store.actions.SHOW_ALERT_DIALOG({
+          type: "error",
           title: "インストール失敗",
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
           message: `音声合成モデルのインストールに失敗しました。(${error})`,
@@ -403,6 +405,7 @@ const unInstallAivmModel = async () => {
       console.error(error);
       if (error instanceof ResponseError) {
         void store.actions.SHOW_ALERT_DIALOG({
+          type: "error",
           title: "アンインストール失敗",
           message: `音声合成モデル「${activeAivmInfo.value?.manifest.name}」のアンインストールに失敗しました。
             (HTTP Error ${error.response.status} / ${await error.response.text()})`,
@@ -416,6 +419,7 @@ const unInstallAivmModel = async () => {
           await store.actions.CREATE_ALL_DEFAULT_PRESET();
         } else {
           void store.actions.SHOW_ALERT_DIALOG({
+            type: "error",
             title: "アンインストール失敗",
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             message: `音声合成モデル「${activeAivmInfo.value?.manifest.name}」のアンインストールに失敗しました。(${error})`,

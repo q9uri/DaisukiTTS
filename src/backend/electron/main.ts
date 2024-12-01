@@ -422,7 +422,7 @@ const retryShowSaveDialogWhileSafeDir = async <
       type: "warning",
       buttons: ["保存場所を変更", "無視して保存"],
       defaultId: 0,
-      title: "警告",
+      title: "保存先の警告",
       cancelId: 0,
     });
     return warningResult.response === 0 ? "retry" : "forceSave";
