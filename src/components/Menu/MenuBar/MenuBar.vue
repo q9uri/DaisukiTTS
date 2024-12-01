@@ -296,7 +296,7 @@ const engineSubMenuData = computed<MenuItemData[]>(() => {
   }
   subMenu.push( {
     type: "button",
-    label: "話者リストを更新",
+    label: "話者リストを再読み込み",
     async onClick() {
       await store.actions.LOAD_CHARACTER({ engineId: store.getters.DEFAULT_ENGINE_ID });
       await store.actions.LOAD_DEFAULT_STYLE_IDS();

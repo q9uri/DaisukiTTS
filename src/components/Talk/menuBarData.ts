@@ -63,7 +63,7 @@ export const useMenuBarData = () => {
   const viewSubMenuData = computed<MenuItemData[]>(() => [
     {
       type: "button",
-      label: showTextLineNumber.value ? "行番号を非表示" : "行番号を表示",
+      label: showTextLineNumber.value ? "行番号を隠す" : "行番号を表示",
       onClick: () => {
         changeShowTextLineNumber(!showTextLineNumber.value);
       },

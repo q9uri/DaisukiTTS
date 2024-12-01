@@ -25,6 +25,7 @@ export const getColor = (dialogType: DialogType) => {
       // TODO：warning用の色を用意する
       return "warning";
     case "question":
+      return "warning";
     case "info":
     case "none":
       return "display";

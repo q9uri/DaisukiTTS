@@ -224,8 +224,8 @@ watch(
 
 const applyDefaultSetting = async () => {
   const result = await store.actions.SHOW_CONFIRM_DIALOG({
-    title: "ツールバーをデフォルトに戻します",
-    message: "ツールバーをデフォルトに戻します。\nよろしいですか？",
+    title: "ツールバーの順序をリセット",
+    message: "ツールバーの順序をデフォルトに戻します。\nよろしいですか？",
     actionName: "はい",
     cancel: "いいえ",
   });

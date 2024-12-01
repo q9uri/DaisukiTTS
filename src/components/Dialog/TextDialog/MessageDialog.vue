@@ -11,10 +11,10 @@
     @hide="onDialogHide"
   >
     <QCard class="q-py-sm q-px-md dialog-card">
-      <QCardSection class="title">
+      <QCardSection class="message-dialog-title">
         <QIcon
           v-if="props.type !== 'none'"
-          :name="iconName"
+          :name="`sym_r_${iconName}`"
           class="text-h5 q-mr-sm"
           :color
         />
@@ -71,13 +71,20 @@ function onOk() {
 }
 </script>
 
+<style lang="scss">
+.message-dialog-title .material-symbols-rounded {
+  font-size: 1.9rem !important;
+}
+</style>
+
 <style scoped lang="scss">
-.title {
+.message-dialog-title {
   display: flex;
   align-items: center;
 }
 
 .message {
+  word-break: break-all;
   white-space: pre-wrap;
 }
 </style>

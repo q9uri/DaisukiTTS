@@ -128,7 +128,7 @@
       <!-- プリセット再登録ダイアログ -->
       <QDialog v-model="showsPresetRewriteDialog" @beforeHide="closeAllDialog">
         <QCard>
-          <QCardSection>
+          <QCardSection class="q-pb-none">
             <div class="text-h6">プリセットの再登録</div>
           </QCardSection>
           <QCardSection>

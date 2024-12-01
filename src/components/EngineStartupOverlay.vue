@@ -14,7 +14,7 @@
   >
     <div>
       <QSpinner color="primary" size="2.5rem" />
-      <div class="q-mt-xs">
+      <div class="q-mt-sm">
         {{
           allEngineState === "STARTING"
             ? "音声合成エンジン起動中..."

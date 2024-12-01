@@ -105,6 +105,9 @@ export class EngineInfoManager {
     const engineInfos: EngineInfo[] = [];
     for (const dirName of fs.readdirSync(this.vvppEngineDir)) {
       const engineDir = path.join(this.vvppEngineDir, dirName);
+      if (dirName === ".DS_Store") {
+        continue;
+      }
       if (!fs.statSync(engineDir).isDirectory()) {
         log.log(`${engineDir} is not directory`);
         continue;

@@ -11,7 +11,7 @@
     @hide="onDialogHide"
   >
     <QCard class="q-py-sm q-px-md dialog-card">
-      <QCardSection class="title">
+      <QCardSection class="question-dialog-title">
         <QIcon
           v-if="props.type !== 'none'"
           :name="`sym_r_${iconName}`"
@@ -32,7 +32,8 @@
           :key="index"
           flat
           :label="button"
-          color="display"
+          :color="index === props.buttons.length - 1 ? 'toolbar-button' : 'display'"
+          :textColor="index === props.buttons.length - 1 ? 'toolbar-button-display' : undefined"
           class="text-no-wrap text-bold"
           @click="onClick(index)"
         />
@@ -86,13 +87,21 @@ const onClick = (index: number) => {
   onDialogOK({ index });
 };
 </script>
+
+<style lang="scss">
+.question-dialog-title .material-symbols-rounded {
+  font-size: 1.9rem !important;
+}
+</style>
+
 <style scoped lang="scss">
-.title {
+.question-dialog-title {
   display: flex;
   align-items: center;
 }
 
 .message {
+  word-break: break-all;
   white-space: pre-wrap;
 }
 </style>

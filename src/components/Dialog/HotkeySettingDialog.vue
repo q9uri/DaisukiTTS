@@ -31,7 +31,7 @@
             <template #append>
               <QIcon
                 v-if="hotkeyFilter !== ''"
-                name="close"
+                name="sym_r_close"
                 class="cursor-pointer"
                 @click="hotkeyFilter = ''"
               />

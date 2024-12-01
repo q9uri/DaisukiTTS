@@ -382,7 +382,7 @@ const unInstallAivmModel = async () => {
   }
   const result = await store.actions.SHOW_CONFIRM_DIALOG({
     title: "アンインストールの確認",
-    message: '本当に音声合成モデル「${activeAivmInfo.value?.manifest.name}」をアンインストールしますか？\n' +
+    message: `本当に音声合成モデル「${activeAivmInfo.value?.manifest.name}」をアンインストールしますか？\n` +
              'アンインストールすると、この音声合成モデル内の話者/スタイルは再度インストールするまで使えなくなります。',
     actionName: "アンインストール",
   });

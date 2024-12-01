@@ -37,7 +37,7 @@
           <div v-if="uiLockedState" class="ui-lock-popup">
             <div class="q-pa-md">
               <QSpinner color="primary" size="2.5rem" />
-              <div class="q-mt-xs">
+              <div class="q-mt-sm">
                 <template v-if="uiLockedState === 'addingEngine'">
                   音声合成エンジンを追加しています...
                 </template>
