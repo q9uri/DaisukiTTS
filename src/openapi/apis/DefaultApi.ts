@@ -283,8 +283,8 @@ export interface DefaultApiInterface {
     accentPhrasesAccentPhrasesPost(requestParameters: AccentPhrasesAccentPhrasesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<AccentPhrase>>;
 
     /**
-     * 新しいプリセットを追加します
-     * @summary Add Preset
+     * 新しいプリセットを追加します。
+     * @summary 新しいプリセットを追加する
      * @param {Preset} preset 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -293,14 +293,14 @@ export interface DefaultApiInterface {
     addPresetAddPresetPostRaw(requestParameters: AddPresetAddPresetPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<number>>;
 
     /**
-     * 新しいプリセットを追加します
-     * Add Preset
+     * 新しいプリセットを追加します。
+     * 新しいプリセットを追加する
      */
     addPresetAddPresetPost(requestParameters: AddPresetAddPresetPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<number>;
 
     /**
      * ユーザー辞書に言葉を追加します。
-     * @summary Add User Dict Word
+     * @summary ユーザー辞書に言葉を追加する
      * @param {string} surface 言葉の表層形
      * @param {string} pronunciation 言葉の発音（カタカナ）
      * @param {number} accentType アクセント型（音が下がる場所を指す）
@@ -314,7 +314,7 @@ export interface DefaultApiInterface {
 
     /**
      * ユーザー辞書に言葉を追加します。
-     * Add User Dict Word
+     * ユーザー辞書に言葉を追加する
      */
     addUserDictWordUserDictWordPost(requestParameters: AddUserDictWordUserDictWordPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<string>;
 
@@ -403,8 +403,8 @@ export interface DefaultApiInterface {
     coreVersionsCoreVersionsGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<string>>;
 
     /**
-     * 既存のプリセットを削除します
-     * @summary Delete Preset
+     * 既存のプリセットを削除します。
+     * @summary 既存のプリセットを削除する
      * @param {number} id 削除するプリセットのプリセットID
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -413,14 +413,14 @@ export interface DefaultApiInterface {
     deletePresetDeletePresetPostRaw(requestParameters: DeletePresetDeletePresetPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>>;
 
     /**
-     * 既存のプリセットを削除します
-     * Delete Preset
+     * 既存のプリセットを削除します。
+     * 既存のプリセットを削除する
      */
     deletePresetDeletePresetPost(requestParameters: DeletePresetDeletePresetPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
 
     /**
      * ユーザー辞書に登録されている言葉を削除します。
-     * @summary Delete User Dict Word
+     * @summary ユーザー辞書に登録されている言葉を削除する
      * @param {string} wordUuid 削除する言葉のUUID
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -430,7 +430,7 @@ export interface DefaultApiInterface {
 
     /**
      * ユーザー辞書に登録されている言葉を削除します。
-     * Delete User Dict Word
+     * ユーザー辞書に登録されている言葉を削除する
      */
     deleteUserDictWordUserDictWordWordUuidDelete(requestParameters: DeleteUserDictWordUserDictWordWordUuidDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
 
@@ -468,8 +468,8 @@ export interface DefaultApiInterface {
 
     /**
      * 指定された音声合成モデルの情報を取得します。
-     * @summary Get Aivm Info
-     * @param {string} aivmUuid AIVMX ファイルの UUID
+     * @summary 指定された音声合成モデルの情報を取得する
+     * @param {string} aivmUuid 音声合成モデルの UUID
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
@@ -478,13 +478,13 @@ export interface DefaultApiInterface {
 
     /**
      * 指定された音声合成モデルの情報を取得します。
-     * Get Aivm Info
+     * 指定された音声合成モデルの情報を取得する
      */
     getAivmInfoAivmModelsAivmUuidGet(requestParameters: GetAivmInfoAivmModelsAivmUuidGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<AivmInfo>;
 
     /**
-     * インストールした音声合成モデルの情報を返します。
-     * @summary Get Installed Aivm Infos
+     * インストール済みのすべての音声合成モデルの情報を返します。
+     * @summary インストール済みのすべての音声合成モデルの情報を取得する
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
@@ -492,8 +492,8 @@ export interface DefaultApiInterface {
     getInstalledAivmInfosAivmModelsGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: AivmInfo; }>>;
 
     /**
-     * インストールした音声合成モデルの情報を返します。
-     * Get Installed Aivm Infos
+     * インストール済みのすべての音声合成モデルの情報を返します。
+     * インストール済みのすべての音声合成モデルの情報を取得する
      */
     getInstalledAivmInfosAivmModelsGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{ [key: string]: AivmInfo; }>;
 
@@ -513,8 +513,8 @@ export interface DefaultApiInterface {
     getPortalPageGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<string>;
 
     /**
-     * エンジンが保持しているプリセットの設定を返します
-     * @summary Get Presets
+     * エンジンが保持しているプリセットの設定を返します。
+     * @summary エンジンが保持しているプリセットの設定を取得する
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
@@ -522,14 +522,14 @@ export interface DefaultApiInterface {
     getPresetsPresetsGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Preset>>>;
 
     /**
-     * エンジンが保持しているプリセットの設定を返します
-     * Get Presets
+     * エンジンが保持しているプリセットの設定を返します。
+     * エンジンが保持しているプリセットの設定を取得する
      */
     getPresetsPresetsGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Preset>>;
 
     /**
      * ユーザー辞書に登録されている単語の一覧を返します。 単語の表層形(surface)は正規化済みの物を返します。
-     * @summary Get User Dict Words
+     * @summary ユーザー辞書に登録されている単語の一覧を取得する
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
@@ -538,13 +538,13 @@ export interface DefaultApiInterface {
 
     /**
      * ユーザー辞書に登録されている単語の一覧を返します。 単語の表層形(surface)は正規化済みの物を返します。
-     * Get User Dict Words
+     * ユーザー辞書に登録されている単語の一覧を取得する
      */
     getUserDictWordsUserDictGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{ [key: string]: UserDictWord; }>;
 
     /**
      * 他のユーザー辞書をインポートします。
-     * @summary Import User Dict Words
+     * @summary 他のユーザー辞書をインポートする
      * @param {boolean} override 重複したエントリがあった場合、上書きするかどうか
      * @param {{ [key: string]: UserDictWord; }} requestBody 
      * @param {*} [options] Override http request option.
@@ -555,15 +555,15 @@ export interface DefaultApiInterface {
 
     /**
      * 他のユーザー辞書をインポートします。
-     * Import User Dict Words
+     * 他のユーザー辞書をインポートする
      */
     importUserDictWordsImportUserDictPost(requestParameters: ImportUserDictWordsImportUserDictPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
 
     /**
-     * 指定されたスタイルを初期化します。 実行しなくても他のAPIは使用できますが、初回実行時に時間がかかることがあります。
-     * @summary Initialize Speaker
+     * 指定されたスタイル ID に紐づく音声合成モデルをロードします。 実行しなくても他の API は使用できますが、初回実行時に時間がかかることがあります。
+     * @summary 指定されたスタイル ID に紐づく音声合成モデルをロードする
      * @param {number} speaker 
-     * @param {boolean} [skipReinit] 既に初期化済みのスタイルの再初期化をスキップするかどうか
+     * @param {boolean} [skipReinit] 既にロード済みの音声合成モデルの再ロードをスキップするかどうか
      * @param {string} [coreVersion] AivisSpeech Engine ではサポートされていないパラメータです (常に無視されます) 。
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -572,14 +572,14 @@ export interface DefaultApiInterface {
     initializeSpeakerInitializeSpeakerPostRaw(requestParameters: InitializeSpeakerInitializeSpeakerPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>>;
 
     /**
-     * 指定されたスタイルを初期化します。 実行しなくても他のAPIは使用できますが、初回実行時に時間がかかることがあります。
-     * Initialize Speaker
+     * 指定されたスタイル ID に紐づく音声合成モデルをロードします。 実行しなくても他の API は使用できますが、初回実行時に時間がかかることがあります。
+     * 指定されたスタイル ID に紐づく音声合成モデルをロードする
      */
     initializeSpeakerInitializeSpeakerPost(requestParameters: InitializeSpeakerInitializeSpeakerPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
 
     /**
      * 音声合成モデルをインストールします。 ファイルからインストールする場合は `file` を指定してください。 URL からインストールする場合は `url` を指定してください。
-     * @summary Install Aivm
+     * @summary 音声合成モデルをインストールする
      * @param {Blob} [file] 
      * @param {string} [url] 
      * @param {*} [options] Override http request option.
@@ -590,13 +590,13 @@ export interface DefaultApiInterface {
 
     /**
      * 音声合成モデルをインストールします。 ファイルからインストールする場合は `file` を指定してください。 URL からインストールする場合は `url` を指定してください。
-     * Install Aivm
+     * 音声合成モデルをインストールする
      */
     installAivmAivmModelsInstallPost(requestParameters: InstallAivmAivmModelsInstallPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
 
     /**
-     * 指定されたスタイルが初期化されているかどうかを返します。
-     * @summary Is Initialized Speaker
+     * 指定されたスタイル ID に紐づく音声合成モデルがロードされているかどうかを返します。
+     * @summary 指定されたスタイル ID に紐づく音声合成モデルがロードされているかを確認する
      * @param {number} speaker 
      * @param {string} [coreVersion] AivisSpeech Engine ではサポートされていないパラメータです (常に無視されます) 。
      * @param {*} [options] Override http request option.
@@ -606,14 +606,14 @@ export interface DefaultApiInterface {
     isInitializedSpeakerIsInitializedSpeakerGetRaw(requestParameters: IsInitializedSpeakerIsInitializedSpeakerGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<boolean>>;
 
     /**
-     * 指定されたスタイルが初期化されているかどうかを返します。
-     * Is Initialized Speaker
+     * 指定されたスタイル ID に紐づく音声合成モデルがロードされているかどうかを返します。
+     * 指定されたスタイル ID に紐づく音声合成モデルがロードされているかを確認する
      */
     isInitializedSpeakerIsInitializedSpeakerGet(requestParameters: IsInitializedSpeakerIsInitializedSpeakerGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<boolean>;
 
     /**
      * 
-     * @summary アクセント句から音高・音素長を得る
+     * @summary アクセント句から音高・音素長を得る (AivisSpeech Engine では常にダミーの値が返されます)
      * @param {number} speaker 
      * @param {Array<AccentPhrase>} accentPhrase 
      * @param {string} [coreVersion] AivisSpeech Engine ではサポートされていないパラメータです (常に無視されます) 。
@@ -624,13 +624,13 @@ export interface DefaultApiInterface {
     moraDataMoraDataPostRaw(requestParameters: MoraDataMoraDataPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<AccentPhrase>>>;
 
     /**
-     * アクセント句から音高・音素長を得る
+     * アクセント句から音高・音素長を得る (AivisSpeech Engine では常にダミーの値が返されます)
      */
     moraDataMoraDataPost(requestParameters: MoraDataMoraDataPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<AccentPhrase>>;
 
     /**
      * 
-     * @summary アクセント句から音素長を得る
+     * @summary アクセント句から音素長を得る (AivisSpeech Engine では常にダミーの値が返されます)
      * @param {number} speaker 
      * @param {Array<AccentPhrase>} accentPhrase 
      * @param {string} [coreVersion] AivisSpeech Engine ではサポートされていないパラメータです (常に無視されます) 。
@@ -641,13 +641,13 @@ export interface DefaultApiInterface {
     moraLengthMoraLengthPostRaw(requestParameters: MoraLengthMoraLengthPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<AccentPhrase>>>;
 
     /**
-     * アクセント句から音素長を得る
+     * アクセント句から音素長を得る (AivisSpeech Engine では常にダミーの値が返されます)
      */
     moraLengthMoraLengthPost(requestParameters: MoraLengthMoraLengthPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<AccentPhrase>>;
 
     /**
      * 
-     * @summary アクセント句から音高を得る
+     * @summary アクセント句から音高を得る (AivisSpeech Engine では常にダミーの値が返されます)
      * @param {number} speaker 
      * @param {Array<AccentPhrase>} accentPhrase 
      * @param {string} [coreVersion] AivisSpeech Engine ではサポートされていないパラメータです (常に無視されます) 。
@@ -658,12 +658,12 @@ export interface DefaultApiInterface {
     moraPitchMoraPitchPostRaw(requestParameters: MoraPitchMoraPitchPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<AccentPhrase>>>;
 
     /**
-     * アクセント句から音高を得る
+     * アクセント句から音高を得る (AivisSpeech Engine では常にダミーの値が返されます)
      */
     moraPitchMoraPitchPost(requestParameters: MoraPitchMoraPitchPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<AccentPhrase>>;
 
     /**
-     * 指定されたベーススタイルに対してエンジン内の各キャラクターがモーフィング機能を利用可能か返します。 モーフィングの許可/禁止は `/speakers `の `speaker.supported_features.synthesis_morphing` に記載されています。 プロパティが存在しない場合は、モーフィングが許可されているとみなします。 返り値のスタイル ID は string 型なので注意。 AivisSpeech Engine では話者ごとに発声タイミングが異なる関係で実装不可能なため (動作こそするが聴くに耐えない) 、 全ての話者でモーフィングが禁止されています。
+     * 指定されたベーススタイルに対してエンジン内の各キャラクターがモーフィング機能を利用可能か返します。<br> モーフィングの許可/禁止は `/speakers `の `speaker.supported_features.synthesis_morphing` に記載されています。<br> プロパティが存在しない場合は、モーフィングが許可されているとみなします。<br> 返り値のスタイル ID は string 型なので注意。<br> AivisSpeech Engine では話者ごとに発声タイミングが異なる関係で実装不可能なため (動作こそするが聴くに耐えない) 、 全ての話者でモーフィングが禁止されています。
      * @summary 指定したスタイルに対してエンジン内のキャラクターがモーフィングが可能か判定する
      * @param {Array<number>} requestBody 
      * @param {string} [coreVersion] AivisSpeech Engine ではサポートされていないパラメータです (常に無視されます) 。
@@ -674,7 +674,7 @@ export interface DefaultApiInterface {
     morphableTargetsMorphableTargetsPostRaw(requestParameters: MorphableTargetsMorphableTargetsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<{ [key: string]: MorphableTargetInfo; }>>>;
 
     /**
-     * 指定されたベーススタイルに対してエンジン内の各キャラクターがモーフィング機能を利用可能か返します。 モーフィングの許可/禁止は `/speakers `の `speaker.supported_features.synthesis_morphing` に記載されています。 プロパティが存在しない場合は、モーフィングが許可されているとみなします。 返り値のスタイル ID は string 型なので注意。 AivisSpeech Engine では話者ごとに発声タイミングが異なる関係で実装不可能なため (動作こそするが聴くに耐えない) 、 全ての話者でモーフィングが禁止されています。
+     * 指定されたベーススタイルに対してエンジン内の各キャラクターがモーフィング機能を利用可能か返します。<br> モーフィングの許可/禁止は `/speakers `の `speaker.supported_features.synthesis_morphing` に記載されています。<br> プロパティが存在しない場合は、モーフィングが許可されているとみなします。<br> 返り値のスタイル ID は string 型なので注意。<br> AivisSpeech Engine では話者ごとに発声タイミングが異なる関係で実装不可能なため (動作こそするが聴くに耐えない) 、 全ての話者でモーフィングが禁止されています。
      * 指定したスタイルに対してエンジン内のキャラクターがモーフィングが可能か判定する
      */
     morphableTargetsMorphableTargetsPost(requestParameters: MorphableTargetsMorphableTargetsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<{ [key: string]: MorphableTargetInfo; }>>;
@@ -698,7 +698,7 @@ export interface DefaultApiInterface {
 
     /**
      * ユーザー辞書に登録されている言葉を更新します。
-     * @summary Rewrite User Dict Word
+     * @summary ユーザー辞書に登録されている言葉を更新する
      * @param {string} wordUuid 更新する言葉のUUID
      * @param {string} surface 言葉の表層形
      * @param {string} pronunciation 言葉の発音（カタカナ）
@@ -713,7 +713,7 @@ export interface DefaultApiInterface {
 
     /**
      * ユーザー辞書に登録されている言葉を更新します。
-     * Rewrite User Dict Word
+     * ユーザー辞書に登録されている言葉を更新する
      */
     rewriteUserDictWordUserDictWordWordUuidPut(requestParameters: RewriteUserDictWordUserDictWordWordUuidPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
 
@@ -816,8 +816,8 @@ export interface DefaultApiInterface {
     singersSingersGet(requestParameters: SingersSingersGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Speaker>>;
 
     /**
-     * UUID で指定された喋れるキャラクターの情報を返します。 画像や音声はresource_formatで指定した形式で返されます。
-     * @summary Speaker Info
+     * UUID で指定された話者の情報を返します。 画像や音声は resource_format で指定した形式で返されます。
+     * @summary UUID で指定された話者の情報を取得する
      * @param {string} speakerUuid 
      * @param {'base64' | 'url'} [resourceFormat] 
      * @param {string} [coreVersion] AivisSpeech Engine ではサポートされていないパラメータです (常に無視されます) 。
@@ -828,14 +828,14 @@ export interface DefaultApiInterface {
     speakerInfoSpeakerInfoGetRaw(requestParameters: SpeakerInfoSpeakerInfoGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SpeakerInfo>>;
 
     /**
-     * UUID で指定された喋れるキャラクターの情報を返します。 画像や音声はresource_formatで指定した形式で返されます。
-     * Speaker Info
+     * UUID で指定された話者の情報を返します。 画像や音声は resource_format で指定した形式で返されます。
+     * UUID で指定された話者の情報を取得する
      */
     speakerInfoSpeakerInfoGet(requestParameters: SpeakerInfoSpeakerInfoGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SpeakerInfo>;
 
     /**
-     * 喋れるキャラクターの情報の一覧を返します。
-     * @summary Speakers
+     * 話者情報の一覧を返します。
+     * @summary 話者情報の一覧を取得する
      * @param {string} [coreVersion] AivisSpeech Engine ではサポートされていないパラメータです (常に無視されます) 。
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -844,14 +844,14 @@ export interface DefaultApiInterface {
     speakersSpeakersGetRaw(requestParameters: SpeakersSpeakersGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Speaker>>>;
 
     /**
-     * 喋れるキャラクターの情報の一覧を返します。
-     * Speakers
+     * 話者情報の一覧を返します。
+     * 話者情報の一覧を取得する
      */
     speakersSpeakersGet(requestParameters: SpeakersSpeakersGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Speaker>>;
 
     /**
-     * 対応デバイスの一覧を取得します。
-     * @summary Supported Devices
+     * このビルドでサポートされている、音声合成モデルの推論デバイスを返します。<br> 通常、下記の値が返されます。true であっても実際に推論デバイスが利用可能とは限りません。 - Windows: `{\"cpu\": true, \"cuda\": false, \"dml\": true}` - macOS: `{\"cpu\": true, \"cuda\": false, \"dml\": false}` - Linux: `{\"cpu\": true, \"cuda\": true, \"dml\": false}`
+     * @summary このビルドでサポートされている、音声合成モデルの推論デバイスを取得する
      * @param {string} [coreVersion] AivisSpeech Engine ではサポートされていないパラメータです (常に無視されます) 。
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -860,13 +860,13 @@ export interface DefaultApiInterface {
     supportedDevicesSupportedDevicesGetRaw(requestParameters: SupportedDevicesSupportedDevicesGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SupportedDevicesInfo>>;
 
     /**
-     * 対応デバイスの一覧を取得します。
-     * Supported Devices
+     * このビルドでサポートされている、音声合成モデルの推論デバイスを返します。<br> 通常、下記の値が返されます。true であっても実際に推論デバイスが利用可能とは限りません。 - Windows: `{\"cpu\": true, \"cuda\": false, \"dml\": true}` - macOS: `{\"cpu\": true, \"cuda\": false, \"dml\": false}` - Linux: `{\"cpu\": true, \"cuda\": true, \"dml\": false}`
+     * このビルドでサポートされている、音声合成モデルの推論デバイスを取得する
      */
     supportedDevicesSupportedDevicesGet(requestParameters: SupportedDevicesSupportedDevicesGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SupportedDevicesInfo>;
 
     /**
-     * 指定された 2 種類のスタイルで音声を合成、指定した割合でモーフィングした音声を得ます。 モーフィングの割合は `morph_rate` で指定でき、0.0 でベースのスタイル、1.0 でターゲットのスタイルに近づきます。 AivisSpeech Engine では話者ごとに発声タイミングが異なる関係で実装不可能なため (動作こそするが聴くに耐えない) 、 常に 400 Bad Request を返します。
+     * 指定された 2 種類のスタイルで音声を合成、指定した割合でモーフィングした音声を得ます。<br> モーフィングの割合は `morph_rate` で指定でき、0.0 でベースのスタイル、1.0 でターゲットのスタイルに近づきます。<br> AivisSpeech Engine では話者ごとに発声タイミングが異なる関係で実装不可能なため (動作こそするが聴くに耐えない) 、 常に 400 Bad Request を返します。
      * @summary 2種類のスタイルでモーフィングした音声を合成する
      * @param {number} baseSpeaker 
      * @param {number} targetSpeaker 
@@ -880,13 +880,13 @@ export interface DefaultApiInterface {
     synthesisMorphingSynthesisMorphingPostRaw(requestParameters: SynthesisMorphingSynthesisMorphingPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Blob>>;
 
     /**
-     * 指定された 2 種類のスタイルで音声を合成、指定した割合でモーフィングした音声を得ます。 モーフィングの割合は `morph_rate` で指定でき、0.0 でベースのスタイル、1.0 でターゲットのスタイルに近づきます。 AivisSpeech Engine では話者ごとに発声タイミングが異なる関係で実装不可能なため (動作こそするが聴くに耐えない) 、 常に 400 Bad Request を返します。
+     * 指定された 2 種類のスタイルで音声を合成、指定した割合でモーフィングした音声を得ます。<br> モーフィングの割合は `morph_rate` で指定でき、0.0 でベースのスタイル、1.0 でターゲットのスタイルに近づきます。<br> AivisSpeech Engine では話者ごとに発声タイミングが異なる関係で実装不可能なため (動作こそするが聴くに耐えない) 、 常に 400 Bad Request を返します。
      * 2種類のスタイルでモーフィングした音声を合成する
      */
     synthesisMorphingSynthesisMorphingPost(requestParameters: SynthesisMorphingSynthesisMorphingPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Blob>;
 
     /**
-     * 
+     * 指定されたスタイル ID に紐づく音声合成モデルを用いて音声合成を行います。
      * @summary 音声合成する
      * @param {number} speaker 
      * @param {AudioQuery} audioQuery 
@@ -899,14 +899,15 @@ export interface DefaultApiInterface {
     synthesisSynthesisPostRaw(requestParameters: SynthesisSynthesisPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Blob>>;
 
     /**
+     * 指定されたスタイル ID に紐づく音声合成モデルを用いて音声合成を行います。
      * 音声合成する
      */
     synthesisSynthesisPost(requestParameters: SynthesisSynthesisPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Blob>;
 
     /**
      * 指定された音声合成モデルをアンインストールします。
-     * @summary Uninstall Aivm
-     * @param {string} aivmUuid AIVMX ファイルの UUID
+     * @summary 音声合成モデルをアンインストールする
+     * @param {string} aivmUuid 音声合成モデルの UUID
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
@@ -915,13 +916,13 @@ export interface DefaultApiInterface {
 
     /**
      * 指定された音声合成モデルをアンインストールします。
-     * Uninstall Aivm
+     * 音声合成モデルをアンインストールする
      */
     uninstallAivmAivmModelsAivmUuidUninstallDelete(requestParameters: UninstallAivmAivmModelsAivmUuidUninstallDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
 
     /**
-     * 既存のプリセットを更新します
-     * @summary Update Preset
+     * 既存のプリセットを更新します。
+     * @summary 既存のプリセットを更新する
      * @param {Preset} preset 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -930,8 +931,8 @@ export interface DefaultApiInterface {
     updatePresetUpdatePresetPostRaw(requestParameters: UpdatePresetUpdatePresetPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<number>>;
 
     /**
-     * 既存のプリセットを更新します
-     * Update Preset
+     * 既存のプリセットを更新します。
+     * 既存のプリセットを更新する
      */
     updatePresetUpdatePresetPost(requestParameters: UpdatePresetUpdatePresetPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<number>;
 
@@ -1026,8 +1027,8 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 新しいプリセットを追加します
-     * Add Preset
+     * 新しいプリセットを追加します。
+     * 新しいプリセットを追加する
      */
     async addPresetAddPresetPostRaw(requestParameters: AddPresetAddPresetPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<number>> {
         if (requestParameters.preset === null || requestParameters.preset === undefined) {
@@ -1056,8 +1057,8 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 新しいプリセットを追加します
-     * Add Preset
+     * 新しいプリセットを追加します。
+     * 新しいプリセットを追加する
      */
     async addPresetAddPresetPost(requestParameters: AddPresetAddPresetPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<number> {
         const response = await this.addPresetAddPresetPostRaw(requestParameters, initOverrides);
@@ -1066,7 +1067,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
 
     /**
      * ユーザー辞書に言葉を追加します。
-     * Add User Dict Word
+     * ユーザー辞書に言葉を追加する
      */
     async addUserDictWordUserDictWordPostRaw(requestParameters: AddUserDictWordUserDictWordPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<string>> {
         if (requestParameters.surface === null || requestParameters.surface === undefined) {
@@ -1121,7 +1122,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
 
     /**
      * ユーザー辞書に言葉を追加します。
-     * Add User Dict Word
+     * ユーザー辞書に言葉を追加する
      */
     async addUserDictWordUserDictWordPost(requestParameters: AddUserDictWordUserDictWordPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<string> {
         const response = await this.addUserDictWordUserDictWordPostRaw(requestParameters, initOverrides);
@@ -1333,8 +1334,8 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 既存のプリセットを削除します
-     * Delete Preset
+     * 既存のプリセットを削除します。
+     * 既存のプリセットを削除する
      */
     async deletePresetDeletePresetPostRaw(requestParameters: DeletePresetDeletePresetPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters.id === null || requestParameters.id === undefined) {
@@ -1360,8 +1361,8 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 既存のプリセットを削除します
-     * Delete Preset
+     * 既存のプリセットを削除します。
+     * 既存のプリセットを削除する
      */
     async deletePresetDeletePresetPost(requestParameters: DeletePresetDeletePresetPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.deletePresetDeletePresetPostRaw(requestParameters, initOverrides);
@@ -1369,7 +1370,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
 
     /**
      * ユーザー辞書に登録されている言葉を削除します。
-     * Delete User Dict Word
+     * ユーザー辞書に登録されている言葉を削除する
      */
     async deleteUserDictWordUserDictWordWordUuidDeleteRaw(requestParameters: DeleteUserDictWordUserDictWordWordUuidDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters.wordUuid === null || requestParameters.wordUuid === undefined) {
@@ -1392,7 +1393,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
 
     /**
      * ユーザー辞書に登録されている言葉を削除します。
-     * Delete User Dict Word
+     * ユーザー辞書に登録されている言葉を削除する
      */
     async deleteUserDictWordUserDictWordWordUuidDelete(requestParameters: DeleteUserDictWordUserDictWordWordUuidDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.deleteUserDictWordUserDictWordWordUuidDeleteRaw(requestParameters, initOverrides);
@@ -1473,7 +1474,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
 
     /**
      * 指定された音声合成モデルの情報を取得します。
-     * Get Aivm Info
+     * 指定された音声合成モデルの情報を取得する
      */
     async getAivmInfoAivmModelsAivmUuidGetRaw(requestParameters: GetAivmInfoAivmModelsAivmUuidGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AivmInfo>> {
         if (requestParameters.aivmUuid === null || requestParameters.aivmUuid === undefined) {
@@ -1496,7 +1497,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
 
     /**
      * 指定された音声合成モデルの情報を取得します。
-     * Get Aivm Info
+     * 指定された音声合成モデルの情報を取得する
      */
     async getAivmInfoAivmModelsAivmUuidGet(requestParameters: GetAivmInfoAivmModelsAivmUuidGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<AivmInfo> {
         const response = await this.getAivmInfoAivmModelsAivmUuidGetRaw(requestParameters, initOverrides);
@@ -1504,8 +1505,8 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * インストールした音声合成モデルの情報を返します。
-     * Get Installed Aivm Infos
+     * インストール済みのすべての音声合成モデルの情報を返します。
+     * インストール済みのすべての音声合成モデルの情報を取得する
      */
     async getInstalledAivmInfosAivmModelsGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: AivmInfo; }>> {
         const queryParameters: any = {};
@@ -1523,8 +1524,8 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * インストールした音声合成モデルの情報を返します。
-     * Get Installed Aivm Infos
+     * インストール済みのすべての音声合成モデルの情報を返します。
+     * インストール済みのすべての音声合成モデルの情報を取得する
      */
     async getInstalledAivmInfosAivmModelsGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{ [key: string]: AivmInfo; }> {
         const response = await this.getInstalledAivmInfosAivmModelsGetRaw(initOverrides);
@@ -1564,8 +1565,8 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * エンジンが保持しているプリセットの設定を返します
-     * Get Presets
+     * エンジンが保持しているプリセットの設定を返します。
+     * エンジンが保持しているプリセットの設定を取得する
      */
     async getPresetsPresetsGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Preset>>> {
         const queryParameters: any = {};
@@ -1583,8 +1584,8 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * エンジンが保持しているプリセットの設定を返します
-     * Get Presets
+     * エンジンが保持しているプリセットの設定を返します。
+     * エンジンが保持しているプリセットの設定を取得する
      */
     async getPresetsPresetsGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Preset>> {
         const response = await this.getPresetsPresetsGetRaw(initOverrides);
@@ -1593,7 +1594,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
 
     /**
      * ユーザー辞書に登録されている単語の一覧を返します。 単語の表層形(surface)は正規化済みの物を返します。
-     * Get User Dict Words
+     * ユーザー辞書に登録されている単語の一覧を取得する
      */
     async getUserDictWordsUserDictGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: UserDictWord; }>> {
         const queryParameters: any = {};
@@ -1612,7 +1613,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
 
     /**
      * ユーザー辞書に登録されている単語の一覧を返します。 単語の表層形(surface)は正規化済みの物を返します。
-     * Get User Dict Words
+     * ユーザー辞書に登録されている単語の一覧を取得する
      */
     async getUserDictWordsUserDictGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{ [key: string]: UserDictWord; }> {
         const response = await this.getUserDictWordsUserDictGetRaw(initOverrides);
@@ -1621,7 +1622,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
 
     /**
      * 他のユーザー辞書をインポートします。
-     * Import User Dict Words
+     * 他のユーザー辞書をインポートする
      */
     async importUserDictWordsImportUserDictPostRaw(requestParameters: ImportUserDictWordsImportUserDictPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters.override === null || requestParameters.override === undefined) {
@@ -1655,15 +1656,15 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
 
     /**
      * 他のユーザー辞書をインポートします。
-     * Import User Dict Words
+     * 他のユーザー辞書をインポートする
      */
     async importUserDictWordsImportUserDictPost(requestParameters: ImportUserDictWordsImportUserDictPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.importUserDictWordsImportUserDictPostRaw(requestParameters, initOverrides);
     }
 
     /**
-     * 指定されたスタイルを初期化します。 実行しなくても他のAPIは使用できますが、初回実行時に時間がかかることがあります。
-     * Initialize Speaker
+     * 指定されたスタイル ID に紐づく音声合成モデルをロードします。 実行しなくても他の API は使用できますが、初回実行時に時間がかかることがあります。
+     * 指定されたスタイル ID に紐づく音声合成モデルをロードする
      */
     async initializeSpeakerInitializeSpeakerPostRaw(requestParameters: InitializeSpeakerInitializeSpeakerPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters.speaker === null || requestParameters.speaker === undefined) {
@@ -1697,8 +1698,8 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 指定されたスタイルを初期化します。 実行しなくても他のAPIは使用できますが、初回実行時に時間がかかることがあります。
-     * Initialize Speaker
+     * 指定されたスタイル ID に紐づく音声合成モデルをロードします。 実行しなくても他の API は使用できますが、初回実行時に時間がかかることがあります。
+     * 指定されたスタイル ID に紐づく音声合成モデルをロードする
      */
     async initializeSpeakerInitializeSpeakerPost(requestParameters: InitializeSpeakerInitializeSpeakerPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.initializeSpeakerInitializeSpeakerPostRaw(requestParameters, initOverrides);
@@ -1706,7 +1707,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
 
     /**
      * 音声合成モデルをインストールします。 ファイルからインストールする場合は `file` を指定してください。 URL からインストールする場合は `url` を指定してください。
-     * Install Aivm
+     * 音声合成モデルをインストールする
      */
     async installAivmAivmModelsInstallPostRaw(requestParameters: InstallAivmAivmModelsInstallPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         const queryParameters: any = {};
@@ -1750,15 +1751,15 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
 
     /**
      * 音声合成モデルをインストールします。 ファイルからインストールする場合は `file` を指定してください。 URL からインストールする場合は `url` を指定してください。
-     * Install Aivm
+     * 音声合成モデルをインストールする
      */
     async installAivmAivmModelsInstallPost(requestParameters: InstallAivmAivmModelsInstallPostRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.installAivmAivmModelsInstallPostRaw(requestParameters, initOverrides);
     }
 
     /**
-     * 指定されたスタイルが初期化されているかどうかを返します。
-     * Is Initialized Speaker
+     * 指定されたスタイル ID に紐づく音声合成モデルがロードされているかどうかを返します。
+     * 指定されたスタイル ID に紐づく音声合成モデルがロードされているかを確認する
      */
     async isInitializedSpeakerIsInitializedSpeakerGetRaw(requestParameters: IsInitializedSpeakerIsInitializedSpeakerGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<boolean>> {
         if (requestParameters.speaker === null || requestParameters.speaker === undefined) {
@@ -1792,8 +1793,8 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 指定されたスタイルが初期化されているかどうかを返します。
-     * Is Initialized Speaker
+     * 指定されたスタイル ID に紐づく音声合成モデルがロードされているかどうかを返します。
+     * 指定されたスタイル ID に紐づく音声合成モデルがロードされているかを確認する
      */
     async isInitializedSpeakerIsInitializedSpeakerGet(requestParameters: IsInitializedSpeakerIsInitializedSpeakerGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<boolean> {
         const response = await this.isInitializedSpeakerIsInitializedSpeakerGetRaw(requestParameters, initOverrides);
@@ -1801,7 +1802,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * アクセント句から音高・音素長を得る
+     * アクセント句から音高・音素長を得る (AivisSpeech Engine では常にダミーの値が返されます)
      */
     async moraDataMoraDataPostRaw(requestParameters: MoraDataMoraDataPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<AccentPhrase>>> {
         if (requestParameters.speaker === null || requestParameters.speaker === undefined) {
@@ -1838,7 +1839,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * アクセント句から音高・音素長を得る
+     * アクセント句から音高・音素長を得る (AivisSpeech Engine では常にダミーの値が返されます)
      */
     async moraDataMoraDataPost(requestParameters: MoraDataMoraDataPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<AccentPhrase>> {
         const response = await this.moraDataMoraDataPostRaw(requestParameters, initOverrides);
@@ -1846,7 +1847,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * アクセント句から音素長を得る
+     * アクセント句から音素長を得る (AivisSpeech Engine では常にダミーの値が返されます)
      */
     async moraLengthMoraLengthPostRaw(requestParameters: MoraLengthMoraLengthPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<AccentPhrase>>> {
         if (requestParameters.speaker === null || requestParameters.speaker === undefined) {
@@ -1883,7 +1884,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * アクセント句から音素長を得る
+     * アクセント句から音素長を得る (AivisSpeech Engine では常にダミーの値が返されます)
      */
     async moraLengthMoraLengthPost(requestParameters: MoraLengthMoraLengthPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<AccentPhrase>> {
         const response = await this.moraLengthMoraLengthPostRaw(requestParameters, initOverrides);
@@ -1891,7 +1892,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * アクセント句から音高を得る
+     * アクセント句から音高を得る (AivisSpeech Engine では常にダミーの値が返されます)
      */
     async moraPitchMoraPitchPostRaw(requestParameters: MoraPitchMoraPitchPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<AccentPhrase>>> {
         if (requestParameters.speaker === null || requestParameters.speaker === undefined) {
@@ -1928,7 +1929,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * アクセント句から音高を得る
+     * アクセント句から音高を得る (AivisSpeech Engine では常にダミーの値が返されます)
      */
     async moraPitchMoraPitchPost(requestParameters: MoraPitchMoraPitchPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<AccentPhrase>> {
         const response = await this.moraPitchMoraPitchPostRaw(requestParameters, initOverrides);
@@ -1936,7 +1937,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 指定されたベーススタイルに対してエンジン内の各キャラクターがモーフィング機能を利用可能か返します。 モーフィングの許可/禁止は `/speakers `の `speaker.supported_features.synthesis_morphing` に記載されています。 プロパティが存在しない場合は、モーフィングが許可されているとみなします。 返り値のスタイル ID は string 型なので注意。 AivisSpeech Engine では話者ごとに発声タイミングが異なる関係で実装不可能なため (動作こそするが聴くに耐えない) 、 全ての話者でモーフィングが禁止されています。
+     * 指定されたベーススタイルに対してエンジン内の各キャラクターがモーフィング機能を利用可能か返します。<br> モーフィングの許可/禁止は `/speakers `の `speaker.supported_features.synthesis_morphing` に記載されています。<br> プロパティが存在しない場合は、モーフィングが許可されているとみなします。<br> 返り値のスタイル ID は string 型なので注意。<br> AivisSpeech Engine では話者ごとに発声タイミングが異なる関係で実装不可能なため (動作こそするが聴くに耐えない) 、 全ての話者でモーフィングが禁止されています。
      * 指定したスタイルに対してエンジン内のキャラクターがモーフィングが可能か判定する
      */
     async morphableTargetsMorphableTargetsPostRaw(requestParameters: MorphableTargetsMorphableTargetsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<{ [key: string]: MorphableTargetInfo; }>>> {
@@ -1966,7 +1967,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 指定されたベーススタイルに対してエンジン内の各キャラクターがモーフィング機能を利用可能か返します。 モーフィングの許可/禁止は `/speakers `の `speaker.supported_features.synthesis_morphing` に記載されています。 プロパティが存在しない場合は、モーフィングが許可されているとみなします。 返り値のスタイル ID は string 型なので注意。 AivisSpeech Engine では話者ごとに発声タイミングが異なる関係で実装不可能なため (動作こそするが聴くに耐えない) 、 全ての話者でモーフィングが禁止されています。
+     * 指定されたベーススタイルに対してエンジン内の各キャラクターがモーフィング機能を利用可能か返します。<br> モーフィングの許可/禁止は `/speakers `の `speaker.supported_features.synthesis_morphing` に記載されています。<br> プロパティが存在しない場合は、モーフィングが許可されているとみなします。<br> 返り値のスタイル ID は string 型なので注意。<br> AivisSpeech Engine では話者ごとに発声タイミングが異なる関係で実装不可能なため (動作こそするが聴くに耐えない) 、 全ての話者でモーフィングが禁止されています。
      * 指定したスタイルに対してエンジン内のキャラクターがモーフィングが可能か判定する
      */
     async morphableTargetsMorphableTargetsPost(requestParameters: MorphableTargetsMorphableTargetsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<{ [key: string]: MorphableTargetInfo; }>> {
@@ -2021,7 +2022,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
 
     /**
      * ユーザー辞書に登録されている言葉を更新します。
-     * Rewrite User Dict Word
+     * ユーザー辞書に登録されている言葉を更新する
      */
     async rewriteUserDictWordUserDictWordWordUuidPutRaw(requestParameters: RewriteUserDictWordUserDictWordWordUuidPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters.wordUuid === null || requestParameters.wordUuid === undefined) {
@@ -2076,7 +2077,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
 
     /**
      * ユーザー辞書に登録されている言葉を更新します。
-     * Rewrite User Dict Word
+     * ユーザー辞書に登録されている言葉を更新する
      */
     async rewriteUserDictWordUserDictWordWordUuidPut(requestParameters: RewriteUserDictWordUserDictWordWordUuidPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.rewriteUserDictWordUserDictWordWordUuidPutRaw(requestParameters, initOverrides);
@@ -2326,8 +2327,8 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * UUID で指定された喋れるキャラクターの情報を返します。 画像や音声はresource_formatで指定した形式で返されます。
-     * Speaker Info
+     * UUID で指定された話者の情報を返します。 画像や音声は resource_format で指定した形式で返されます。
+     * UUID で指定された話者の情報を取得する
      */
     async speakerInfoSpeakerInfoGetRaw(requestParameters: SpeakerInfoSpeakerInfoGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SpeakerInfo>> {
         if (requestParameters.speakerUuid === null || requestParameters.speakerUuid === undefined) {
@@ -2361,8 +2362,8 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * UUID で指定された喋れるキャラクターの情報を返します。 画像や音声はresource_formatで指定した形式で返されます。
-     * Speaker Info
+     * UUID で指定された話者の情報を返します。 画像や音声は resource_format で指定した形式で返されます。
+     * UUID で指定された話者の情報を取得する
      */
     async speakerInfoSpeakerInfoGet(requestParameters: SpeakerInfoSpeakerInfoGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SpeakerInfo> {
         const response = await this.speakerInfoSpeakerInfoGetRaw(requestParameters, initOverrides);
@@ -2370,8 +2371,8 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 喋れるキャラクターの情報の一覧を返します。
-     * Speakers
+     * 話者情報の一覧を返します。
+     * 話者情報の一覧を取得する
      */
     async speakersSpeakersGetRaw(requestParameters: SpeakersSpeakersGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Speaker>>> {
         const queryParameters: any = {};
@@ -2393,8 +2394,8 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 喋れるキャラクターの情報の一覧を返します。
-     * Speakers
+     * 話者情報の一覧を返します。
+     * 話者情報の一覧を取得する
      */
     async speakersSpeakersGet(requestParameters: SpeakersSpeakersGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Speaker>> {
         const response = await this.speakersSpeakersGetRaw(requestParameters, initOverrides);
@@ -2402,8 +2403,8 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 対応デバイスの一覧を取得します。
-     * Supported Devices
+     * このビルドでサポートされている、音声合成モデルの推論デバイスを返します。<br> 通常、下記の値が返されます。true であっても実際に推論デバイスが利用可能とは限りません。 - Windows: `{\"cpu\": true, \"cuda\": false, \"dml\": true}` - macOS: `{\"cpu\": true, \"cuda\": false, \"dml\": false}` - Linux: `{\"cpu\": true, \"cuda\": true, \"dml\": false}`
+     * このビルドでサポートされている、音声合成モデルの推論デバイスを取得する
      */
     async supportedDevicesSupportedDevicesGetRaw(requestParameters: SupportedDevicesSupportedDevicesGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SupportedDevicesInfo>> {
         const queryParameters: any = {};
@@ -2425,8 +2426,8 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 対応デバイスの一覧を取得します。
-     * Supported Devices
+     * このビルドでサポートされている、音声合成モデルの推論デバイスを返します。<br> 通常、下記の値が返されます。true であっても実際に推論デバイスが利用可能とは限りません。 - Windows: `{\"cpu\": true, \"cuda\": false, \"dml\": true}` - macOS: `{\"cpu\": true, \"cuda\": false, \"dml\": false}` - Linux: `{\"cpu\": true, \"cuda\": true, \"dml\": false}`
+     * このビルドでサポートされている、音声合成モデルの推論デバイスを取得する
      */
     async supportedDevicesSupportedDevicesGet(requestParameters: SupportedDevicesSupportedDevicesGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SupportedDevicesInfo> {
         const response = await this.supportedDevicesSupportedDevicesGetRaw(requestParameters, initOverrides);
@@ -2434,7 +2435,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 指定された 2 種類のスタイルで音声を合成、指定した割合でモーフィングした音声を得ます。 モーフィングの割合は `morph_rate` で指定でき、0.0 でベースのスタイル、1.0 でターゲットのスタイルに近づきます。 AivisSpeech Engine では話者ごとに発声タイミングが異なる関係で実装不可能なため (動作こそするが聴くに耐えない) 、 常に 400 Bad Request を返します。
+     * 指定された 2 種類のスタイルで音声を合成、指定した割合でモーフィングした音声を得ます。<br> モーフィングの割合は `morph_rate` で指定でき、0.0 でベースのスタイル、1.0 でターゲットのスタイルに近づきます。<br> AivisSpeech Engine では話者ごとに発声タイミングが異なる関係で実装不可能なため (動作こそするが聴くに耐えない) 、 常に 400 Bad Request を返します。
      * 2種類のスタイルでモーフィングした音声を合成する
      */
     async synthesisMorphingSynthesisMorphingPostRaw(requestParameters: SynthesisMorphingSynthesisMorphingPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Blob>> {
@@ -2488,7 +2489,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 指定された 2 種類のスタイルで音声を合成、指定した割合でモーフィングした音声を得ます。 モーフィングの割合は `morph_rate` で指定でき、0.0 でベースのスタイル、1.0 でターゲットのスタイルに近づきます。 AivisSpeech Engine では話者ごとに発声タイミングが異なる関係で実装不可能なため (動作こそするが聴くに耐えない) 、 常に 400 Bad Request を返します。
+     * 指定された 2 種類のスタイルで音声を合成、指定した割合でモーフィングした音声を得ます。<br> モーフィングの割合は `morph_rate` で指定でき、0.0 でベースのスタイル、1.0 でターゲットのスタイルに近づきます。<br> AivisSpeech Engine では話者ごとに発声タイミングが異なる関係で実装不可能なため (動作こそするが聴くに耐えない) 、 常に 400 Bad Request を返します。
      * 2種類のスタイルでモーフィングした音声を合成する
      */
     async synthesisMorphingSynthesisMorphingPost(requestParameters: SynthesisMorphingSynthesisMorphingPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Blob> {
@@ -2497,6 +2498,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
+     * 指定されたスタイル ID に紐づく音声合成モデルを用いて音声合成を行います。
      * 音声合成する
      */
     async synthesisSynthesisPostRaw(requestParameters: SynthesisSynthesisPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Blob>> {
@@ -2538,6 +2540,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
+     * 指定されたスタイル ID に紐づく音声合成モデルを用いて音声合成を行います。
      * 音声合成する
      */
     async synthesisSynthesisPost(requestParameters: SynthesisSynthesisPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Blob> {
@@ -2547,7 +2550,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
 
     /**
      * 指定された音声合成モデルをアンインストールします。
-     * Uninstall Aivm
+     * 音声合成モデルをアンインストールする
      */
     async uninstallAivmAivmModelsAivmUuidUninstallDeleteRaw(requestParameters: UninstallAivmAivmModelsAivmUuidUninstallDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters.aivmUuid === null || requestParameters.aivmUuid === undefined) {
@@ -2570,15 +2573,15 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
 
     /**
      * 指定された音声合成モデルをアンインストールします。
-     * Uninstall Aivm
+     * 音声合成モデルをアンインストールする
      */
     async uninstallAivmAivmModelsAivmUuidUninstallDelete(requestParameters: UninstallAivmAivmModelsAivmUuidUninstallDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.uninstallAivmAivmModelsAivmUuidUninstallDeleteRaw(requestParameters, initOverrides);
     }
 
     /**
-     * 既存のプリセットを更新します
-     * Update Preset
+     * 既存のプリセットを更新します。
+     * 既存のプリセットを更新する
      */
     async updatePresetUpdatePresetPostRaw(requestParameters: UpdatePresetUpdatePresetPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<number>> {
         if (requestParameters.preset === null || requestParameters.preset === undefined) {
@@ -2607,8 +2610,8 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 既存のプリセットを更新します
-     * Update Preset
+     * 既存のプリセットを更新します。
+     * 既存のプリセットを更新する
      */
     async updatePresetUpdatePresetPost(requestParameters: UpdatePresetUpdatePresetPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<number> {
         const response = await this.updatePresetUpdatePresetPostRaw(requestParameters, initOverrides);
