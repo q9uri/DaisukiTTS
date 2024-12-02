@@ -84,17 +84,17 @@ jobs:
             macos_artifact_name: "AivisSpeech-macOS-arm64-${version}.${ext}"
             os: macos-14
           # Linux x64
-          # - artifact_name: linux-x64-prepackage
-          #   artifact_path: dist_electron/linux-unpacked
-          #   aivisspeech_engine_asset_name: Linux-x64
-          #   package_name: AivisSpeech
-          #   compressed_artifact_name: AivisSpeech-Linux-x64
-          #   app_asar_dir: prepackage/resources
-          #   installer_artifact_name: linux-x64-appimage
-          #   linux_artifact_name: "AivisSpeech.${ext}"
-          #   linux_executable_name: AivisSpeech
-          #   linux_appimage_7z_name: AivisSpeech.AppImage
-          #   os: ubuntu-20.04
+          - artifact_name: linux-x64-prepackage
+            artifact_path: dist_electron/linux-unpacked
+            aivisspeech_engine_asset_name: Linux-x64
+            package_name: AivisSpeech
+            compressed_artifact_name: AivisSpeech-Linux-x64
+            app_asar_dir: prepackage/resources
+            installer_artifact_name: linux-x64-appimage
+            linux_artifact_name: "AivisSpeech.${ext}"
+            linux_executable_name: AivisSpeech
+            linux_appimage_7z_name: AivisSpeech.AppImage
+            os: ubuntu-20.04
 
     runs-on: ${{ matrix.os }}
     steps:
