@@ -248,37 +248,37 @@ jobs:
         if: endsWith(matrix.installer_artifact_name, '-dmg') # macOS
         run: codesign --force --deep -s - prepackage/AivisSpeech.app
 
-      - name: Create Linux tar.gz (without nvidia)
-        if: startsWith(matrix.artifact_name, 'linux-') && !contains(matrix.artifact_name, 'nvidia')
-        run: |
-          name="${{ matrix.compressed_artifact_name }}-${{ env.AIVISSPEECH_EDITOR_VERSION }}"
-          7z a -ttar $name.tar prepackage/
-          7z rn $name.tar prepackage/ AivisSpeech/
-          7z a -tgzip $name.tar.gz $name.tar
-          rm $name.tar
+      # - name: Create Linux tar.gz (without nvidia)
+      #   if: startsWith(matrix.artifact_name, 'linux-') && !contains(matrix.artifact_name, 'nvidia')
+      #   run: |
+      #     name="${{ matrix.compressed_artifact_name }}-${{ env.AIVISSPEECH_EDITOR_VERSION }}"
+      #     7z a -ttar $name.tar prepackage/
+      #     7z rn $name.tar prepackage/ AivisSpeech/
+      #     7z a -tgzip $name.tar.gz $name.tar
+      #     rm $name.tar
 
-      - name: Upload Linux tar.gz (without nvidia) to Artifacts
-        if: startsWith(matrix.artifact_name, 'linux-') && !contains(matrix.artifact_name, 'nvidia') && github.event.inputs.upload_artifact == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.artifact_name }}-targz
-          path: |-
-            ${{ matrix.compressed_artifact_name }}-${{ env.AIVISSPEECH_EDITOR_VERSION }}.tar.gz
+      # - name: Upload Linux tar.gz (without nvidia) to Artifacts
+      #   if: startsWith(matrix.artifact_name, 'linux-') && !contains(matrix.artifact_name, 'nvidia') && github.event.inputs.upload_artifact == 'true'
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: ${{ matrix.artifact_name }}-targz
+      #     path: |-
+      #       ${{ matrix.compressed_artifact_name }}-${{ env.AIVISSPEECH_EDITOR_VERSION }}.tar.gz
 
-      - name: Upload Linux tar.gz (without nvidia) to Release Assets
-        if: startsWith(matrix.artifact_name, 'linux-') && !contains(matrix.artifact_name, 'nvidia') && (github.event.release.tag_name || github.event.inputs.version) != ''
-        uses: softprops/action-gh-release@v2
-        with:
-          prerelease: ${{ github.event.inputs.prerelease }}
-          tag_name: ${{ env.AIVISSPEECH_EDITOR_VERSION }}
-          files: |-
-            ${{ matrix.compressed_artifact_name }}-${{ env.AIVISSPEECH_EDITOR_VERSION }}.tar.gz
-          target_commitish: ${{ github.sha }}
+      # - name: Upload Linux tar.gz (without nvidia) to Release Assets
+      #   if: startsWith(matrix.artifact_name, 'linux-') && !contains(matrix.artifact_name, 'nvidia') && (github.event.release.tag_name || github.event.inputs.version) != ''
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     prerelease: ${{ github.event.inputs.prerelease }}
+      #     tag_name: ${{ env.AIVISSPEECH_EDITOR_VERSION }}
+      #     files: |-
+      #       ${{ matrix.compressed_artifact_name }}-${{ env.AIVISSPEECH_EDITOR_VERSION }}.tar.gz
+      #     target_commitish: ${{ github.sha }}
 
-      - name: Delete Linux tar.gz (without nvidia)
-        if: startsWith(matrix.artifact_name, 'linux-') && !contains(matrix.artifact_name, 'nvidia')
-        run: |
-          rm ${{ matrix.compressed_artifact_name }}-${{ env.AIVISSPEECH_EDITOR_VERSION }}.tar.gz
+      # - name: Delete Linux tar.gz (without nvidia)
+      #   if: startsWith(matrix.artifact_name, 'linux-') && !contains(matrix.artifact_name, 'nvidia')
+      #   run: |
+      #     rm ${{ matrix.compressed_artifact_name }}-${{ env.AIVISSPEECH_EDITOR_VERSION }}.tar.gz
 
       - name: Create Windows & Mac zip (without nvidia)
         if: (startsWith(matrix.artifact_name, 'windows-') || startsWith(matrix.artifact_name, 'macos-')) && !contains(matrix.artifact_name, 'nvidia')
