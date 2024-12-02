@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# AivisSpeech Installer Script
+# AivisSpeech Installer Script (unmaintained)
 
 # set -x # Debug mode: output verbose log
 set -euo pipefail
@@ -25,7 +25,7 @@ cat << 'BANNER'
 +-+-+-+-+-+-+-+-+-+
 BANNER
 
-NAME=$(basename "${NAME:-linux-nvidia-appimage}")
+NAME=$(basename "${NAME:-AivisSpeech.AppImage}")
 VERSION=$(basename "${VERSION:-}")
 REPO_URL=${REPO_URL:-https://github.com/Aivis-Project/AivisSpeech}
 
