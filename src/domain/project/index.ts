@@ -7,8 +7,10 @@
 import semver from "semver";
 
 import { LatestProjectType, projectSchema } from "./schema";
+import { uuid4 } from "@/helpers/random";
 import { AccentPhrase } from "@/openapi";
-import { EngineId, StyleId, Voice } from "@/type/preload";
+import { DEFAULT_TRACK_NAME } from "@/sing/domain";
+import { EngineId, StyleId, TrackId, Voice } from "@/type/preload";
 
 // const DEFAULT_SAMPLING_RATE = 44100;
 
@@ -309,6 +311,20 @@ export const migrateProjectFileObject = async (
   // ----- 以下は AivisSpeech 固有のマイグレーション処理 -----
 
   if (semver.satisfies(projectAppVersion, "<1.1.0", semverSatisfiesOptions)) {
+
+    // tracks: Track[] -> tracks: Record<TrackId, Track> + trackOrder: TrackId[]
+    const newTracks: Record<TrackId, unknown> = {};
+    for (const track of projectData.song.tracks) {
+      track.name = DEFAULT_TRACK_NAME;
+      track.solo = false;
+      track.mute = false;
+      track.gain = 1;
+      track.pan = 0;
+      newTracks[TrackId(uuid4())] = track;
+    }
+    projectData.song.tracks = newTracks;
+    projectData.song.trackOrder = Object.keys(newTracks);
+
     // 文内無音倍率の追加
     for (const audioItemsKey in projectData.talk.audioItems) {
       projectData.talk.audioItems[audioItemsKey].query.pauseLengthScale = 1;
