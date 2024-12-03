@@ -431,3 +431,16 @@ jobs:
             dist_electron/nsis-web/out/*.7z.*
             dist_electron/nsis-web/*.exe
           target_commitish: ${{ github.sha }}
+
+  update-tag-to-current-commit:
+    if: ${{ (github.event.release.tag_name || github.event.inputs.version) != '' }}
+    needs: [build-and-upload]
+    runs-on: ubuntu-latest
+    steps:
+      - name: <Setup> Check out the repository
+        uses: actions/checkout@v4
+
+      - name: <Deploy> Change tag to this commit for refreshing the release # c.f. voicevox_engine#854
+        run: |
+          git tag -f ${{ github.event.release.tag_name || github.event.inputs.version }}
+          git push -f --tag
