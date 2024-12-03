@@ -679,7 +679,13 @@ const [
 const canSetAudioOutputDevice = computed(() => {
   return !!HTMLAudioElement.prototype.setSinkId;
 });
-const currentAudioOutputDeviceComputed = computed<string | undefined>({
+const currentAudioOutputDeviceComputed = computed<
+  | {
+      key: string;
+      label: string;
+    }
+  | undefined
+>({
   get: () => {
     // 再生デバイスが見つからなかったらデフォルト値に戻す
     // FIXME: watchなどにしてgetter内で操作しないようにする
@@ -687,7 +693,7 @@ const currentAudioOutputDeviceComputed = computed<string | undefined>({
       (device) => device.key === store.state.savingSetting.audioOutputDevice,
     );
     if (device) {
-      return device.key;
+      return device;
     } else if (store.state.savingSetting.audioOutputDevice !== "default") {
       handleSavingSettingChange("audioOutputDevice", "default");
     }
@@ -695,7 +701,7 @@ const currentAudioOutputDeviceComputed = computed<string | undefined>({
   },
   set: (device) => {
     if (device) {
-      handleSavingSettingChange("audioOutputDevice", device);
+      handleSavingSettingChange("audioOutputDevice", device.key);
     }
   },
 });
