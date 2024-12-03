@@ -516,25 +516,30 @@ const parameterConfigs = computed<ParameterConfig[]>(() => [
       }),
     key: "volumeScale",
   },
-  {
-    label: "文内無音倍率",
-    tooltip: "文内無音時間の長さを調整できます",
-    sliderProps: {
-      modelValue: () => query.value?.pauseLengthScale ?? null,
-      disable: () => uiLocked.value,
-      max: SLIDER_PARAMETERS.PAUSE_LENGTH_SCALE.max,
-      min: SLIDER_PARAMETERS.PAUSE_LENGTH_SCALE.min,
-      step: SLIDER_PARAMETERS.PAUSE_LENGTH_SCALE.step,
-      scrollStep: SLIDER_PARAMETERS.PAUSE_LENGTH_SCALE.scrollStep,
-      scrollMinStep: SLIDER_PARAMETERS.PAUSE_LENGTH_SCALE.scrollMinStep,
-    },
-    onChange: (pauseLengthScale: number) =>
-      store.actions.COMMAND_MULTI_SET_AUDIO_PAUSE_LENGTH_SCALE({
-        audioKeys: selectedAudioKeys.value,
-        pauseLengthScale,
-      }),
-    key: "pauseLengthScale",
-  },
+  // AivisSpeech Engine 以外の音声合成エンジンでのみ「文内無音倍率」を表示する
+  ...(audioItem.value.voice.engineId !== store.getters.DEFAULT_ENGINE_ID
+    ? ([
+      {
+        label: "文内無音倍率",
+        tooltip: "文内無音時間の長さを調整できます",
+        sliderProps: {
+          modelValue: () => query.value?.pauseLengthScale ?? null,
+          disable: () => uiLocked.value,
+          max: SLIDER_PARAMETERS.PAUSE_LENGTH_SCALE.max,
+          min: SLIDER_PARAMETERS.PAUSE_LENGTH_SCALE.min,
+          step: SLIDER_PARAMETERS.PAUSE_LENGTH_SCALE.step,
+          scrollStep: SLIDER_PARAMETERS.PAUSE_LENGTH_SCALE.scrollStep,
+          scrollMinStep: SLIDER_PARAMETERS.PAUSE_LENGTH_SCALE.scrollMinStep,
+        },
+        onChange: (pauseLengthScale: number) =>
+          store.actions.COMMAND_MULTI_SET_AUDIO_PAUSE_LENGTH_SCALE({
+            audioKeys: selectedAudioKeys.value,
+            pauseLengthScale,
+          }),
+        key: "pauseLengthScale",
+      },
+      ] as ParameterConfig[])
+    : []),
   {
     label: "開始無音（秒）",
     tooltip: "音声先頭の無音時間の長さを調整できます",
