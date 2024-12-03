@@ -19,15 +19,13 @@
               style="margin-top: 20px !important"
               spaced
             />
-            <QItemLabel header>{{
-              mapNullablePipe(engineInfos.get(engineId), (v) => v.name)
-            }}</QItemLabel>
+            <QItemLabel header>{{ engineInfos.get(engineId)?.name }}</QItemLabel>
           </template>
           <template
-            v-for="([, characterInfo], characterIndex) in mapNullablePipe(
-              engineInfos.get(engineId),
-              (v) => v.characterInfos,
-            )"
+            v-for="([, characterInfo], characterIndex) in getOrThrow(
+              engineInfos,
+              engineId,
+            ).characterInfos"
             :key="characterIndex"
           >
             <QItem
@@ -58,12 +56,10 @@
         </div>
         <h3 style="margin-top: 24px !important">
           {{
-            mapNullablePipe(
-              engineInfos.get(selectedInfo.engine),
-              (v) => v.characterInfos,
-              (v) => mapNullablePipe(selectedInfo, (i) => v.get(i.character)),
-              (v) => v.metas.speakerName,
-            )
+            selectedInfo &&
+            engineInfos
+              .get(selectedInfo.engine)
+              ?.characterInfos.get(selectedInfo.character)?.metas.speakerName
           }}
         </h3>
         <QCard flat bordered class="q-mt-lg">
@@ -83,7 +79,7 @@ import { computed, ref } from "vue";
 import { useStore } from "@/store";
 import { useMarkdownIt } from "@/plugins/markdownItPlugin";
 import { EngineId, SpeakerId } from "@/type/preload";
-import { mapNullablePipe } from "@/helpers/map";
+import { getOrThrow } from "@/helpers/mapHelper";
 
 type DetailKey = { engine: EngineId; character: SpeakerId };
 
