@@ -266,7 +266,9 @@ const pronunciation = computed(() => {
 });
 
 const handleChangePronounce = (newPronunciation: string) => {
-  let popUntilPause = false;
+  const popUntilPause = false;
+  // AivisSpeech Engine では句読点や記号もモーラ扱いとしているため、下記処理は行わない
+  /*
   newPronunciation = newPronunciation
     .replace(/,/g, "、")
     // 連続する読点をまとめる
@@ -281,6 +283,7 @@ const handleChangePronounce = (newPronunciation: string) => {
       popUntilPause = true;
     }
   }
+  */
   void store.actions.COMMAND_CHANGE_SINGLE_ACCENT_PHRASE({
     audioKey: props.audioKey,
     newPronunciation,

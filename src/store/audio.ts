@@ -2506,7 +2506,8 @@ export const audioCommandStore = transformCommandStore(
 
         let newAccentPhrasesSegment: AccentPhrase[] | undefined = undefined;
 
-        const kanaRegex = createKanaRegex(true);
+        // AivisSpeech Engine では句読点や記号もモーラ扱いとしているため、includeSeparation を false に設定している
+        const kanaRegex = createKanaRegex(false);
         if (kanaRegex.test(newPronunciation)) {
           // ひらがなが混ざっている場合はカタカナに変換
           const katakana = convertHiraToKana(newPronunciation);
