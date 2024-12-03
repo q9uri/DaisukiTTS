@@ -6,6 +6,7 @@
 import { onErrorCaptured, onMounted } from "vue";
 
 const logError = (error: Error): void => {
+  console.error(error);
   window.backend.logError(error);
 };
 

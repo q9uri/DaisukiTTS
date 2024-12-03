@@ -120,6 +120,8 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
         });
 
         // ソングプロジェクトの初期化
+        // AivisSpeech ではソングプロジェクトを初期化しない
+        /*
         await context.actions.SET_TPQN({ tpqn: DEFAULT_TPQN });
         await context.actions.SET_TEMPOS({
           tempos: [createDefaultTempo(0)],
@@ -134,6 +136,7 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
         await context.actions.SET_NOTES({ notes: [], trackId });
         await context.actions.SET_SINGER({ withRelated: true, trackId });
         await context.actions.CLEAR_PITCH_EDIT_DATA({ trackId });
+        */
 
         context.mutations.SET_PROJECT_FILEPATH({ filePath: undefined });
         void context.actions.CLEAR_UNDO_HISTORY();
