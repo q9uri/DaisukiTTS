@@ -90,7 +90,7 @@ jobs:
             package_name: AivisSpeech
             compressed_artifact_name: AivisSpeech-Linux-x64
             app_asar_dir: prepackage/resources
-            installer_artifact_name: AivisSpeech.AppImage
+            installer_artifact_name: linux-x64-appimage
             linux_artifact_name: "AivisSpeech.${ext}"
             linux_executable_name: AivisSpeech
             linux_appimage_7z_name: AivisSpeech.AppImage
@@ -373,7 +373,7 @@ jobs:
 
             paste -d '\t' archives_name.txt archives_size.txt archives_hash.txt > archives.txt
 
-            mv archives.txt "${{ matrix.installer_artifact_name }}.7z.txt"
+            mv archives.txt "AivisSpeech.AppImage.7z.txt"
           done
 
       - name: Upload Linux AppImage split to Artifacts
