@@ -278,6 +278,7 @@ const migrations: [string, (store: Record<string, unknown>) => unknown][] = [
   [
     ">=1.1",
     (config) => {
+
       // プリセット機能を実験的機能から通常機能に
       const experimentalSetting =
         config.experimentalSetting as ExperimentalSettingType;
@@ -307,7 +308,10 @@ const migrations: [string, (store: Record<string, unknown>) => unknown][] = [
       const presets = config.presets as ConfigType["presets"];
       for (const preset of Object.values(presets.items)) {
         if (preset == undefined) throw new Error("preset == undefined");
-        preset.pauseLengthScale = 1;
+        if (!("pauseLengthScale" in preset)) {
+          // @ts-expect-error 存在しない場合のみ追加する
+          preset.pauseLengthScale = 1;
+        }
       }
 
       return config;
@@ -353,7 +357,7 @@ export abstract class BaseConfigManager {
       const data = await this.load();
       const version = data.__internal__.migrations.version;
       for (const [versionRange, migration] of migrations) {
-        if (!semver.satisfies(version, versionRange)) {
+        if (!semver.satisfies(version, versionRange) || version === '999.999.999') {
           log.info(`Migrating ${version} to ${versionRange} ...`);
           migration(data);
           log.info(`Migrated ${version} to ${versionRange} successfully.`);

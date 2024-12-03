@@ -6,7 +6,6 @@ import {
   ProjectStoreState,
   ProjectStoreTypes,
 } from "@/store/type";
-import { TrackId } from "@/type/preload";
 import path from "@/helpers/path";
 import { getValueOrThrow, ResultError } from "@/type/result";
 import { LatestProjectType } from "@/domain/project/schema";
@@ -14,19 +13,12 @@ import {
   migrateProjectFileObject,
   ProjectFileFormatError,
 } from "@/domain/project";
-import {
-  createDefaultTempo,
-  createDefaultTimeSignature,
-  createDefaultTrack,
-  DEFAULT_TPQN,
-} from "@/sing/domain";
 import { EditorType } from "@/type/preload";
 import { IsEqual } from "@/type/utility";
 import {
   showAlertDialog,
   showQuestionDialog,
 } from "@/components/Dialog/Dialog";
-import { uuid4 } from "@/helpers/random";
 
 export const projectStoreState: ProjectStoreState = {
   savedLastCommandIds: { talk: null, song: null },
