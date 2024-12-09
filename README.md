@@ -77,7 +77,7 @@ AIVM 仕様や AIVM / AIVMX ファイルについての詳細は、Aivis Project
 - `Style-Bert-VITS2 (JP-Extra)`
 
 > [!NOTE]
-> AIVM の仕様上は多言語対応の話者を定義できますが、AivisSpeech Engine は VOICEVOX ENGINE と同様に、日本語音声合成のみに対応しています。  
+> AIVM メタデータの仕様上は多言語対応の話者を定義できますが、AivisSpeech Engine は VOICEVOX ENGINE と同様に、日本語音声合成のみに対応しています。  
 > そのため、英語や中国語に対応した音声合成モデルであっても、日本語以外の音声合成はできません。
 
 ### モデルファイルの配置場所

@@ -97,22 +97,31 @@ AivisSpeech をはじめて起動するときのみ、モデルデータのダ�
 起動中の音声合成エンジンの設定画面で行えます。
 
 ソフトウェア起動中にブラウザから `http://127.0.0.1:[音声合成エンジンのポート番号]/setting` にアクセスすると音声合成エンジンの設定画面が開きます。  
-音声合成エンジンのポート番号はデフォルトで `10101` です。
+AivisSpeech Engine のポート番号のデフォルトは `10101` です。
 
 ### Q. クレジット表記は必要ですか？
 
 AivisSpeech は、利用用途を束縛されない、自由な AI 音声合成ソフトウェアを目指しています。  
-（成果物で使った音声合成モデルの規約次第ではありますが）基本的にクレジット表記不要で、個人・法人・商用・非商用問わず自由にお使いいただけます。  
+（成果物で使った音声合成モデルのライセンス次第ではありますが）少なくともソフトウェア本体はクレジット表記不要で、個人・法人・商用・非商用を問わず、自由にお使いいただけます。
 
 …とはいえ、より多くの方に AivisSpeech のことを知っていただきたい気持ちもあります。  
 もしよければ、成果物のどこかに AivisSpeech のことをクレジットしていただけると嬉しいです。（クレジットの表記フォーマットはお任せします。）
 
 ## 不具合・エラーに関する質問
 
-### Q. バグを見つけました。どこに報告すれば良いですか？
+### Q. 不具合を見つけました。どこに報告すれば良いですか？
 
-バグを見つけられた方は Twitter (X) または [Aivis Project お問い合わせフォーム](https://docs.google.com/forms/d/e/1FAIpQLSd1gi8lMW1mpdrkCHbM090pWmWhKgz4tR1Obc9G9hOuWpZPsA/viewform) までご報告いただけると助かります。  
-Aivis Project 公式 ([@aivis_project](https://twitter.com/aivis_project))
+不具合を見つけられた方は、以下のいずれかの方法でご報告ください。  
+なるべく具体的な状況（エラーメッセージ、発生時の操作内容など）を記載いただけますと、より迅速な対応が可能です。
+
+1. **[GitHub Issue](https://github.com/Aivis-Project/AivisSpeech/issues) (推奨)**  
+   GitHub アカウントをお持ちの方は、GitHub の Issue からご報告いただけると、早期の対応が可能です。
+
+2. **[Twitter (X)](https://x.com/aivis_project)**  
+   Twitter (X) のリプライや DM でご報告いただくことも可能です。
+
+3. **[Aivis Project お問い合わせフォーム](https://docs.google.com/forms/d/e/1FAIpQLSd1gi8lMW1mpdrkCHbM090pWmWhKgz4tR1Obc9G9hOuWpZPsA/viewform)**  
+   お問い合わせフォームからもご報告いただけます。
 
 ### Q. バージョンアップすると表示がおかしくなりました
 
