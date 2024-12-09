@@ -35,7 +35,7 @@
 以下はユーザーの方向けのドキュメントです。
 
 - **[使い方](public/howtouse.md)**
-- **[よくある質問](public/qAndA.md)**
+- **[よくある質問 / Q&A](public/qAndA.md)**
 - **[お問い合わせ](public/contact.md)**
 
 ## 動作環境
