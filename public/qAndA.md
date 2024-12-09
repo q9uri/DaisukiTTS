@@ -185,11 +185,11 @@ Intel 第 12 世代以降の CPU では、上記の Windows 11 の設定画面�
 
 #### Windows 版
 
-`C:\Users\(ユーザー名)\AppData\Roaming\AivisSpeech-Engine\logs`
+`C:\Users\(ユーザー名)\AppData\Roaming\AivisSpeech-Engine\Logs`
 
 #### Mac 版
 
-`/Users/(ユーザー名)/Library/Application Support/AivisSpeech-Engine/logs`
+`/Users/(ユーザー名)/Library/Application Support/AivisSpeech-Engine/Logs`
 
 ## その他
 
