@@ -71,7 +71,7 @@
       v-else
       dense
       flat
-      icon="crop_square"
+      icon="sym_r_crop_square"
       class="title-bar-buttons"
       aria-label="最大化"
       @click="toggleMaximizeWindow()"
