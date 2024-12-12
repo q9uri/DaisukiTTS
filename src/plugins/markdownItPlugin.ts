@@ -1,6 +1,8 @@
 import { Plugin, inject, InjectionKey } from "vue";
 import MarkdownIt from "markdown-it";
+import MarkdownItGitHubAlerts from "markdown-it-github-alerts";
 import { UnreachableError } from "@/type/utility";
+import "markdown-it-github-alerts/styles/github-base.css";
 
 const markdownItKey: InjectionKey<MarkdownIt> = Symbol("_markdownIt_");
 
@@ -18,6 +20,7 @@ export const markdownItPlugin: Plugin = {
       html: true,
       linkify: true,
     });
+    md.use(MarkdownItGitHubAlerts)
 
     // 全てのリンクに_blankを付ける
     // https://github.com/markdown-it/markdown-it/blob/master/docs/architecture.md#renderer
