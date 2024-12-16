@@ -4,10 +4,11 @@
 
 ### Q. 動作環境を教えてください。
 
-Windows・macOS 搭載の PC に対応しています。
+Windows・macOS 搭載の PC に対応しています。  
+AivisSpeech を起動するには、PC に 3GB 以上の空きメモリ (RAM) が必要です。
 
-Windows: Windows 10 (22H2 以降)・Windows 11  
-macOS: macOS 13 Ventura 以降  
+- **Windows:** Windows 10 (22H2 以降)・Windows 11  
+- **macOS:** macOS 13 Ventura 以降
 
 > [!NOTE]
 > Intel CPU 搭載 Mac での動作は積極的に検証していません。  
@@ -16,7 +17,7 @@ macOS: macOS 13 Ventura 以降
 > [!WARNING]
 > Windows 10 では、バージョン 22H2 での動作確認のみ行っています。  
 > **サポートが終了した Windows 10 の古いバージョンでは、AivisSpeech Engine がクラッシュし起動に失敗する事例が報告されています。**  
-> セキュリティ上の観点からも、Windows 10 環境の方は最低限バージョン 22H2 まで更新してからの利用を強くおすすめいたします。
+> セキュリティ上の観点からも、Windows 10 環境の方は、最低限バージョン 22H2 まで更新してからの利用を強くおすすめいたします。
 
 ## インストールに関する質問
 
