@@ -315,17 +315,19 @@ export const migrateProjectFileObject = async (
 
     // AivisSpeech ではソング機能は封印されているが、実装上の都合で一応マイグレーションしている
     // tracks: Track[] -> tracks: Record<TrackId, Track> + trackOrder: TrackId[]
-    const newTracks: Record<TrackId, unknown> = {};
-    for (const track of projectData.song.tracks) {
-      track.name = DEFAULT_TRACK_NAME;
-      track.solo = false;
-      track.mute = false;
-      track.gain = 1;
-      track.pan = 0;
-      newTracks[TrackId(uuid4())] = track;
+    if (Array.isArray(projectData.song.tracks)) {  // すでに変換済みの場合は何もしない
+      const newTracks: Record<TrackId, unknown> = {};
+      for (const track of projectData.song.tracks) {
+        track.name = DEFAULT_TRACK_NAME;
+        track.solo = false;
+        track.mute = false;
+        track.gain = 1;
+        track.pan = 0;
+        newTracks[TrackId(uuid4())] = track;
+      }
+      projectData.song.tracks = newTracks;
+      projectData.song.trackOrder = Object.keys(newTracks);
     }
-    projectData.song.tracks = newTracks;
-    projectData.song.trackOrder = Object.keys(newTracks);
 
     // 文内無音倍率の追加
     for (const audioItemsKey in projectData.talk.audioItems) {
