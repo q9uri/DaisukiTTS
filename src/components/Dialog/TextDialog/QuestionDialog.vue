@@ -105,5 +105,6 @@ const onClick = (index: number) => {
 .message {
   word-break: break-all;
   white-space: pre-wrap;
+  line-height: 1.65;
 }
 </style>

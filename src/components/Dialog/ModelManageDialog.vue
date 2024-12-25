@@ -34,6 +34,8 @@
                   <QItemLabel class="text-display">{{ aivmInfo.manifest.name }}</QItemLabel>
                   <QItemLabel caption class="engine-path">
                     {{ aivmInfo.manifest.speakers.length }} Speakers / Version {{ aivmInfo.manifest.version }}
+                    <QBadge v-if="aivmInfo.isUpdateAvailable" color="primary"
+                      style="margin-left: 4px; margin-top: 2px; font-size: 10.5px;">Update!</QBadge>
                   </QItemLabel>
                 </QItemSection>
               </QItem>
@@ -51,75 +53,88 @@
             <QTabPanels v-model="activeSpeakerIndex"
               animated class="bg-background">
               <QTabPanel v-for="(speaker, index) of activeAivmInfo.manifest.speakers" :key="speaker.uuid" :name="index">
-                <div class="q-mt-sm row items-center">
-                  <div class="col-auto" style="font-size: 20px; font-weight: bold;">
-                    <span>{{ activeAivmInfo.manifest.name }}</span>
-                    <!-- 音声合成モデル名と現在の話者名が異なる場合のみ、話者名を追加する -->
-                    <span v-if="activeAivmInfo.manifest.name !== speaker.name">
-                      - {{ speaker.name }}
-                    </span>
+                <div class="model-detail-content">
+                  <div class="q-mt-sm row items-center">
+                    <div class="col-auto" style="font-size: 20px; font-weight: bold;">
+                      <span>{{ activeAivmInfo.manifest.name }}</span>
+                      <!-- 音声合成モデル名と現在の話者名が異なる場合のみ、話者名を追加する -->
+                      <span v-if="activeAivmInfo.manifest.name !== speaker.name">
+                        - {{ speaker.name }}
+                      </span>
+                    </div>
+                    <div class="col-auto q-ml-auto" style="font-size: 13.5px; color: #D2D3D4;">
+                      <span>{{ activeAivmInfo.manifest.speakers.length }} Speakers / Version {{ activeAivmInfo.manifest.version }}</span>
+                      <span v-if="activeAivmInfo.isUpdateAvailable" class="q-ml-xs text-primary">
+                        (Version {{ activeAivmInfo.latestVersion }} に更新できます)
+                      </span>
+                    </div>
                   </div>
-                  <div class="col-auto q-ml-auto" style="font-size: 13.5px; color: #D2D3D4;">
-                    <span>{{ activeAivmInfo.manifest.speakers.length }} Speakers / Version {{ activeAivmInfo.manifest.version }}</span>
+                  <div class="row items-center" style="margin-top: 12px;">
+                    <div class="col-auto q-mr-sm" style="font-size: 15px; font-weight: bold;">
+                      {{ activeAivmInfo.manifest.speakers.reduce((acc, speaker) => acc + speaker.styles.length, 0) }}スタイル
+                    </div>
+                    <div class="col-auto" style="font-size: 13.5px; font-weight: bold; color: #D2D3D4;">
+                      {{ speaker.styles.map(style => style.name).join(' / ') }}
+                    </div>
                   </div>
-                </div>
-                <div class="row items-center" style="margin-top: 12px;">
-                  <div class="col-auto q-mr-sm" style="font-size: 15px; font-weight: bold;">
-                    {{ activeAivmInfo.manifest.speakers.reduce((acc, speaker) => acc + speaker.styles.length, 0) }}スタイル
+                  <div class="row items-center" style="margin-top: 12px; font-size: 12.5px; color: #D2D3D4;">
+                    <QIcon style="margin-right: 4px;" name="sym_r_manufacturing" /> Model Architecture: {{ activeAivmInfo.manifest.modelArchitecture }}
+                    <QIcon style="margin-right: 4px; margin-left: 12px;" name="sym_r_description" /> Model Format: {{ activeAivmInfo.manifest.modelFormat }}
                   </div>
-                  <div class="col-auto" style="font-size: 13.5px; font-weight: bold; color: #D2D3D4;">
-                    {{ speaker.styles.map(style => style.name).join(' / ') }}
+                  <div class="row items-center" style="margin-top: 4px; font-size: 12.5px; color: #D2D3D4;">
+                    <QIcon style="margin-right: 4px;" name="sym_r_person" />
+                    {{ activeAivmInfo.manifest.creators!.length >= 2 ? 'Creators: ' : 'Creator: ' }}
+                    {{ activeAivmInfo.manifest.creators!.length >= 1 ? activeAivmInfo.manifest.creators!.join(' / ') : '不明' }}
                   </div>
-                </div>
-                <div class="row items-center" style="margin-top: 12px; font-size: 12.5px; color: #D2D3D4;">
-                  <QIcon style="margin-right: 4px;" name="sym_r_manufacturing" /> Model Architecture: {{ activeAivmInfo.manifest.modelArchitecture }}
-                  <QIcon style="margin-right: 4px; margin-left: 12px;" name="sym_r_description" /> Model Format: {{ activeAivmInfo.manifest.modelFormat }}
-                </div>
-                <div class="row items-center" style="margin-top: 4px; font-size: 12.5px; color: #D2D3D4;">
-                  <QIcon style="margin-right: 4px;" name="sym_r_person" />
-                  {{ activeAivmInfo.manifest.creators!.length >= 2 ? 'Creators: ' : 'Creator: ' }}
-                  {{ activeAivmInfo.manifest.creators!.length >= 1 ? activeAivmInfo.manifest.creators!.join(' / ') : '不明' }}
-                </div>
-                <div class="q-mt-md" style="font-size: 13.5px; color: #D2D3D4; white-space: pre-wrap; word-wrap: break-word;">
-                  {{ activeAivmInfo.manifest.description === '' ?
-                    '（この音声合成モデルの説明は提供されていません）' :
-                    activeAivmInfo.manifest.description
-                  }}
-                </div>
-                <div class="q-mt-md" style="margin-bottom: 12px; font-size: 17px; font-weight: bold;">ボイスサンプル</div>
-                <div class="row" style="gap: 12px;">
-                  <div v-for="style in speaker.styles" :key="style.localId" class="col-12">
-                    <div class="style-card">
-                      <div class="style-content">
-                        <div class="style-icon-container">
-                          <img class="style-icon" :src="style.icon ? style.icon : speaker.icon" />
-                          <div class="style-name">{{ style.name }}</div>
-                        </div>
-                        <div class="voice-samples-container">
-                          <div v-if="style.voiceSamples!.length === 0" class="sample-transcript">
-                            （このスタイルのボイスサンプルは提供されていません）
+                  <div class="q-mt-md" style="font-size: 13.5px; color: #D2D3D4; white-space: pre-wrap; word-wrap: break-word;">
+                    {{ activeAivmInfo.manifest.description === '' ?
+                      '（この音声合成モデルの説明は提供されていません）' :
+                      activeAivmInfo.manifest.description
+                    }}
+                  </div>
+                  <div class="q-mt-md" style="margin-bottom: 12px; font-size: 17px; font-weight: bold;">ボイスサンプル</div>
+                  <div class="row" style="gap: 12px;">
+                    <div v-for="style in speaker.styles" :key="style.localId" class="col-12">
+                      <div class="style-card">
+                        <div class="style-content">
+                          <div class="style-icon-container">
+                            <img class="style-icon" :src="style.icon ? style.icon : speaker.icon" />
+                            <div class="style-name">{{ style.name }}</div>
                           </div>
-                          <div v-for="(sample, voiceSampleIndex) in style.voiceSamples" :key="voiceSampleIndex" class="voice-sample">
-                            <div
-                              class="play-button"
-                              :class="{ 'playing': audioPlaying[`${speaker.uuid}-${style.localId}-${voiceSampleIndex}`] }"
-                              @click="toggleAudio(speaker.uuid, style.localId, voiceSampleIndex, sample.audio)"
-                            >
-                              <QIcon
-                                :name="audioPlaying[`${speaker.uuid}-${style.localId}-${voiceSampleIndex}`] ? 'sym_r_stop' : 'sym_r_volume_up'"
-                                size="25px"
-                                color="white"
-                              />
+                          <div class="voice-samples-container">
+                            <div v-if="style.voiceSamples!.length === 0" class="sample-transcript">
+                              （このスタイルのボイスサンプルは提供されていません）
                             </div>
-                            <div class="sample-transcript">{{ sample.transcript }}</div>
+                            <div v-for="(sample, voiceSampleIndex) in style.voiceSamples" :key="voiceSampleIndex" class="voice-sample">
+                              <div
+                                class="play-button"
+                                :class="{ 'playing': audioPlaying[`${speaker.uuid}-${style.localId}-${voiceSampleIndex}`] }"
+                                @click="toggleAudio(speaker.uuid, style.localId, voiceSampleIndex, sample.audio)"
+                              >
+                                <QIcon
+                                  :name="audioPlaying[`${speaker.uuid}-${style.localId}-${voiceSampleIndex}`] ? 'sym_r_stop' : 'sym_r_volume_up'"
+                                  size="25px"
+                                  color="white"
+                                />
+                              </div>
+                              <div class="sample-transcript">{{ sample.transcript }}</div>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="q-mt-md q-mb-xs row">
+                <div class="fixed-bottom-buttons">
                   <QSpace />
+                  <QBtn v-if="activeAivmInfo.isUpdateAvailable" outline icon="sym_r_update"
+                    label="アップデート" textColor="primary" class="text-no-wrap text-bold q-mr-sm"
+                    @click="updateAivmModel" />
+                  <QBtn outline :icon="activeAivmInfo.isLoaded ? 'sym_r_power_off' : 'sym_r_power'"
+                    :label="activeAivmInfo.isLoaded ? 'モデルをアンロード' : 'モデルをロード'"
+                    :textColor="activeAivmInfo.isLoaded ? 'power-off' : 'power-on'"
+                    class="text-no-wrap text-bold q-mr-sm"
+                    @click="toggleModelLoad" />
                   <QBtn outline icon="sym_r_delete" label="アンインストール" textColor="warning" class="text-no-wrap text-bold"
                     @click="unInstallAivmModel" />
                 </div>
@@ -326,7 +341,7 @@ const cancelInstall = () => {
 // 音声合成モデルをインストールする
 const installModel = async () => {
   void store.actions.SHOW_LOADING_SCREEN({
-    message: "インストール中...",
+    message: "インストールしています...",
   });
   try {
     const apiInstance = await getApiInstance();
@@ -352,8 +367,8 @@ const installModel = async () => {
       void store.actions.SHOW_ALERT_DIALOG({
         type: "error",
         title: "インストール失敗",
-        message: `音声合成モデルのインストールに失敗しました。
-          (HTTP Error ${error.response.status} / ${await error.response.text()})`,
+        message: `音声合成モデルのインストールに失敗しました。\n` +
+                 `(HTTP Error ${error.response.status} / ${await error.response.text()})`,
       });
     } else {
       // assert characterInfo !== undefined エラーを無視
@@ -407,8 +422,8 @@ const unInstallAivmModel = async () => {
         void store.actions.SHOW_ALERT_DIALOG({
           type: "error",
           title: "アンインストール失敗",
-          message: `音声合成モデル「${activeAivmInfo.value?.manifest.name}」のアンインストールに失敗しました。
-            (HTTP Error ${error.response.status} / ${await error.response.text()})`,
+          message: `音声合成モデル「${activeAivmInfo.value?.manifest.name}」のアンインストールに失敗しました。\n` +
+                   `(HTTP Error ${error.response.status} / ${await error.response.text()})`,
         });
       } else {
         // assert characterInfo !== undefined エラーを無視
@@ -423,6 +438,109 @@ const unInstallAivmModel = async () => {
             title: "アンインストール失敗",
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             message: `音声合成モデル「${activeAivmInfo.value?.manifest.name}」のアンインストールに失敗しました。(${error})`,
+          });
+        }
+      }
+    } finally {
+      await store.actions.HIDE_ALL_LOADING_SCREEN();
+      void getAivmInfos();  // 再取得
+    }
+  }
+};
+
+// モデルのロード/アンロードを切り替える
+const toggleModelLoad = async () => {
+  if (activeAivmUuid.value == null) {
+    throw new Error('aivm model is not selected');
+  }
+
+  void store.actions.SHOW_LOADING_SCREEN({
+    message: activeAivmInfo.value?.isLoaded ? 'モデルをアンロードしています...' : 'モデルをロードしています...',
+  });
+
+  try {
+    const apiInstance = await getApiInstance();
+    if (activeAivmInfo.value?.isLoaded) {
+      await apiInstance.invoke('unloadAivmAivmModelsAivmUuidUnloadPost')({ aivmUuid: activeAivmUuid.value });
+    } else {
+      await apiInstance.invoke('loadAivmAivmModelsAivmUuidLoadPost')({ aivmUuid: activeAivmUuid.value });
+    }
+  } catch (error) {
+    console.error(error);
+    if (error instanceof ResponseError) {
+      void store.actions.SHOW_ALERT_DIALOG({
+        type: 'error',
+        title: activeAivmInfo.value?.isLoaded ? 'アンロード失敗' : 'ロード失敗',
+        message: `音声合成モデル「${activeAivmInfo.value?.manifest.name}」の${activeAivmInfo.value?.isLoaded ? 'アンロード' : 'ロード'}に失敗しました。\n` +
+                 `(HTTP Error ${error.response.status} / ${await error.response.text()})`,
+      });
+    } else {
+      void store.actions.SHOW_ALERT_DIALOG({
+        type: 'error',
+        title: activeAivmInfo.value?.isLoaded ? 'アンロード失敗' : 'ロード失敗',
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        message: `音声合成モデル「${activeAivmInfo.value?.manifest.name}」の${activeAivmInfo.value?.isLoaded ? 'アンロード' : 'ロード'}に失敗しました。(${error})`,
+      });
+    }
+  } finally {
+    await store.actions.HIDE_ALL_LOADING_SCREEN();
+    void getAivmInfos();  // 再取得
+  }
+};
+
+// モデルをアップデートする
+const updateAivmModel = async () => {
+  if (activeAivmUuid.value == null) {
+    throw new Error('aivm model is not selected');
+  }
+
+  const result = await store.actions.SHOW_CONFIRM_DIALOG({
+    title: 'アップデートの確認',
+    message: `音声合成モデル「${activeAivmInfo.value?.manifest.name}」を Version ${activeAivmInfo.value?.latestVersion} へアップデートしますか？\n` +
+             'アップデート後、前のバージョンに戻すことはできません。',
+    actionName: 'アップデート',
+  });
+
+  if (result === 'OK') {
+    void store.actions.SHOW_LOADING_SCREEN({
+      message: 'アップデートしています...',
+    });
+
+    try {
+      const apiInstance = await getApiInstance();
+      await apiInstance.invoke('updateAivmAivmModelsAivmUuidUpdatePost')({ aivmUuid: activeAivmUuid.value });
+      // アップデート成功時の処理
+      // 話者・スタイル一覧を再読み込み
+      await store.actions.LOAD_CHARACTER({ engineId: store.getters.DEFAULT_ENGINE_ID });
+      await store.actions.LOAD_DEFAULT_STYLE_IDS();
+      // プリセットを再作成
+      await store.actions.CREATE_ALL_DEFAULT_PRESET();
+      void store.actions.SHOW_ALERT_DIALOG({
+        title: 'アップデート完了',
+        message: '音声合成モデルが正常にアップデートされました。',
+      });
+    } catch (error) {
+      console.error(error);
+      if (error instanceof ResponseError) {
+        void store.actions.SHOW_ALERT_DIALOG({
+          type: 'error',
+          title: 'アップデート失敗',
+          message: `音声合成モデル「${activeAivmInfo.value?.manifest.name}」のアップデートに失敗しました。\n` +
+                   `(HTTP Error ${error.response.status} / ${await error.response.text()})`,
+        });
+      } else {
+        // assert characterInfo !== undefined エラーを無視
+        if (error instanceof Error && error.message === 'assert characterInfo !== undefined') {
+          // アップデート成功時の処理を実行
+          await store.actions.LOAD_CHARACTER({ engineId: store.getters.DEFAULT_ENGINE_ID });
+          await store.actions.LOAD_DEFAULT_STYLE_IDS();
+          await store.actions.CREATE_ALL_DEFAULT_PRESET();
+        } else {
+          void store.actions.SHOW_ALERT_DIALOG({
+            type: 'error',
+            title: 'アップデート失敗',
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            message: `音声合成モデル「${activeAivmInfo.value?.manifest.name}」のアップデートに失敗しました。(${error})`,
           });
         }
       }
@@ -452,12 +570,45 @@ onUnmounted(() => {
   background: rgba(colors.$primary-rgb, 0.4);
 }
 
-.model-list, .model-detail {
+.model-list {
   height: calc(
     100vh - #{vars.$menubar-height + vars.$toolbar-height +
       vars.$window-border-width}
   );
   overflow-y: auto;
+}
+
+.text-power-on {
+  color: #86df9f;
+}
+
+.text-power-off {
+  color: #dfd686;
+}
+
+.model-detail {
+
+  .q-tab-panel {
+    padding: 0 !important;
+  }
+
+  .model-detail-content {
+    height: calc(
+      100vh - #{vars.$menubar-height + vars.$toolbar-height +
+        vars.$window-border-width} - 66px
+    );
+    padding: 16px;
+    overflow-y: auto;
+  }
+
+  .fixed-bottom-buttons {
+    display: flex;
+    justify-content: flex-end;
+    padding: 16px;
+    padding-top: 14px;
+    height: 66px;
+    border-top: 2px solid var(--color-splitter);
+  }
 }
 
 .model-list-disable-overlay {
@@ -509,7 +660,7 @@ onUnmounted(() => {
   color: #FBEEEA;
   font-size: 14px;
   font-weight: 700;
-  line-height: 19.20px;
+  line-height: 1.6;
   word-wrap: break-word;
 }
 
@@ -551,14 +702,8 @@ onUnmounted(() => {
   color: white;
   font-size: 13.50px;
   font-weight: 400;
-  line-height: 19.58px;
+  line-height: 1.6;
   word-wrap: break-word;
-}
-
-.right-pane-buttons {
-  display: flex;
-  flex: 1;
-  align-items: flex-end;
 }
 
 </style>
