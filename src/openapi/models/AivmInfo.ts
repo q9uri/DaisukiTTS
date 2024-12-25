@@ -37,6 +37,24 @@ import {
 export interface AivmInfo {
     /**
      * 
+     * @type {boolean}
+     * @memberof AivmInfo
+     */
+    isLoaded: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof AivmInfo
+     */
+    isUpdateAvailable: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof AivmInfo
+     */
+    latestVersion: string;
+    /**
+     * 
      * @type {string}
      * @memberof AivmInfo
      */
@@ -60,6 +78,9 @@ export interface AivmInfo {
  */
 export function instanceOfAivmInfo(value: object): boolean {
     let isInstance = true;
+    isInstance = isInstance && "isLoaded" in value;
+    isInstance = isInstance && "isUpdateAvailable" in value;
+    isInstance = isInstance && "latestVersion" in value;
     isInstance = isInstance && "filePath" in value;
     isInstance = isInstance && "manifest" in value;
     isInstance = isInstance && "speakers" in value;
@@ -77,6 +98,9 @@ export function AivmInfoFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
     }
     return {
         
+        'isLoaded': json['is_loaded'],
+        'isUpdateAvailable': json['is_update_available'],
+        'latestVersion': json['latest_version'],
         'filePath': json['file_path'],
         'manifest': AivmManifestFromJSON(json['manifest']),
         'speakers': ((json['speakers'] as Array<any>).map(LibrarySpeakerFromJSON)),
@@ -92,6 +116,9 @@ export function AivmInfoToJSON(value?: AivmInfo | null): any {
     }
     return {
         
+        'is_loaded': value.isLoaded,
+        'is_update_available': value.isUpdateAvailable,
+        'latest_version': value.latestVersion,
         'file_path': value.filePath,
         'manifest': AivmManifestToJSON(value.manifest),
         'speakers': ((value.speakers as Array<any>).map(LibrarySpeakerToJSON)),

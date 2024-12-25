@@ -14,7 +14,7 @@
 
 
 /**
- * CORSの許可モード
+ * CORS の許可モード
  * @export
  */
 export const CorsPolicyMode = {

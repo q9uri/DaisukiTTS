@@ -150,6 +150,10 @@ export interface IsInitializedSpeakerIsInitializedSpeakerGetRequest {
     coreVersion?: string;
 }
 
+export interface LoadAivmAivmModelsAivmUuidLoadPostRequest {
+    aivmUuid: string;
+}
+
 export interface MoraDataMoraDataPostRequest {
     speaker: number;
     accentPhrase: Array<AccentPhrase>;
@@ -245,6 +249,14 @@ export interface SynthesisSynthesisPostRequest {
 }
 
 export interface UninstallAivmAivmModelsAivmUuidUninstallDeleteRequest {
+    aivmUuid: string;
+}
+
+export interface UnloadAivmAivmModelsAivmUuidUnloadPostRequest {
+    aivmUuid: string;
+}
+
+export interface UpdateAivmAivmModelsAivmUuidUpdatePostRequest {
     aivmUuid: string;
 }
 
@@ -372,8 +384,8 @@ export interface DefaultApiInterface {
     cancellableSynthesisCancellableSynthesisPost(requestParameters: CancellableSynthesisCancellableSynthesisPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Blob>;
 
     /**
-     * base64エンコードされたwavデータを一纏めにし、wavファイルで返します。
-     * @summary base64エンコードされた複数のwavデータを一つに結合する
+     * Base64 エンコードされた WAV データを一つに結合し、WAV ファイルで返します。
+     * @summary Base64 エンコードされた複数の WAV データを一つに結合する
      * @param {Array<string>} requestBody 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -382,8 +394,8 @@ export interface DefaultApiInterface {
     connectWavesConnectWavesPostRaw(requestParameters: ConnectWavesConnectWavesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Blob>>;
 
     /**
-     * base64エンコードされたwavデータを一纏めにし、wavファイルで返します。
-     * base64エンコードされた複数のwavデータを一つに結合する
+     * Base64 エンコードされた WAV データを一つに結合し、WAV ファイルで返します。
+     * Base64 エンコードされた複数の WAV データを一つに結合する
      */
     connectWavesConnectWavesPost(requestParameters: ConnectWavesConnectWavesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Blob>;
 
@@ -528,7 +540,7 @@ export interface DefaultApiInterface {
     getPresetsPresetsGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Preset>>;
 
     /**
-     * ユーザー辞書に登録されている単語の一覧を返します。 単語の表層形(surface)は正規化済みの物を返します。
+     * ユーザー辞書に登録されている単語の一覧を返します。 単語の表層形 (surface) は正規化済みの物を返します。
      * @summary ユーザー辞書に登録されている単語の一覧を取得する
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -537,7 +549,7 @@ export interface DefaultApiInterface {
     getUserDictWordsUserDictGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: UserDictWord; }>>;
 
     /**
-     * ユーザー辞書に登録されている単語の一覧を返します。 単語の表層形(surface)は正規化済みの物を返します。
+     * ユーザー辞書に登録されている単語の一覧を返します。 単語の表層形 (surface) は正規化済みの物を返します。
      * ユーザー辞書に登録されている単語の一覧を取得する
      */
     getUserDictWordsUserDictGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{ [key: string]: UserDictWord; }>;
@@ -560,7 +572,7 @@ export interface DefaultApiInterface {
     importUserDictWordsImportUserDictPost(requestParameters: ImportUserDictWordsImportUserDictPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
 
     /**
-     * 指定されたスタイル ID に紐づく音声合成モデルをロードします。 実行しなくても他の API は使用できますが、初回実行時に時間がかかることがあります。
+     * 指定されたスタイル ID に紐づく音声合成モデルをロードします。 実行しなくても他の API は利用できますが、音声合成の初回実行時に時間がかかることがあります。
      * @summary 指定されたスタイル ID に紐づく音声合成モデルをロードする
      * @param {number} speaker 
      * @param {boolean} [skipReinit] 既にロード済みの音声合成モデルの再ロードをスキップするかどうか
@@ -572,7 +584,7 @@ export interface DefaultApiInterface {
     initializeSpeakerInitializeSpeakerPostRaw(requestParameters: InitializeSpeakerInitializeSpeakerPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>>;
 
     /**
-     * 指定されたスタイル ID に紐づく音声合成モデルをロードします。 実行しなくても他の API は使用できますが、初回実行時に時間がかかることがあります。
+     * 指定されたスタイル ID に紐づく音声合成モデルをロードします。 実行しなくても他の API は利用できますが、音声合成の初回実行時に時間がかかることがあります。
      * 指定されたスタイル ID に紐づく音声合成モデルをロードする
      */
     initializeSpeakerInitializeSpeakerPost(requestParameters: InitializeSpeakerInitializeSpeakerPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
@@ -610,6 +622,22 @@ export interface DefaultApiInterface {
      * 指定されたスタイル ID に紐づく音声合成モデルがロードされているかを確認する
      */
     isInitializedSpeakerIsInitializedSpeakerGet(requestParameters: IsInitializedSpeakerIsInitializedSpeakerGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<boolean>;
+
+    /**
+     * 指定された音声合成モデルをロードします。すでにロード済みの場合は何も行われません。 実行しなくても他の API は利用できますが、音声合成の初回実行時に時間がかかることがあります。
+     * @summary 指定された音声合成モデルをロードする
+     * @param {string} aivmUuid 音声合成モデルの UUID
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    loadAivmAivmModelsAivmUuidLoadPostRaw(requestParameters: LoadAivmAivmModelsAivmUuidLoadPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>>;
+
+    /**
+     * 指定された音声合成モデルをロードします。すでにロード済みの場合は何も行われません。 実行しなくても他の API は利用できますが、音声合成の初回実行時に時間がかかることがあります。
+     * 指定された音声合成モデルをロードする
+     */
+    loadAivmAivmModelsAivmUuidLoadPost(requestParameters: LoadAivmAivmModelsAivmUuidLoadPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
 
     /**
      * 
@@ -699,7 +727,7 @@ export interface DefaultApiInterface {
     /**
      * ユーザー辞書に登録されている言葉を更新します。
      * @summary ユーザー辞書に登録されている言葉を更新する
-     * @param {string} wordUuid 更新する言葉のUUID
+     * @param {string} wordUuid 更新する言葉の UUID
      * @param {string} surface 言葉の表層形
      * @param {string} pronunciation 言葉の発音（カタカナ）
      * @param {number} accentType アクセント型（音が下がる場所を指す）
@@ -906,7 +934,7 @@ export interface DefaultApiInterface {
 
     /**
      * 指定された音声合成モデルをアンインストールします。
-     * @summary 音声合成モデルをアンインストールする
+     * @summary 指定された音声合成モデルをアンインストールする
      * @param {string} aivmUuid 音声合成モデルの UUID
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -916,9 +944,41 @@ export interface DefaultApiInterface {
 
     /**
      * 指定された音声合成モデルをアンインストールします。
-     * 音声合成モデルをアンインストールする
+     * 指定された音声合成モデルをアンインストールする
      */
     uninstallAivmAivmModelsAivmUuidUninstallDelete(requestParameters: UninstallAivmAivmModelsAivmUuidUninstallDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
+
+    /**
+     * 指定された音声合成モデルをアンロードします。
+     * @summary 指定された音声合成モデルをアンロードする
+     * @param {string} aivmUuid 音声合成モデルの UUID
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    unloadAivmAivmModelsAivmUuidUnloadPostRaw(requestParameters: UnloadAivmAivmModelsAivmUuidUnloadPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>>;
+
+    /**
+     * 指定された音声合成モデルをアンロードします。
+     * 指定された音声合成モデルをアンロードする
+     */
+    unloadAivmAivmModelsAivmUuidUnloadPost(requestParameters: UnloadAivmAivmModelsAivmUuidUnloadPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
+
+    /**
+     * AivisHub から指定された音声合成モデルの一番新しいバージョンをダウンロードし、 インストール済みの音声合成モデルへ上書き更新します。
+     * @summary 指定された音声合成モデルを更新する
+     * @param {string} aivmUuid 音声合成モデルの UUID
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    updateAivmAivmModelsAivmUuidUpdatePostRaw(requestParameters: UpdateAivmAivmModelsAivmUuidUpdatePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>>;
+
+    /**
+     * AivisHub から指定された音声合成モデルの一番新しいバージョンをダウンロードし、 インストール済みの音声合成モデルへ上書き更新します。
+     * 指定された音声合成モデルを更新する
+     */
+    updateAivmAivmModelsAivmUuidUpdatePost(requestParameters: UpdateAivmAivmModelsAivmUuidUpdatePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
 
     /**
      * 既存のプリセットを更新します。
@@ -1271,8 +1331,8 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * base64エンコードされたwavデータを一纏めにし、wavファイルで返します。
-     * base64エンコードされた複数のwavデータを一つに結合する
+     * Base64 エンコードされた WAV データを一つに結合し、WAV ファイルで返します。
+     * Base64 エンコードされた複数の WAV データを一つに結合する
      */
     async connectWavesConnectWavesPostRaw(requestParameters: ConnectWavesConnectWavesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Blob>> {
         if (requestParameters.requestBody === null || requestParameters.requestBody === undefined) {
@@ -1297,8 +1357,8 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * base64エンコードされたwavデータを一纏めにし、wavファイルで返します。
-     * base64エンコードされた複数のwavデータを一つに結合する
+     * Base64 エンコードされた WAV データを一つに結合し、WAV ファイルで返します。
+     * Base64 エンコードされた複数の WAV データを一つに結合する
      */
     async connectWavesConnectWavesPost(requestParameters: ConnectWavesConnectWavesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Blob> {
         const response = await this.connectWavesConnectWavesPostRaw(requestParameters, initOverrides);
@@ -1593,7 +1653,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * ユーザー辞書に登録されている単語の一覧を返します。 単語の表層形(surface)は正規化済みの物を返します。
+     * ユーザー辞書に登録されている単語の一覧を返します。 単語の表層形 (surface) は正規化済みの物を返します。
      * ユーザー辞書に登録されている単語の一覧を取得する
      */
     async getUserDictWordsUserDictGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: UserDictWord; }>> {
@@ -1612,7 +1672,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * ユーザー辞書に登録されている単語の一覧を返します。 単語の表層形(surface)は正規化済みの物を返します。
+     * ユーザー辞書に登録されている単語の一覧を返します。 単語の表層形 (surface) は正規化済みの物を返します。
      * ユーザー辞書に登録されている単語の一覧を取得する
      */
     async getUserDictWordsUserDictGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{ [key: string]: UserDictWord; }> {
@@ -1663,7 +1723,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 指定されたスタイル ID に紐づく音声合成モデルをロードします。 実行しなくても他の API は使用できますが、初回実行時に時間がかかることがあります。
+     * 指定されたスタイル ID に紐づく音声合成モデルをロードします。 実行しなくても他の API は利用できますが、音声合成の初回実行時に時間がかかることがあります。
      * 指定されたスタイル ID に紐づく音声合成モデルをロードする
      */
     async initializeSpeakerInitializeSpeakerPostRaw(requestParameters: InitializeSpeakerInitializeSpeakerPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
@@ -1698,7 +1758,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 指定されたスタイル ID に紐づく音声合成モデルをロードします。 実行しなくても他の API は使用できますが、初回実行時に時間がかかることがあります。
+     * 指定されたスタイル ID に紐づく音声合成モデルをロードします。 実行しなくても他の API は利用できますが、音声合成の初回実行時に時間がかかることがあります。
      * 指定されたスタイル ID に紐づく音声合成モデルをロードする
      */
     async initializeSpeakerInitializeSpeakerPost(requestParameters: InitializeSpeakerInitializeSpeakerPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
@@ -1799,6 +1859,37 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     async isInitializedSpeakerIsInitializedSpeakerGet(requestParameters: IsInitializedSpeakerIsInitializedSpeakerGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<boolean> {
         const response = await this.isInitializedSpeakerIsInitializedSpeakerGetRaw(requestParameters, initOverrides);
         return await response.value();
+    }
+
+    /**
+     * 指定された音声合成モデルをロードします。すでにロード済みの場合は何も行われません。 実行しなくても他の API は利用できますが、音声合成の初回実行時に時間がかかることがあります。
+     * 指定された音声合成モデルをロードする
+     */
+    async loadAivmAivmModelsAivmUuidLoadPostRaw(requestParameters: LoadAivmAivmModelsAivmUuidLoadPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.aivmUuid === null || requestParameters.aivmUuid === undefined) {
+            throw new runtime.RequiredError('aivmUuid','Required parameter requestParameters.aivmUuid was null or undefined when calling loadAivmAivmModelsAivmUuidLoadPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/aivm_models/{aivm_uuid}/load`.replace(`{${"aivm_uuid"}}`, encodeURIComponent(String(requestParameters.aivmUuid))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * 指定された音声合成モデルをロードします。すでにロード済みの場合は何も行われません。 実行しなくても他の API は利用できますが、音声合成の初回実行時に時間がかかることがあります。
+     * 指定された音声合成モデルをロードする
+     */
+    async loadAivmAivmModelsAivmUuidLoadPost(requestParameters: LoadAivmAivmModelsAivmUuidLoadPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.loadAivmAivmModelsAivmUuidLoadPostRaw(requestParameters, initOverrides);
     }
 
     /**
@@ -2550,7 +2641,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
 
     /**
      * 指定された音声合成モデルをアンインストールします。
-     * 音声合成モデルをアンインストールする
+     * 指定された音声合成モデルをアンインストールする
      */
     async uninstallAivmAivmModelsAivmUuidUninstallDeleteRaw(requestParameters: UninstallAivmAivmModelsAivmUuidUninstallDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters.aivmUuid === null || requestParameters.aivmUuid === undefined) {
@@ -2573,10 +2664,72 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
 
     /**
      * 指定された音声合成モデルをアンインストールします。
-     * 音声合成モデルをアンインストールする
+     * 指定された音声合成モデルをアンインストールする
      */
     async uninstallAivmAivmModelsAivmUuidUninstallDelete(requestParameters: UninstallAivmAivmModelsAivmUuidUninstallDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.uninstallAivmAivmModelsAivmUuidUninstallDeleteRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * 指定された音声合成モデルをアンロードします。
+     * 指定された音声合成モデルをアンロードする
+     */
+    async unloadAivmAivmModelsAivmUuidUnloadPostRaw(requestParameters: UnloadAivmAivmModelsAivmUuidUnloadPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.aivmUuid === null || requestParameters.aivmUuid === undefined) {
+            throw new runtime.RequiredError('aivmUuid','Required parameter requestParameters.aivmUuid was null or undefined when calling unloadAivmAivmModelsAivmUuidUnloadPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/aivm_models/{aivm_uuid}/unload`.replace(`{${"aivm_uuid"}}`, encodeURIComponent(String(requestParameters.aivmUuid))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * 指定された音声合成モデルをアンロードします。
+     * 指定された音声合成モデルをアンロードする
+     */
+    async unloadAivmAivmModelsAivmUuidUnloadPost(requestParameters: UnloadAivmAivmModelsAivmUuidUnloadPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.unloadAivmAivmModelsAivmUuidUnloadPostRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * AivisHub から指定された音声合成モデルの一番新しいバージョンをダウンロードし、 インストール済みの音声合成モデルへ上書き更新します。
+     * 指定された音声合成モデルを更新する
+     */
+    async updateAivmAivmModelsAivmUuidUpdatePostRaw(requestParameters: UpdateAivmAivmModelsAivmUuidUpdatePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.aivmUuid === null || requestParameters.aivmUuid === undefined) {
+            throw new runtime.RequiredError('aivmUuid','Required parameter requestParameters.aivmUuid was null or undefined when calling updateAivmAivmModelsAivmUuidUpdatePost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/aivm_models/{aivm_uuid}/update`.replace(`{${"aivm_uuid"}}`, encodeURIComponent(String(requestParameters.aivmUuid))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * AivisHub から指定された音声合成モデルの一番新しいバージョンをダウンロードし、 インストール済みの音声合成モデルへ上書き更新します。
+     * 指定された音声合成モデルを更新する
+     */
+    async updateAivmAivmModelsAivmUuidUpdatePost(requestParameters: UpdateAivmAivmModelsAivmUuidUpdatePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.updateAivmAivmModelsAivmUuidUpdatePostRaw(requestParameters, initOverrides);
     }
 
     /**

@@ -20,37 +20,42 @@ import { exists, mapValues } from '../runtime';
  */
 export interface Mora {
     /**
-     * 文字
+     * 子音＋母音に対応する文字。
+     * VOICEVOX ENGINE と異なり、感嘆符・句読点などの記号もモーラに含まれる。
+     * 記号モーラの場合、`text` には記号がそのまま、`vowel` には "pau" が設定される。
      * @type {string}
      * @memberof Mora
      */
     text: string;
     /**
-     * 子音の音素
+     * 
      * @type {string}
      * @memberof Mora
      */
     consonant?: string;
     /**
-     * 子音の音長
+     * 子音の音長。
+     * AivisSpeech Engine の実装上算出できないため、ダミー値として常に 0.0 が返される。
      * @type {number}
      * @memberof Mora
      */
     consonantLength?: number;
     /**
-     * 母音の音素
+     * 
      * @type {string}
      * @memberof Mora
      */
     vowel: string;
     /**
-     * 母音の音長
+     * 母音の音長。
+     * AivisSpeech Engine の実装上算出できないため、ダミー値として常に 0.0 が返される。
      * @type {number}
      * @memberof Mora
      */
     vowelLength: number;
     /**
-     * 音高
+     * 音高。
+     * AivisSpeech Engine の実装上算出できないため、ダミー値として常に 0.0 が返される。
      * @type {number}
      * @memberof Mora
      */

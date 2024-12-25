@@ -14,7 +14,7 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- * 辞書のコンパイルに使われる情報
+ * 辞書のビルドに使われる情報
  * @export
  * @interface UserDictWord
  */
