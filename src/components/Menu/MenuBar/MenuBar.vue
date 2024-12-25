@@ -548,6 +548,15 @@ const menudata = computed<MenuItemData[]>(() => [
       { type: "separator" },
       {
         type: "button",
+        label: "フィードバックを送る",
+        onClick() {
+          window.open('https://forms.gle/sTsZGfX7aR8ox8Rs7', '_blank');
+        },
+        disableWhenUiLocked: false,
+      },
+      { type: "separator" },
+      {
+        type: "button",
         label: "オプション",
         onClick() {
           void store.actions.SET_DIALOG_OPEN({
