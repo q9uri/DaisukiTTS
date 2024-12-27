@@ -41,7 +41,7 @@
 ## 動作環境
 
 Windows・macOS 搭載の PC に対応しています。  
-AivisSpeech を起動するには、PC に 3GB 以上の空きメモリ (RAM) が必要です。
+AivisSpeech を起動するには、PC に 1.5GB 以上の空きメモリ (RAM) が必要です。
 
 - **Windows:** Windows 10 (22H2 以降)・Windows 11  
 - **macOS:** macOS 13 Ventura 以降
