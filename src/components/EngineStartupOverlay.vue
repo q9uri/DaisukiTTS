@@ -3,7 +3,11 @@
   <!-- TODO: allEngineStateが "ERROR" のときエラーになったエンジンを探してトーストで案内 -->
   <div v-if="allEngineState === 'FAILED_STARTING'" class="waiting-engine">
     <div>
-      音声合成エンジンの起動に失敗しました。音声合成エンジンの再起動をお試しください。
+      音声合成エンジンの起動に失敗しました。音声合成エンジンの再起動をお試しください。<br>
+      AivisSpeech を起動するには、PC に 1.5GB 以上の空きメモリ (RAM) が必要です。<br>
+      また、ウイルス対策ソフトが音声合成エンジン (run.exe) を不正なプログラムと誤って判断し、隔離している可能性もあります。<br>
+      ウイルス対策ソフトの設定から、run.exe を許可リストに追加してください。<br>
+      <QBtn class="q-mt-sm" outline @click="openQa">Q&A を見る</QBtn>
     </div>
   </div>
   <div
