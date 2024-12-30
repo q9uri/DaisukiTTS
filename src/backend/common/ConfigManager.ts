@@ -357,7 +357,7 @@ export abstract class BaseConfigManager {
       const data = await this.load();
       const version = data.__internal__.migrations.version;
       for (const [versionRange, migration] of migrations) {
-        if (!semver.satisfies(version, versionRange) || version === '999.999.999') {
+        if (!semver.satisfies(version, versionRange) || version === "999.999.999") {
           log.info(`Migrating ${version} to ${versionRange} ...`);
           migration(data);
           log.info(`Migrated ${version} to ${versionRange} successfully.`);

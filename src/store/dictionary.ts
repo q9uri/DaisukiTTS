@@ -70,7 +70,7 @@ export const dictionaryStore = createPartialStore<DictionaryStoreTypes>({
       const engineId: EngineId | undefined = state.engineIds[0];
 
       if (engineId == undefined)
-        throw new Error(`No such engine registered: index == 0`);
+        throw new Error("No such engine registered: index == 0");
       await actions
         .INSTANTIATE_ENGINE_CONNECTOR({
           engineId,
@@ -94,7 +94,7 @@ export const dictionaryStore = createPartialStore<DictionaryStoreTypes>({
       { wordUuid, surface, pronunciation, accentType, priority },
     ) {
       if (state.engineIds.length === 0)
-        throw new Error(`At least one engine must be registered`);
+        throw new Error("At least one engine must be registered");
       for (const engineId of state.engineIds) {
         await actions
           .INSTANTIATE_ENGINE_CONNECTOR({
@@ -116,7 +116,7 @@ export const dictionaryStore = createPartialStore<DictionaryStoreTypes>({
   DELETE_WORD: {
     async action({ state, actions }, { wordUuid }) {
       if (state.engineIds.length === 0)
-        throw new Error(`At least one engine must be registered`);
+        throw new Error("At least one engine must be registered");
       for (const engineId of state.engineIds) {
         await actions
           .INSTANTIATE_ENGINE_CONNECTOR({

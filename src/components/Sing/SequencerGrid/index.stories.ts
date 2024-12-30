@@ -24,7 +24,7 @@ const meta: Meta<typeof Presentation> = {
     setup() {
       return { args };
     },
-    template: `<div style="width: 100vw; height: 400px; overflow: hidden;"><Presentation v-bind="args" /></div>`,
+    template: "<div style=\"width: 100vw; height: 400px; overflow: hidden;\"><Presentation v-bind=\"args\" /></div>",
   }),
 };
 

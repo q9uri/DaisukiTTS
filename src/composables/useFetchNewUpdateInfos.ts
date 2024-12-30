@@ -13,16 +13,16 @@ export const useFetchNewUpdateInfos = (
 ) => {
   const result = ref<
     | {
-        status: "updateChecking";
-      }
+      status: "updateChecking";
+    }
     | {
-        status: "updateAvailable";
-        latestVersion: string;
-        newUpdateInfos: UpdateInfo[];
-      }
+      status: "updateAvailable";
+      latestVersion: string;
+      newUpdateInfos: UpdateInfo[];
+    }
     | {
-        status: "updateNotAvailable";
-      }
+      status: "updateNotAvailable";
+    }
   >({
     status: "updateChecking",
   });

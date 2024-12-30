@@ -59,7 +59,7 @@ export const ipcMainSendProxy = new Proxy(
   {
     get:
       (_, channel: string) =>
-      (win: BrowserWindow, ...args: unknown[]) =>
+        (win: BrowserWindow, ...args: unknown[]) =>
         win.webContents.send(channel, ...args),
   },
 ) as IpcMainSend;

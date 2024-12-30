@@ -681,9 +681,9 @@ const canSetAudioOutputDevice = computed(() => {
 });
 const currentAudioOutputDeviceComputed = computed<
   | {
-      key: string;
-      label: string;
-    }
+    key: string;
+    label: string;
+  }
   | undefined
 >({
   get: () => {

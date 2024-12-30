@@ -11,7 +11,7 @@ const meta: Meta<typeof BaseSwitch> = {
       const checked = ref(Boolean(args.checked));
       return { args, checked };
     },
-    template: `<BaseSwitch v-bind="args" v-model:checked="checked"></BaseSwitch>`,
+    template: "<BaseSwitch v-bind=\"args\" v-model:checked=\"checked\"></BaseSwitch>",
   }),
 };
 

@@ -187,13 +187,13 @@ const projectFileErrorMessage = computed(() => {
 
 type Project =
   | {
-      type: "utaformatix";
-      project: UfProject;
-    }
+    type: "utaformatix";
+    project: UfProject;
+  }
   | {
-      type: "vvproj";
-      project: LatestProjectType;
-    };
+    type: "vvproj";
+    project: LatestProjectType;
+  };
 
 // データ
 const project = ref<Project | null>(null);

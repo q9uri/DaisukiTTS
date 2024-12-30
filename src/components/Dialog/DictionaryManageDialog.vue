@@ -307,7 +307,7 @@ const createUILockAction = function <T>(action: Promise<T>) {
 
 const loadingDictProcess = async () => {
   if (store.state.engineIds.length === 0)
-    throw new Error(`assert engineId.length > 0`);
+    throw new Error("assert engineId.length > 0");
 
   loadingDictState.value = "loading";
   try {
@@ -460,7 +460,7 @@ const play = async () => {
   });
 
   if (audioItem.query == undefined)
-    throw new Error(`assert audioItem.query !== undefined`);
+    throw new Error("assert audioItem.query !== undefined");
 
   audioItem.query.accentPhrases = [accentPhrase.value];
 
@@ -535,7 +535,7 @@ const isWordChanged = computed(() => {
 });
 const saveWord = async () => {
   isNewWordEditing.value = false;
-  if (!accentPhrase.value) throw new Error(`accentPhrase === undefined`);
+  if (!accentPhrase.value) throw new Error("accentPhrase === undefined");
   const accent = computeRegisteredAccent();
   if (selectedId.value) {
     try {

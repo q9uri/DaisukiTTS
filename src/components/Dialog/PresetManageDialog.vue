@@ -78,12 +78,12 @@ const previewPresetKeys = ref(store.state.presetKeys);
 const previewPresetList = computed(() =>
   isPreview.value
     ? previewPresetKeys.value
-        .filter((key) => presetItems.value[key] != undefined)
-        .filter((key) => !isDefaultPresetKey(key))
-        .map((key) => ({
-          key,
-          ...presetItems.value[key],
-        }))
+      .filter((key) => presetItems.value[key] != undefined)
+      .filter((key) => !isDefaultPresetKey(key))
+      .map((key) => ({
+        key,
+        ...presetItems.value[key],
+      }))
     : presetList.value,
 );
 

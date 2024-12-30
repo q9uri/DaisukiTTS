@@ -529,16 +529,16 @@ export type AudioCommandStoreTypes = {
       changes: Record<
         AudioKey,
         | {
-            update: "AccentPhrases";
-            accentPhrases: AccentPhrase[];
-          }
+          update: "AccentPhrases";
+          accentPhrases: AccentPhrase[];
+        }
         | {
-            update: "AudioQuery";
-            query: EditorAudioQuery;
-          }
+          update: "AudioQuery";
+          query: EditorAudioQuery;
+        }
         | {
-            update: "OnlyVoice";
-          }
+          update: "OnlyVoice";
+        }
       >;
     };
     action(payload: { audioKeys: AudioKey[]; voice: Voice }): void;
@@ -1854,15 +1854,15 @@ export type SettingStoreState = {
   confirmedTips: ConfirmedTips;
   engineSettings: EngineSettings;
 } & Omit<RootMiscSettingType, "openedEditor"> & {
-    openedEditor: EditorType | undefined; // undefinedのときはどのエディタを開くか定まっていない
-  };
+  openedEditor: EditorType | undefined; // undefinedのときはどのエディタを開くか定まっていない
+};
 
 // keyとvalueの型を連動するようにしたPayloadを作る
 type KeyValuePayload<R, K extends keyof R = keyof R> = K extends keyof R
   ? {
-      key: K;
-      value: R[K];
-    }
+    key: K;
+    value: R[K];
+  }
   : never;
 
 export type SettingStoreTypes = {
@@ -2133,9 +2133,9 @@ export type UiStoreTypes = {
       obj:
         | { closeOrReload: "close" }
         | {
-            closeOrReload: "reload";
-            isMultiEngineOffMode?: boolean;
-          },
+          closeOrReload: "reload";
+          isMultiEngineOffMode?: boolean;
+        },
     ): Promise<void>;
   };
 
@@ -2303,7 +2303,8 @@ export type ProxyStoreTypes = {
  * All Store Types
  */
 
-export type State = AudioStoreState &
+export type State = (
+  AudioStoreState &
   AudioPlayerStoreState &
   AudioCommandStoreState &
   CommandStoreState &
@@ -2316,9 +2317,11 @@ export type State = AudioStoreState &
   DictionaryStoreState &
   ProxyStoreState &
   SingingStoreState &
-  SingingCommandStoreState;
+  SingingCommandStoreState
+);
 
-type AllStoreTypes = AudioStoreTypes &
+type AllStoreTypes = (
+  AudioStoreTypes &
   AudioPlayerStoreTypes &
   AudioCommandStoreTypes &
   CommandStoreTypes &
@@ -2331,7 +2334,8 @@ type AllStoreTypes = AudioStoreTypes &
   DictionaryStoreTypes &
   ProxyStoreTypes &
   SingingStoreTypes &
-  SingingCommandStoreTypes;
+  SingingCommandStoreTypes
+);
 
 export type AllGetters = StoreType<AllStoreTypes, "getter">;
 export type AllMutations = StoreType<AllStoreTypes, "mutation">;

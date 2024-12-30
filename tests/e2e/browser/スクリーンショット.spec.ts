@@ -13,9 +13,9 @@ import {
 
 let speakerImages:
   | {
-      portrait: string;
-      icon: string;
-    }[]
+    portrait: string;
+    icon: string;
+  }[]
   | undefined = undefined;
 
 /**

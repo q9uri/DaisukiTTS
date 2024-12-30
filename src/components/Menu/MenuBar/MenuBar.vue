@@ -194,26 +194,26 @@ const updateRecentProjects = async () => {
   recentProjectsSubMenuData.value =
     recentlyUsedProjects.length === 0
       ? [
-          {
-            type: "button",
-            label: "最近使ったプロジェクトはありません",
-            onClick: () => {
-              // 何もしない
-            },
-            disabled: true,
-            disableWhenUiLocked: false,
-          },
-        ]
-      : recentlyUsedProjects.map((projectFilePath) => ({
+        {
           type: "button",
-          label: projectFilePath,
+          label: "最近使ったプロジェクトはありません",
           onClick: () => {
-            void store.actions.LOAD_PROJECT_FILE({
-              filePath: projectFilePath,
-            });
+            // 何もしない
           },
+          disabled: true,
           disableWhenUiLocked: false,
-        }));
+        },
+      ]
+      : recentlyUsedProjects.map((projectFilePath) => ({
+        type: "button",
+        label: projectFilePath,
+        onClick: () => {
+          void store.actions.LOAD_PROJECT_FILE({
+            filePath: projectFilePath,
+          });
+        },
+        disableWhenUiLocked: false,
+      }));
 };
 const projectFilePath = computed(() => store.state.projectFilePath);
 watch(projectFilePath, updateRecentProjects, {
@@ -409,19 +409,19 @@ const menudata = computed<MenuItemData[]>(() => [
       },
       ...(isMultiSelectEnabled.value
         ? [
-            {
-              type: "button",
-              label: "すべて選択",
-              onClick: async () => {
-                if (!uiLocked.value && isMultiSelectEnabled.value) {
-                  await store.actions.SET_SELECTED_AUDIO_KEYS({
-                    audioKeys: audioKeys.value,
-                  });
-                }
-              },
-              disableWhenUiLocked: true,
-            } as const,
-          ]
+          {
+            type: "button",
+            label: "すべて選択",
+            onClick: async () => {
+              if (!uiLocked.value && isMultiSelectEnabled.value) {
+                await store.actions.SET_SELECTED_AUDIO_KEYS({
+                  audioKeys: audioKeys.value,
+                });
+              }
+            },
+            disableWhenUiLocked: true,
+          } as const,
+        ]
         : []),
       ...props.editSubMenuData,
     ],
@@ -550,7 +550,7 @@ const menudata = computed<MenuItemData[]>(() => [
         type: "button",
         label: "フィードバックを送る",
         onClick() {
-          window.open('https://forms.gle/sTsZGfX7aR8ox8Rs7', '_blank');
+          window.open("https://forms.gle/sTsZGfX7aR8ox8Rs7", "_blank");
         },
         disableWhenUiLocked: false,
       },

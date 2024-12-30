@@ -52,10 +52,10 @@ export const audioPlayerStore = createPartialStore<AudioPlayerStoreTypes>({
           resolve();
         } else {
           const handleLoadedMetadata = () => {
-            audioElement.removeEventListener('loadedmetadata', handleLoadedMetadata);
+            audioElement.removeEventListener("loadedmetadata", handleLoadedMetadata);
             resolve();
           };
-          audioElement.addEventListener('loadedmetadata', handleLoadedMetadata);
+          audioElement.addEventListener("loadedmetadata", handleLoadedMetadata);
         }
       });
 

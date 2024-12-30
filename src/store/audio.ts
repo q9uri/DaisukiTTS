@@ -116,7 +116,7 @@ function parseTextFile(
   const seps = [",", "\r\n", "\n"];
   let lastVoice =
     initVoice ?? uuid2Voice.get(userOrderedCharacterInfos[0].metas.speakerUuid);
-  if (lastVoice == undefined) throw new Error(`lastStyle is undefined.`);
+  if (lastVoice == undefined) throw new Error("lastStyle is undefined.");
   for (const splitText of body.split(new RegExp(`${seps.join("|")}`, "g"))) {
     const voice = name2Voice.get(splitText);
     if (voice != undefined) {
@@ -346,7 +346,7 @@ export const audioStore = createPartialStore<AudioStoreTypes>({
                 ...(useResourceUrl && { resourceFormat: "url" }),
               })
               .catch((error) => {
-                window.backend.logError(error, `Failed to get speakerInfo.`);
+                window.backend.logError(error, "Failed to get speakerInfo.");
                 throw error;
               });
             speakerStylePromise = speakerInfoPromise.then((speakerInfo) =>
@@ -363,7 +363,7 @@ export const audioStore = createPartialStore<AudioStoreTypes>({
                 ...(useResourceUrl && { resourceFormat: "url" }),
               })
               .catch((error) => {
-                window.backend.logError(error, `Failed to get singerInfo.`);
+                window.backend.logError(error, "Failed to get singerInfo.");
                 throw error;
               });
             singerStylePromise = singerInfoPromise.then((singerInfo) =>
@@ -407,7 +407,7 @@ export const audioStore = createPartialStore<AudioStoreTypes>({
             ? await instance.invoke("singersSingersGet")({})
             : [],
         ]).catch((error) => {
-          window.backend.logError(error, `Failed to get Speakers.`);
+          window.backend.logError(error, "Failed to get Speakers.");
           throw error;
         });
 
@@ -698,8 +698,8 @@ export const audioStore = createPartialStore<AudioStoreTypes>({
 
       const query = getters.IS_ENGINE_READY(voice.engineId)
         ? await actions
-            .FETCH_AUDIO_QUERY(fetchQueryParams)
-            .catch(() => undefined)
+          .FETCH_AUDIO_QUERY(fetchQueryParams)
+          .catch(() => undefined)
         : undefined;
 
       const newAudioItem: AudioItem = { text, voice };
@@ -1337,7 +1337,7 @@ export const audioStore = createPartialStore<AudioStoreTypes>({
         accentPhrases.forEach(phrase => {
           let consecutivePunctuations = 0;
           phrase.moras.forEach(mora => {
-            if (mora.text === '.' || mora.text === ',') {
+            if (mora.text === "." || mora.text === ",") {
               consecutivePunctuations++;
               if (consecutivePunctuations <= maxConsecutivePunctuations) {
                 totalSpecialMoras++;
@@ -1362,7 +1362,7 @@ export const audioStore = createPartialStore<AudioStoreTypes>({
         for (const phrase of accentPhrases) {
           let consecutivePunctuations = 0;
           phrase.moras.forEach(mora => {
-            if (mora.text === '.' || mora.text === ',') {
+            if (mora.text === "." || mora.text === ",") {
               consecutivePunctuations++;
               if (consecutivePunctuations <= maxConsecutivePunctuations) {
                 length += averageMoraLength * specialMoraWeight;
@@ -1445,7 +1445,7 @@ export const audioStore = createPartialStore<AudioStoreTypes>({
       ) => {
         const engineId: EngineId | undefined = state.engineIds[0]; // TODO: 複数エンジン対応, 暫定的に音声結合機能は0番目のエンジンのみを使用する
         if (engineId == undefined)
-          throw new Error(`No such engine registered: index == 0`);
+          throw new Error("No such engine registered: index == 0");
 
         const instance = await actions.INSTANTIATE_ENGINE_CONNECTOR({
           engineId,
@@ -2146,16 +2146,16 @@ export const audioCommandStore = transformCommandStore(
           changes: Record<
             AudioKey,
             | {
-                update: "AccentPhrases";
-                accentPhrases: AccentPhrase[];
-              }
+              update: "AccentPhrases";
+              accentPhrases: AccentPhrase[];
+            }
             | {
-                update: "AudioQuery";
-                query: EditorAudioQuery;
-              }
+              update: "AudioQuery";
+              query: EditorAudioQuery;
+            }
             | {
-                update: "OnlyVoice";
-              }
+              update: "OnlyVoice";
+            }
           >;
         },
       ) {
@@ -2210,16 +2210,16 @@ export const audioCommandStore = transformCommandStore(
         const changes: Record<
           AudioKey,
           | {
-              update: "AccentPhrases";
-              accentPhrases: AccentPhrase[];
-            }
+            update: "AccentPhrases";
+            accentPhrases: AccentPhrase[];
+          }
           | {
-              update: "AudioQuery";
-              query: EditorAudioQuery;
-            }
+            update: "AudioQuery";
+            query: EditorAudioQuery;
+          }
           | {
-              update: "OnlyVoice";
-            }
+            update: "OnlyVoice";
+          }
         > = {};
 
         for (const audioKey of audioKeys) {

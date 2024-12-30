@@ -68,7 +68,7 @@ export class EngineAndVvppController {
     const result = dialog.showMessageBoxSync(win, {
       type: "warning",
       title: "音声合成エンジン追加の確認",
-      message: `この操作はコンピュータに損害を与える可能性があります。音声合成エンジンの配布元が信頼できない場合は追加しないでください。`,
+      message: "この操作はコンピュータに損害を与える可能性があります。音声合成エンジンの配布元が信頼できない場合は追加しないでください。",
       buttons: ["追加", "キャンセル"],
       noLink: true,
       cancelId: 1,
@@ -135,7 +135,7 @@ export class EngineAndVvppController {
   updateEngineSetting(engineId: EngineId, engineSetting: EngineSettingType) {
     const engineSettings = this.configManager.get("engineSettings");
     engineSettings[engineId] = engineSetting;
-    this.configManager.set(`engineSettings`, engineSettings);
+    this.configManager.set("engineSettings", engineSettings);
   }
 
   // エンジンの準備と起動

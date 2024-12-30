@@ -1943,7 +1943,7 @@ export const singingStore = createPartialStore<SingingStoreTypes>({
 
           let query = queryCache.get(queryKey);
           if (query != undefined) {
-            logger.info(`Loaded query from cache.`);
+            logger.info("Loaded query from cache.");
           } else {
             query = await generateQuery(querySource);
             const phonemes = getPhonemes(query);
@@ -2035,10 +2035,10 @@ export const singingStore = createPartialStore<SingingStoreTypes>({
 
           let singingPitch = singingPitchCache.get(singingPitchKey);
           if (singingPitch != undefined) {
-            logger.info(`Loaded singing pitch from cache.`);
+            logger.info("Loaded singing pitch from cache.");
           } else {
             singingPitch = await generateSingingPitch(singingPitchSource);
-            logger.info(`Generated singing pitch.`);
+            logger.info("Generated singing pitch.");
             singingPitchCache.set(singingPitchKey, singingPitch);
           }
 
@@ -2166,10 +2166,10 @@ export const singingStore = createPartialStore<SingingStoreTypes>({
 
           let singingVolume = singingVolumeCache.get(singingVolumeKey);
           if (singingVolume != undefined) {
-            logger.info(`Loaded singing volume from cache.`);
+            logger.info("Loaded singing volume from cache.");
           } else {
             singingVolume = await generateSingingVolume(singingVolumeSource);
-            logger.info(`Generated singing volume.`);
+            logger.info("Generated singing volume.");
             singingVolumeCache.set(singingVolumeKey, singingVolume);
           }
 
@@ -2291,10 +2291,10 @@ export const singingStore = createPartialStore<SingingStoreTypes>({
 
           let singingVoice = singingVoiceCache.get(singingVoiceKey);
           if (singingVoice != undefined) {
-            logger.info(`Loaded singing voice from cache.`);
+            logger.info("Loaded singing voice from cache.");
           } else {
             singingVoice = await synthesizeSingingVoice(singingVoiceSource);
-            logger.info(`Generated singing voice.`);
+            logger.info("Generated singing voice.");
             singingVoiceCache.set(singingVoiceKey, singingVoice);
           }
 

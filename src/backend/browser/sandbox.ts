@@ -152,13 +152,13 @@ export const api: Sandbox = {
           description: obj.name ?? "Text",
           accept: obj.extensions
             ? {
-                "application/octet-stream": obj.extensions.map(
+              "application/octet-stream": obj.extensions.map(
                   (ext) => `.${ext}`,
                 ),
-              }
+            }
             : {
-                "plain/text": [".txt"],
-              },
+              "plain/text": [".txt"],
+            },
         },
       ],
     });
@@ -181,25 +181,25 @@ export const api: Sandbox = {
   },
   onReceivedIPCMsg,
   closeWindow() {
-    throw new Error(`Not supported on Browser version: closeWindow`);
+    throw new Error("Not supported on Browser version: closeWindow");
   },
   minimizeWindow() {
-    throw new Error(`Not supported on Browser version: minimizeWindow`);
+    throw new Error("Not supported on Browser version: minimizeWindow");
   },
   toggleMaximizeWindow() {
-    throw new Error(`Not supported on Browser version: toggleMaximizeWindow`);
+    throw new Error("Not supported on Browser version: toggleMaximizeWindow");
   },
   toggleFullScreen() {
-    throw new Error(`Not supported on Browser version: toggleFullScreen`);
+    throw new Error("Not supported on Browser version: toggleFullScreen");
   },
   zoomIn() {
-    throw new Error(`Not supported on Browser version: zoomIn`);
+    throw new Error("Not supported on Browser version: zoomIn");
   },
   zoomOut() {
-    throw new Error(`Not supported on Browser version: zoomOut`);
+    throw new Error("Not supported on Browser version: zoomOut");
   },
   zoomReset() {
-    throw new Error(`Not supported on Browser version: zoomReset`);
+    throw new Error("Not supported on Browser version: zoomReset");
   },
 
   /* eslint-disable no-console */ // ログの吐き出し先は console ぐらいしかないので、ここでは特例で許可している
@@ -216,17 +216,17 @@ export const api: Sandbox = {
     return;
   },
   openLogDirectory() {
-    throw new Error(`Not supported on Browser version: openLogDirectory`);
+    throw new Error("Not supported on Browser version: openLogDirectory");
   },
   /* eslint-enable no-console */
   engineInfos() {
     return Promise.resolve([defaultEngine]);
   },
   restartEngine(/* engineId: EngineId */) {
-    throw new Error(`Not supported on Browser version: restartEngine`);
+    throw new Error("Not supported on Browser version: restartEngine");
   },
   openEngineDirectory(/* engineId: EngineId */) {
-    throw new Error(`Not supported on Browser version: openEngineDirectory`);
+    throw new Error("Not supported on Browser version: openEngineDirectory");
   },
   async hotkeySettings(newData?: HotkeySettingType) {
     if (newData != undefined) {
@@ -245,7 +245,7 @@ export const api: Sandbox = {
     return checkFileExistsImpl(file);
   },
   changePinWindow() {
-    throw new Error(`Not supported on Browser version: changePinWindow`);
+    throw new Error("Not supported on Browser version: changePinWindow");
   },
   getDefaultHotkeySettings() {
     return Promise.resolve(defaultHotkeySettings);
@@ -279,15 +279,15 @@ export const api: Sandbox = {
     return;
   },
   installVvppEngine(/* path: string */) {
-    throw new Error(`Not supported on Browser version: installVvppEngine`);
+    throw new Error("Not supported on Browser version: installVvppEngine");
   },
   uninstallVvppEngine(/* engineId: EngineId */) {
-    throw new Error(`Not supported on Browser version: uninstallVvppEngine`);
+    throw new Error("Not supported on Browser version: uninstallVvppEngine");
   },
   validateEngineDir(/* engineDir: string */) {
-    throw new Error(`Not supported on Browser version: validateEngineDir`);
+    throw new Error("Not supported on Browser version: validateEngineDir");
   },
   reloadApp(/* obj: { isMultiEngineOffMode: boolean } */) {
-    throw new Error(`Not supported on Browser version: reloadApp`);
+    throw new Error("Not supported on Browser version: reloadApp");
   },
 };

@@ -13,7 +13,7 @@ const ipcRendererInvokeProxy = new Proxy(
   {
     get:
       (_, channel: string) =>
-      (...args: unknown[]) =>
+        (...args: unknown[]) =>
         ipcRenderer.invoke(channel, ...args),
   },
 ) as IpcRendererInvoke;

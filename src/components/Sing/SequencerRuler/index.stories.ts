@@ -29,7 +29,7 @@ const meta: Meta<typeof Presentation> = {
       const playheadTicks = ref(0);
       return { args, playheadTicks };
     },
-    template: `<Presentation v-bind="args" v-model:playheadTicks="playheadTicks" />`,
+    template: "<Presentation v-bind=\"args\" v-model:playheadTicks=\"playheadTicks\" />",
   }),
 };
 

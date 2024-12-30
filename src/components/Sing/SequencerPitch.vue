@@ -396,7 +396,7 @@ watch(
       },
       (err) => {
         if (err != undefined) {
-          warn(`An error occurred.`, err);
+          warn("An error occurred.", err);
         }
       },
     );
@@ -416,7 +416,7 @@ watch(
       },
       (err) => {
         if (err != undefined) {
-          warn(`An error occurred.`, err);
+          warn("An error occurred.", err);
         }
       },
     );

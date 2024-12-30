@@ -102,7 +102,7 @@ const preview: Preview = {
           }
         },
 
-        template: `<story />`,
+        template: "<story />",
       };
     },
   ],

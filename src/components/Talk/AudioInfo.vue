@@ -455,27 +455,27 @@ const parameterConfigs = computed<ParameterConfig[]>(() => [
   // AivisSpeech Engine 以外の音声合成エンジンでは「テンポの緩急」を表示しない
   ...(audioItem.value.voice.engineId === store.getters.DEFAULT_ENGINE_ID
     ? ([
-        {
-          label: "テンポの緩急",
-          tooltip:
+      {
+        label: "テンポの緩急",
+        tooltip:
             "話す速さの緩急の強弱を調整できます\n強くするとより早口で生っぽい抑揚がついた声になります",
-          sliderProps: {
-            modelValue: () => query.value?.tempoDynamicsScale ?? null,
-            disable: () => uiLocked.value,
-            max: SLIDER_PARAMETERS.TEMPO_DYNAMICS.max,
-            min: SLIDER_PARAMETERS.TEMPO_DYNAMICS.min,
-            step: SLIDER_PARAMETERS.TEMPO_DYNAMICS.step,
-            scrollStep: SLIDER_PARAMETERS.TEMPO_DYNAMICS.scrollStep,
-            scrollMinStep: SLIDER_PARAMETERS.TEMPO_DYNAMICS.scrollMinStep,
-          },
-          onChange: (tempoDynamicsScale: number) =>
+        sliderProps: {
+          modelValue: () => query.value?.tempoDynamicsScale ?? null,
+          disable: () => uiLocked.value,
+          max: SLIDER_PARAMETERS.TEMPO_DYNAMICS.max,
+          min: SLIDER_PARAMETERS.TEMPO_DYNAMICS.min,
+          step: SLIDER_PARAMETERS.TEMPO_DYNAMICS.step,
+          scrollStep: SLIDER_PARAMETERS.TEMPO_DYNAMICS.scrollStep,
+          scrollMinStep: SLIDER_PARAMETERS.TEMPO_DYNAMICS.scrollMinStep,
+        },
+        onChange: (tempoDynamicsScale: number) =>
             store.actions.COMMAND_MULTI_SET_AUDIO_TEMPO_DYNAMICS_SCALE({
               audioKeys: selectedAudioKeys.value,
               tempoDynamicsScale,
             }),
-          key: "tempoDynamicsScale",
-        },
-      ] as ParameterConfig[])
+        key: "tempoDynamicsScale",
+      },
+    ] as ParameterConfig[])
     : []),
   {
     label: "音高",
@@ -538,7 +538,7 @@ const parameterConfigs = computed<ParameterConfig[]>(() => [
           }),
         key: "pauseLengthScale",
       },
-      ] as ParameterConfig[])
+    ] as ParameterConfig[])
     : []),
   {
     label: "開始無音（秒）",
@@ -707,11 +707,11 @@ const morphingTargetVoice = computed({
     const morphingInfo =
       voice != undefined
         ? {
-            rate: audioItem.value.morphingInfo?.rate ?? 0.5,
-            targetEngineId: voice.engineId,
-            targetSpeakerId: voice.speakerId,
-            targetStyleId: voice.styleId,
-          }
+          rate: audioItem.value.morphingInfo?.rate ?? 0.5,
+          targetEngineId: voice.engineId,
+          targetSpeakerId: voice.speakerId,
+          targetStyleId: voice.styleId,
+        }
         : undefined;
     void store.actions.COMMAND_MULTI_SET_MORPHING_INFO({
       audioKeys: selectedAudioKeys.value,
@@ -981,12 +981,12 @@ const presetPartsFromParameter = computed<Omit<Preset, "name">>(() => {
       morphingTargetCharacterInfo.value &&
       morphingRateSlider.state.currentValue.value != undefined // FIXME: ifでチェックしてthrowする
         ? {
-            rate: morphingRateSlider.state.currentValue.value,
-            targetEngineId: morphingTargetStyleInfo.value.engineId,
-            targetSpeakerId:
+          rate: morphingRateSlider.state.currentValue.value,
+          targetEngineId: morphingTargetStyleInfo.value.engineId,
+          targetSpeakerId:
               morphingTargetCharacterInfo.value.metas.speakerUuid,
-            targetStyleId: morphingTargetStyleInfo.value.styleId,
-          }
+          targetStyleId: morphingTargetStyleInfo.value.styleId,
+        }
         : undefined,
   };
 });

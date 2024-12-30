@@ -48,7 +48,7 @@ try {
     await fetch("http://localhost:7357/index.json").then((res) => res.json()),
   );
 } catch (e) {
-  throw new Error(`Storybookのindex.jsonの取得に失敗しました`, {
+  throw new Error("Storybookのindex.jsonの取得に失敗しました", {
     cause: e,
   });
 }

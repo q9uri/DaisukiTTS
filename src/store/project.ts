@@ -351,7 +351,7 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
 
       const result: number = await showQuestionDialog({
         type: "warning",
-        title: '変更の保存確認',
+        title: "変更の保存確認",
         message,
         buttons: ["キャンセル", "破棄", "保存"],
         cancel: 0,

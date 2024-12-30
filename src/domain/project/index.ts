@@ -311,7 +311,7 @@ export const migrateProjectFileObject = async (
   // ----- 以下は AivisSpeech 固有のマイグレーション処理 -----
 
   // 1.1.0 未満 -> 1.1.0 以上へのマイグレーション (開発版のみ常にマイグレーションを実行する)
-  if (semver.satisfies(projectAppVersion, "<1.1.0", semverSatisfiesOptions) || projectAppVersion === '999.999.999') {
+  if (semver.satisfies(projectAppVersion, "<1.1.0", semverSatisfiesOptions) || projectAppVersion === "999.999.999") {
 
     // AivisSpeech ではソング機能は封印されているが、実装上の都合で一応マイグレーションしている
     // tracks: Track[] -> tracks: Record<TrackId, Track> + trackOrder: TrackId[]

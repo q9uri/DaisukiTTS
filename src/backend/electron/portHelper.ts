@@ -102,13 +102,13 @@ export async function getPidFromPort(
 
   const exec = isWindows
     ? {
-        cmd: "netstat",
-        args: ["-ano"],
-      }
+      cmd: "netstat",
+      args: ["-ano"],
+    }
     : {
-        cmd: "lsof",
-        args: ["-i", `:${hostInfo.port}`, "-t", "-sTCP:LISTEN"],
-      };
+      cmd: "lsof",
+      args: ["-i", `:${hostInfo.port}`, "-t", "-sTCP:LISTEN"],
+    };
 
   portLog(
     hostInfo.port,
@@ -152,13 +152,13 @@ export async function getProcessNameFromPid(
   portLog(hostInfo.port, `Getting process name from pid=${pid}...`);
   const exec = isWindows
     ? {
-        cmd: "wmic",
-        args: ["process", "where", `"ProcessID=${pid}"`, "get", "name"],
-      }
+      cmd: "wmic",
+      args: ["process", "where", `"ProcessID=${pid}"`, "get", "name"],
+    }
     : {
-        cmd: "ps",
-        args: ["-p", pid.toString(), "-o", "comm="],
-      };
+      cmd: "ps",
+      args: ["-p", pid.toString(), "-o", "comm="],
+    };
 
   const stdout = execFileSync(exec.cmd, exec.args, { shell: true }).toString();
 

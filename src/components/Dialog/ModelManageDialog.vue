@@ -261,9 +261,9 @@ const getAivmInfos = async () => {
 watch(engineManageDialogOpenedComputed, () => {
   if (engineManageDialogOpenedComputed.value) {
     void getAivmInfos();
-    installMethod.value = 'file';
+    installMethod.value = "file";
     selectedFile.value = null;
-    installUrl.value = '';
+    installUrl.value = "";
     isInstalling.value = false;
   }
 });
@@ -301,7 +301,7 @@ const toggleAudio = (speakerUuid: string, styleLocalId: number, sampleIndex: num
   const key = `${speakerUuid}-${styleLocalId}-${sampleIndex}`;
   if (!audioElements[key]) {
     audioElements[key] = new Audio(audioDataUrl);
-    audioElements[key].addEventListener('ended', () => {
+    audioElements[key].addEventListener("ended", () => {
       audioPlaying.value[key] = false;
     });
   }
@@ -319,23 +319,23 @@ const toggleAudio = (speakerUuid: string, styleLocalId: number, sampleIndex: num
 
 // 外部リンクを開く
 const openExternalLink = () => {
-  window.open('https://hub.aivis-project.com/', '_blank');
+  window.open("https://hub.aivis-project.com/", "_blank");
 };
 
 const isInstalling = ref(false);
-const installMethod = ref('file');
+const installMethod = ref("file");
 const selectedFile = ref<File | null>(null);
-const installUrl = ref('');
+const installUrl = ref("");
 
 const canInstall = computed(() => {
-  return (installMethod.value === 'file' && selectedFile.value!= null) ||
-         (installMethod.value === 'url' && installUrl.value.trim() !== '');
+  return (installMethod.value === "file" && selectedFile.value!= null) ||
+         (installMethod.value === "url" && installUrl.value.trim() !== "");
 });
 
 const cancelInstall = () => {
   isInstalling.value = false;
   selectedFile.value = null;
-  installUrl.value = '';
+  installUrl.value = "";
 };
 
 // 音声合成モデルをインストールする
@@ -345,9 +345,9 @@ const installModel = async () => {
   });
   try {
     const apiInstance = await getApiInstance();
-    if (installMethod.value === 'file' && selectedFile.value) {
+    if (installMethod.value === "file" && selectedFile.value) {
       await apiInstance.invoke("installAivmAivmModelsInstallPost")({ file: selectedFile.value });
-    } else if (installMethod.value === 'url') {
+    } else if (installMethod.value === "url") {
       await apiInstance.invoke("installAivmAivmModelsInstallPost")({ url: installUrl.value });
     }
     // インストール成功時の処理
@@ -367,12 +367,12 @@ const installModel = async () => {
       void store.actions.SHOW_ALERT_DIALOG({
         type: "error",
         title: "インストール失敗",
-        message: `音声合成モデルのインストールに失敗しました。\n` +
+        message: "音声合成モデルのインストールに失敗しました。\n" +
                  `(HTTP Error ${error.response.status} / ${await error.response.text()})`,
       });
     } else {
       // assert characterInfo !== undefined エラーを無視
-      if (error instanceof Error && error.message === 'assert characterInfo !== undefined') {
+      if (error instanceof Error && error.message === "assert characterInfo !== undefined") {
         // インストール成功時の処理を実行
         await store.actions.LOAD_CHARACTER({ engineId: store.getters.DEFAULT_ENGINE_ID });
         await store.actions.LOAD_DEFAULT_STYLE_IDS();
@@ -400,7 +400,7 @@ const unInstallAivmModel = async () => {
   const result = await store.actions.SHOW_CONFIRM_DIALOG({
     title: "アンインストールの確認",
     message: `本当に音声合成モデル「${activeAivmInfo.value?.manifest.name}」をアンインストールしますか？\n` +
-             'アンインストールすると、この音声合成モデル内の話者/スタイルは再度インストールするまで使えなくなります。',
+             "アンインストールすると、この音声合成モデル内の話者/スタイルは再度インストールするまで使えなくなります。",
     actionName: "アンインストール",
   });
   if (result === "OK") {
@@ -409,7 +409,7 @@ const unInstallAivmModel = async () => {
     });
     try {
       await getApiInstance().then((instance) =>
-        instance.invoke("uninstallAivmAivmModelsAivmUuidUninstallDelete")({ aivmUuid: activeAivmUuid.value! }))
+        instance.invoke("uninstallAivmAivmModelsAivmUuidUninstallDelete")({ aivmUuid: activeAivmUuid.value! }));
       // アンインストール成功時の処理
       // 話者・スタイル一覧を再読み込み
       await store.actions.LOAD_CHARACTER({ engineId: store.getters.DEFAULT_ENGINE_ID });
@@ -427,7 +427,7 @@ const unInstallAivmModel = async () => {
         });
       } else {
         // assert characterInfo !== undefined エラーを無視
-        if (error instanceof Error && error.message === 'assert characterInfo !== undefined') {
+        if (error instanceof Error && error.message === "assert characterInfo !== undefined") {
           // アンインストール成功時の処理を実行
           await store.actions.LOAD_CHARACTER({ engineId: store.getters.DEFAULT_ENGINE_ID });
           await store.actions.LOAD_DEFAULT_STYLE_IDS();
@@ -451,35 +451,35 @@ const unInstallAivmModel = async () => {
 // モデルのロード/アンロードを切り替える
 const toggleModelLoad = async () => {
   if (activeAivmUuid.value == null) {
-    throw new Error('aivm model is not selected');
+    throw new Error("aivm model is not selected");
   }
 
   void store.actions.SHOW_LOADING_SCREEN({
-    message: activeAivmInfo.value?.isLoaded ? 'モデルをアンロードしています...' : 'モデルをロードしています...',
+    message: activeAivmInfo.value?.isLoaded ? "モデルをアンロードしています..." : "モデルをロードしています...",
   });
 
   try {
     const apiInstance = await getApiInstance();
     if (activeAivmInfo.value?.isLoaded) {
-      await apiInstance.invoke('unloadAivmAivmModelsAivmUuidUnloadPost')({ aivmUuid: activeAivmUuid.value });
+      await apiInstance.invoke("unloadAivmAivmModelsAivmUuidUnloadPost")({ aivmUuid: activeAivmUuid.value });
     } else {
-      await apiInstance.invoke('loadAivmAivmModelsAivmUuidLoadPost')({ aivmUuid: activeAivmUuid.value });
+      await apiInstance.invoke("loadAivmAivmModelsAivmUuidLoadPost")({ aivmUuid: activeAivmUuid.value });
     }
   } catch (error) {
     console.error(error);
     if (error instanceof ResponseError) {
       void store.actions.SHOW_ALERT_DIALOG({
-        type: 'error',
-        title: activeAivmInfo.value?.isLoaded ? 'アンロード失敗' : 'ロード失敗',
-        message: `音声合成モデル「${activeAivmInfo.value?.manifest.name}」の${activeAivmInfo.value?.isLoaded ? 'アンロード' : 'ロード'}に失敗しました。\n` +
+        type: "error",
+        title: activeAivmInfo.value?.isLoaded ? "アンロード失敗" : "ロード失敗",
+        message: `音声合成モデル「${activeAivmInfo.value?.manifest.name}」の${activeAivmInfo.value?.isLoaded ? "アンロード" : "ロード"}に失敗しました。\n` +
                  `(HTTP Error ${error.response.status} / ${await error.response.text()})`,
       });
     } else {
       void store.actions.SHOW_ALERT_DIALOG({
-        type: 'error',
-        title: activeAivmInfo.value?.isLoaded ? 'アンロード失敗' : 'ロード失敗',
+        type: "error",
+        title: activeAivmInfo.value?.isLoaded ? "アンロード失敗" : "ロード失敗",
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        message: `音声合成モデル「${activeAivmInfo.value?.manifest.name}」の${activeAivmInfo.value?.isLoaded ? 'アンロード' : 'ロード'}に失敗しました。(${error})`,
+        message: `音声合成モデル「${activeAivmInfo.value?.manifest.name}」の${activeAivmInfo.value?.isLoaded ? "アンロード" : "ロード"}に失敗しました。(${error})`,
       });
     }
   } finally {
@@ -491,24 +491,24 @@ const toggleModelLoad = async () => {
 // モデルをアップデートする
 const updateAivmModel = async () => {
   if (activeAivmUuid.value == null) {
-    throw new Error('aivm model is not selected');
+    throw new Error("aivm model is not selected");
   }
 
   const result = await store.actions.SHOW_CONFIRM_DIALOG({
-    title: 'アップデートの確認',
+    title: "アップデートの確認",
     message: `音声合成モデル「${activeAivmInfo.value?.manifest.name}」を Version ${activeAivmInfo.value?.latestVersion} へアップデートしますか？\n` +
-             'アップデート後、前のバージョンに戻すことはできません。',
-    actionName: 'アップデート',
+             "アップデート後、前のバージョンに戻すことはできません。",
+    actionName: "アップデート",
   });
 
-  if (result === 'OK') {
+  if (result === "OK") {
     void store.actions.SHOW_LOADING_SCREEN({
-      message: 'アップデートしています...',
+      message: "アップデートしています...",
     });
 
     try {
       const apiInstance = await getApiInstance();
-      await apiInstance.invoke('updateAivmAivmModelsAivmUuidUpdatePost')({ aivmUuid: activeAivmUuid.value });
+      await apiInstance.invoke("updateAivmAivmModelsAivmUuidUpdatePost")({ aivmUuid: activeAivmUuid.value });
       // アップデート成功時の処理
       // 話者・スタイル一覧を再読み込み
       await store.actions.LOAD_CHARACTER({ engineId: store.getters.DEFAULT_ENGINE_ID });
@@ -516,29 +516,29 @@ const updateAivmModel = async () => {
       // プリセットを再作成
       await store.actions.CREATE_ALL_DEFAULT_PRESET();
       void store.actions.SHOW_ALERT_DIALOG({
-        title: 'アップデート完了',
-        message: '音声合成モデルが正常にアップデートされました。',
+        title: "アップデート完了",
+        message: "音声合成モデルが正常にアップデートされました。",
       });
     } catch (error) {
       console.error(error);
       if (error instanceof ResponseError) {
         void store.actions.SHOW_ALERT_DIALOG({
-          type: 'error',
-          title: 'アップデート失敗',
+          type: "error",
+          title: "アップデート失敗",
           message: `音声合成モデル「${activeAivmInfo.value?.manifest.name}」のアップデートに失敗しました。\n` +
                    `(HTTP Error ${error.response.status} / ${await error.response.text()})`,
         });
       } else {
         // assert characterInfo !== undefined エラーを無視
-        if (error instanceof Error && error.message === 'assert characterInfo !== undefined') {
+        if (error instanceof Error && error.message === "assert characterInfo !== undefined") {
           // アップデート成功時の処理を実行
           await store.actions.LOAD_CHARACTER({ engineId: store.getters.DEFAULT_ENGINE_ID });
           await store.actions.LOAD_DEFAULT_STYLE_IDS();
           await store.actions.CREATE_ALL_DEFAULT_PRESET();
         } else {
           void store.actions.SHOW_ALERT_DIALOG({
-            type: 'error',
-            title: 'アップデート失敗',
+            type: "error",
+            title: "アップデート失敗",
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             message: `音声合成モデル「${activeAivmInfo.value?.manifest.name}」のアップデートに失敗しました。(${error})`,
           });
@@ -556,7 +556,7 @@ onUnmounted(() => {
   Object.values(audioElements).forEach(audio => {
     audio.pause();
     audio.currentTime = 0;
-    audio.removeEventListener('ended', () => {});
+    audio.removeEventListener("ended", () => {});
   });
 });
 

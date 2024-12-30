@@ -23,9 +23,9 @@ export function determineNextPresetKey(
   presetKeyCandidate: PresetKey | undefined,
   operation: "generate" | "copy" | "changeVoice",
 ): {
-  nextPresetKey: PresetKey | undefined;
-  shouldApplyPreset: boolean;
-} {
+    nextPresetKey: PresetKey | undefined;
+    shouldApplyPreset: boolean;
+  } {
   const defaultPresetKeyForCurrentVoice =
     state.defaultPresetKeys[VoiceId(voice)];
 

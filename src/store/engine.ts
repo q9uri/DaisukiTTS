@@ -72,7 +72,7 @@ export const engineStore = createPartialStore<EngineStoreTypes>({
         }
       }
       // 通常はここには到達しない
-      return '' as EngineId;
+      return "" as EngineId;
     },
   },
 

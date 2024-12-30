@@ -11,7 +11,7 @@ const meta: Meta<typeof BaseCheckbox> = {
       const checked = ref(Boolean(args.checked));
       return { args, checked };
     },
-    template: `<BaseCheckbox v-bind="args" v-model:checked="checked"></BaseCheckbox>`,
+    template: "<BaseCheckbox v-bind=\"args\" v-model:checked=\"checked\"></BaseCheckbox>",
   }),
 };
 

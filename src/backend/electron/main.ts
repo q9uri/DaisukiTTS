@@ -102,7 +102,7 @@ if (!isDevelopment) {
 // ref: https://docs.sentry.io/platforms/javascript/guides/electron/
 Sentry.init({
   dsn: "https://ab3b3a5b0e9d1c90dae483f740dbc78b@o4508551725383680.ingest.us.sentry.io/4508555292901376",
-  release: `AivisSpeech@${app.getVersion() === '999.999.999' ? 'latest' : app.getVersion()}`,
+  release: `AivisSpeech@${app.getVersion() === "999.999.999" ? "latest" : app.getVersion()}`,
   environment: import.meta.env.MODE,
 });
 
@@ -131,7 +131,7 @@ process.on("uncaughtException", (error) => {
   } else {
     const { message, name } = error;
     let detailedMessage = "";
-    detailedMessage += `メインプロセスで原因不明のエラーが発生しました。\n`;
+    detailedMessage += "メインプロセスで原因不明のエラーが発生しました。\n";
     detailedMessage += `エラー名: ${name}\n`;
     detailedMessage += `メッセージ: ${message}\n`;
     if (error.stack) {
@@ -180,7 +180,7 @@ const onEngineProcessError = (engineInfo: EngineInfo, error: Error) => {
   if (win != undefined) {
     ipcMainSendProxy.DETECTED_ENGINE_ERROR(win, { engineId });
   } else {
-    log.error(`onEngineProcessError: win is undefined`);
+    log.error("onEngineProcessError: win is undefined");
   }
 
   dialog.showErrorBox("音声合成エンジンエラー", error.message);
@@ -221,7 +221,7 @@ function checkMultiEngineEnabled(): boolean {
     dialog.showMessageBoxSync(win, {
       type: "info",
       title: "マルチエンジン機能が無効です",
-      message: `マルチエンジン機能が無効です。vvpp ファイルを使用するには設定からマルチエンジン機能を有効にしてください。`,
+      message: "マルチエンジン機能が無効です。vvpp ファイルを使用するには設定からマルチエンジン機能を有効にしてください。",
       buttons: ["OK"],
       noLink: true,
     });
@@ -926,7 +926,7 @@ app.on("ready", async () => {
         .showMessageBox({
           type: "error",
           title: "設定ファイルの読み込みエラー（開発者向け案内）",
-          message: `設定ファイルの読み込みに失敗しました。設定ファイルの名前を変更するか、設定をリセットしてください。`,
+          message: "設定ファイルの読み込みに失敗しました。設定ファイルの名前を変更するか、設定をリセットしてください。",
           buttons: [
             "何もせず終了",
             "設定ファイルのフォルダを開いて終了",

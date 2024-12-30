@@ -190,13 +190,13 @@ const pagedata = computed(() => {
         updateInfos: updateInfos.value,
         ...(newUpdateResult.value.status == "updateAvailable"
           ? {
-              isUpdateAvailable: true,
-              latestVersion: newUpdateResult.value.latestVersion,
-            }
+            isUpdateAvailable: true,
+            latestVersion: newUpdateResult.value.latestVersion,
+          }
           : {
-              isUpdateAvailable: false,
-              latestVersion: undefined,
-            }),
+            isUpdateAvailable: false,
+            latestVersion: undefined,
+          }),
       },
     },
     {
