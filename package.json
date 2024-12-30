@@ -45,6 +45,8 @@
   "dependencies": {
     "@gtm-support/vue-gtm": "1.2.3",
     "@quasar/extras": "1.16.12",
+    "@sentry/electron": "5.9.0",
+    "@sentry/vue": "8.47.0",
     "@sevenc-nanashi/utaformatix-ts": "npm:@jsr/sevenc-nanashi__utaformatix-ts@0.4.0",
     "@std/path": "npm:@jsr/std__path@1.0.8",
     "async-lock": "1.4.0",

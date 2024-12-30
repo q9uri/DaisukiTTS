@@ -19,6 +19,7 @@ import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import log from "electron-log/main";
 import dayjs from "dayjs";
 import windowStateKeeper from "electron-window-state";
+import * as Sentry from "@sentry/electron/main";
 import { hasSupportedGpu } from "./device";
 import {
   getEngineInfoManager,
@@ -95,6 +96,15 @@ app.setPath("userData", fixedUserDataDir);
 if (!isDevelopment) {
   configMigration014({ fixedUserDataDir, beforeUserDataDir }); // 以前のファイルがあれば持ってくる
 }
+
+// Sentry によるエラートラッキングを開始
+// app.setPath("userData") を設定した後に呼ぶ必要がある
+// ref: https://docs.sentry.io/platforms/javascript/guides/electron/
+Sentry.init({
+  dsn: "https://ab3b3a5b0e9d1c90dae483f740dbc78b@o4508551725383680.ingest.us.sentry.io/4508555292901376",
+  release: `AivisSpeech@${app.getVersion() === '999.999.999' ? 'latest' : app.getVersion()}`,
+  environment: import.meta.env.MODE,
+});
 
 log.initialize({ preload: false });
 // silly 以上のログをコンソールに出力
