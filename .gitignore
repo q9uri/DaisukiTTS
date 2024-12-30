@@ -50,3 +50,6 @@ dist_preview/
 
 # Downloaded binaries
 vendored
+
+# Sentry Config File
+.env.sentry-build-plugin

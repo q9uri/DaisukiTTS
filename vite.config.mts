@@ -8,7 +8,7 @@ import vue from "@vitejs/plugin-vue";
 import checker from "vite-plugin-checker";
 import { BuildOptions, defineConfig, loadEnv, Plugin } from "vite";
 import { quasar } from "@quasar/vite-plugin";
-
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 const isElectron = process.env.VITE_TARGET === "electron";
 const isBrowser = process.env.VITE_TARGET === "browser";
 
@@ -39,8 +39,8 @@ export default defineConfig((options) => {
 
   const shouldEmitSourcemap = ["development", "test"].includes(options.mode);
   const sourcemap: BuildOptions["sourcemap"] = shouldEmitSourcemap
-    ? "inline"
-    : false;
+    ? "inline"  // 開発時はインライン
+    : true;  // 本番時は別ファイル
 
   // ref: electronの起動をスキップしてデバッグ起動を軽くする
   const skipLahnchElectron =
@@ -119,6 +119,12 @@ export default defineConfig((options) => {
             },
           },
         ]),
+        sentryVitePlugin({
+          authToken: process.env.SENTRY_AUTH_TOKEN,
+          org: "jpchain",
+          project: "aivisspeech",
+          telemetry: false,
+        }),
       ],
       isBrowser && injectBrowserPreloadPlugin(),
     ],
