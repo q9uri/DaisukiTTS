@@ -107,6 +107,13 @@ module.exports = {
     "vue/max-attributes-per-line": "off",
     "vue/multiline-html-element-content-newline": "off",
     "vue/singleline-html-element-content-newline": "off",
+    // AivisSpeech 独自
+    "indent": ["error", 2, { "SwitchCase": 1 }],
+    "quotes": ["error", "double"],
+    "semi": ["error", "always"],
+    "@typescript-eslint/indent": ["error", 2, {"SwitchCase": 1}],
+    "@typescript-eslint/quotes": ["error", "double"],
+    "@typescript-eslint/semi": ["error", "always"],
   },
   overrides: [
     {
