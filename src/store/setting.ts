@@ -257,17 +257,18 @@ export const settingStore = createPartialStore<SettingStoreTypes>({
     mutation(state, { acceptRetrieveTelemetry }) {
       state.acceptRetrieveTelemetry = acceptRetrieveTelemetry;
     },
-    action({ mutations }, { acceptRetrieveTelemetry }) {
+    action({ state, mutations }, { acceptRetrieveTelemetry }) {
       /*
       window.dataLayer?.push({
         event: "updateAcceptRetrieveTelemetry",
         acceptRetrieveTelemetry: acceptRetrieveTelemetry == "Accepted",
       });
       */
-      const analytics = useAnalytics();
-      analytics.trackEvent("updateAcceptRetrieveTelemetry", {
-        acceptRetrieveTelemetry: acceptRetrieveTelemetry == "Accepted",
-      });
+      if (acceptRetrieveTelemetry !== state.acceptRetrieveTelemetry) {
+        useAnalytics().trackEvent("update_accept_retrieve_telemetry", {
+          acceptRetrieveTelemetry: acceptRetrieveTelemetry == "Accepted",
+        });
+      }
       void window.backend.setSetting(
         "acceptRetrieveTelemetry",
         acceptRetrieveTelemetry,
@@ -280,17 +281,18 @@ export const settingStore = createPartialStore<SettingStoreTypes>({
     mutation(state, { acceptTerms }) {
       state.acceptTerms = acceptTerms;
     },
-    action({ mutations }, { acceptTerms }) {
+    action({ state, mutations }, { acceptTerms }) {
       /*
       window.dataLayer?.push({
         event: "updateAcceptTerms",
         acceptTerms: acceptTerms == "Accepted",
       });
       */
-      const analytics = useAnalytics();
-      analytics.trackEvent("updateAcceptTerms", {
-        acceptTerms: acceptTerms == "Accepted",
-      });
+      if (acceptTerms !== state.acceptTerms) {
+        useAnalytics().trackEvent("update_accept_terms", {
+          acceptTerms: acceptTerms == "Accepted",
+        });
+      }
       void window.backend.setSetting("acceptTerms", acceptTerms);
       mutations.SET_ACCEPT_TERMS({ acceptTerms });
     },

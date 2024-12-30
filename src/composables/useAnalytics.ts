@@ -3,10 +3,7 @@ import ga4mp, { GA4Instance } from "@analytics-debugger/ga4mp";
 
 const GA4_MEASUREMENT_ID = "G-TEMWCS6D7B";
 const enabled = ref(false);
-const ga4track: GA4Instance = ga4mp([GA4_MEASUREMENT_ID], {
-  debug: import.meta.env.DEV,
-  non_personalized_ads: true,
-});
+let ga4instance: GA4Instance | null = null;
 
 /**
  * Google Analytics 4 を Electron で使うための composable
@@ -27,7 +24,13 @@ export function useAnalytics() {
     eventParameters?: Record<string, any>,
   ) => {
     if (!enabled.value) return;
-    ga4track.trackEvent(eventName, eventParameters);
+    if (ga4instance == null) {
+      ga4instance = ga4mp([GA4_MEASUREMENT_ID], {
+        debug: true,
+        non_personalized_ads: true,
+      });
+    }
+    ga4instance.trackEvent(eventName, eventParameters);
   };
 
   return {
