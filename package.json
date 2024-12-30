@@ -57,6 +57,7 @@
     "encoding-japanese": "1.0.30",
     "fast-array-diff": "1.1.0",
     "fast-base64": "0.1.8",
+    "@analytics-debugger/ga4mp": "0.0.8",
     "glob": "11.0.0",
     "hotkeys-js": "3.13.6",
     "immer": "9.0.21",

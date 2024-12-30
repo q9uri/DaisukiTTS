@@ -1,5 +1,5 @@
 import { createApp } from "vue";
-import { createGtm } from "@gtm-support/vue-gtm";
+// import { createGtm } from "@gtm-support/vue-gtm";
 import { Quasar, Dialog, Loading, Notify } from "quasar";
 import iconSet from "quasar/icon-set/material-symbols-rounded";
 import * as Sentry from "@sentry/electron/renderer";  // eslint-disable-line
@@ -16,7 +16,7 @@ import "./styles/_index.scss";
 
 // NOTE: 起動後、設定を読み込んでからvue-gtmを有効化する関係上、dataLayerの用意が間に合わず、値が欠落してしまう箇所が存在する
 //       ため、それを防止するため自前でdataLayerをあらかじめ用意する
-window.dataLayer = [];
+// window.dataLayer = [];
 
 // Sentry によるエラートラッキングを開始
 // ref: https://docs.sentry.io/platforms/javascript/guides/electron/
@@ -46,13 +46,16 @@ Sentry.init(
 
 createApp(App)
   .use(store, storeKey)
+  // Google Tag Manager (2024年末現在の公式 GA4 実装では動作しないため常に無効化)
+  /*
   .use(
     createGtm({
-      id: import.meta.env.VITE_GTM_CONTAINER_ID ?? "GTM-PNHDPBZ4",
+      id: import.meta.env.VITE_GTM_CONTAINER_ID ?? "GTM-DUMMY",
       // NOTE: 最初はgtm.jsを読まず、プライバシーポリシーに同意後に読み込む
       enabled: false,
     }),
   )
+  */
   .use(Quasar, {
     config: {
       brand: {

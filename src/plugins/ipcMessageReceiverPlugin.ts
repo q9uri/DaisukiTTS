@@ -1,5 +1,6 @@
 import { Plugin } from "vue";
 import { debounce } from "quasar";
+import { useAnalytics } from "@/composables/useAnalytics";
 import { Store } from "@/store/vuex";
 import { AllActions, AllGetters, AllMutations, State } from "@/store/type";
 
@@ -38,8 +39,11 @@ export const ipcMessageReceiver: Plugin = {
       },
 
       DETECT_RESIZED: debounce(
-        (_, { width, height }: { width: number; height: number }) =>
-          window.dataLayer?.push({ event: "windowResize", width, height }),
+        (_, { width, height }: { width: number; height: number }) => {
+          // window.dataLayer?.push({ event: "windowResize", width, height });
+          const analytics = useAnalytics();
+          analytics.trackEvent("windowResize", { width, height });
+        },
         300,
       ),
     });

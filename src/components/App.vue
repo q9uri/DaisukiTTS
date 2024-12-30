@@ -24,8 +24,9 @@
 
 <script setup lang="ts">
 import { watch, onMounted, ref, computed, toRaw, watchEffect } from "vue";
-import { useGtm } from "@gtm-support/vue-gtm";
+// import { useGtm } from "@gtm-support/vue-gtm";
 import { TooltipProvider } from "radix-vue";
+import { useAnalytics } from "@/composables/useAnalytics";
 import TalkEditor from "@/components/Talk/TalkEditor.vue";
 import SingEditor from "@/components/Sing/SingEditor.vue";
 import { EngineId } from "@/type/preload";
@@ -56,12 +57,28 @@ const subMenuData = computed(() => {
 
 const openedEditor = computed(() => store.state.openedEditor);
 
-// Google Tag Manager
+// Google Tag Manager (2024年末現在の公式 GA4 実装では動作しないため常に無効化)
+/*
 const gtm = useGtm();
 watch(
   () => store.state.acceptRetrieveTelemetry,
   (acceptRetrieveTelemetry) => {
     gtm?.enable(acceptRetrieveTelemetry === "Accepted");
+  },
+  { immediate: true },
+);
+*/
+
+// Google アナリティクスの有効/無効を acceptRetrieveTelemetry と連動させる
+const analytics = useAnalytics();
+watch(
+  () => store.state.acceptRetrieveTelemetry,
+  (acceptRetrieveTelemetry) => {
+    if (acceptRetrieveTelemetry === "Accepted") {
+      analytics.enable();
+    } else {
+      analytics.disable();
+    }
   },
   { immediate: true },
 );

@@ -1,6 +1,7 @@
 import { SettingStoreState, SettingStoreTypes } from "./type";
 import { createUILockAction } from "./ui";
 import { createPartialStore } from "./vuex";
+import { useAnalytics } from "@/composables/useAnalytics";
 import { themes } from "@/domain/theme";
 import {
   showAlertDialog,
@@ -257,8 +258,14 @@ export const settingStore = createPartialStore<SettingStoreTypes>({
       state.acceptRetrieveTelemetry = acceptRetrieveTelemetry;
     },
     action({ mutations }, { acceptRetrieveTelemetry }) {
+      /*
       window.dataLayer?.push({
         event: "updateAcceptRetrieveTelemetry",
+        acceptRetrieveTelemetry: acceptRetrieveTelemetry == "Accepted",
+      });
+      */
+      const analytics = useAnalytics();
+      analytics.trackEvent("updateAcceptRetrieveTelemetry", {
         acceptRetrieveTelemetry: acceptRetrieveTelemetry == "Accepted",
       });
       void window.backend.setSetting(
@@ -274,8 +281,14 @@ export const settingStore = createPartialStore<SettingStoreTypes>({
       state.acceptTerms = acceptTerms;
     },
     action({ mutations }, { acceptTerms }) {
+      /*
       window.dataLayer?.push({
         event: "updateAcceptTerms",
+        acceptTerms: acceptTerms == "Accepted",
+      });
+      */
+      const analytics = useAnalytics();
+      analytics.trackEvent("updateAcceptTerms", {
         acceptTerms: acceptTerms == "Accepted",
       });
       void window.backend.setSetting("acceptTerms", acceptTerms);
