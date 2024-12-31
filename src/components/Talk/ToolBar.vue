@@ -110,7 +110,7 @@ registerHotkeyWithCleanup({
 
 const trackToolbarAction = (actionName: string) => {
   void useAnalytics().trackEvent("aisp_toolbar_button_click", {
-    action_name: actionName,
+    action: actionName,
   });
 };
 

@@ -14,8 +14,8 @@ export function useDialogAnalytics(
     () => isOpen.value,
     (newValue) => {
       void analytics.trackEvent("aisp_dialog_state_change", {
-        dialog_name: dialogName,
-        dialog_state: newValue ? "opened" : "closed",
+        dialog: dialogName,
+        state: newValue ? "opened" : "closed",
       });
     },
   );

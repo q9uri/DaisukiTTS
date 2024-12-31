@@ -8,6 +8,7 @@ import {
 } from "./type";
 import { convertAudioQueryFromEditorToEngine } from "./proxy";
 import { generateTempUniqueId } from "./utility";
+import { useAnalytics } from "@/composables/useAnalytics";
 
 const audioBlobCache: Record<string, Blob> = {};
 
@@ -56,11 +57,27 @@ export async function fetchAudioFromAudioItem(
       morphRate: audioItem.morphingInfo.rate,
     });
   } else {
+    const startTime = performance.now() / 1000;  // ミリ秒から秒に変換
     blob = await instance.invoke("synthesisSynthesisPost")({
       audioQuery: engineAudioQuery,
       speaker,
       enableInterrogativeUpspeak:
         state.experimentalSetting.enableInterrogativeUpspeak,
+    });
+    const synthesisTime = (performance.now() / 1000) - startTime;
+    void useAnalytics().trackEvent("aisp_synthesis", {
+      // プライバシーの観点から、テキスト内容は送信しない
+      engineId: audioItem.voice.engineId,
+      speakerId: audioItem.voice.speakerId,
+      styleId: audioItem.voice.styleId,
+      speedScale: audioQuery.speedScale,
+      intonationScale: audioQuery.intonationScale,
+      tempoDynamicsScale: audioQuery.tempoDynamicsScale,
+      pitchScale: audioQuery.pitchScale,
+      volumeScale: audioQuery.volumeScale,
+      prePhonemeLength: audioQuery.prePhonemeLength,
+      postPhonemeLength: audioQuery.postPhonemeLength,
+      synthesisTime: synthesisTime,
     });
   }
   audioBlobCache[id] = blob;
