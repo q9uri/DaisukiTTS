@@ -45,6 +45,7 @@ import ImportSongProjectDialog from "@/components/Dialog/ImportSongProjectDialog
 import ExportSongAudioDialog from "@/components/Dialog/ExportSongAudioDialog/Container.vue";
 import { useStore } from "@/store";
 import { filterCharacterInfosByStyleType } from "@/store/utility";
+import { useDialogAnalytics } from "@/composables/useDialogAnalytics";
 
 const props = defineProps<{
   isEnginesReady: boolean;
@@ -56,12 +57,14 @@ const isHelpDialogOpenComputed = computed({
   get: () => store.state.isHelpDialogOpen,
   set: (val) => store.actions.SET_DIALOG_OPEN({ isHelpDialogOpen: val }),
 });
+useDialogAnalytics("help", isHelpDialogOpenComputed);
 
 // 設定
 const isSettingDialogOpenComputed = computed({
   get: () => store.state.isSettingDialogOpen,
   set: (val) => store.actions.SET_DIALOG_OPEN({ isSettingDialogOpen: val }),
 });
+useDialogAnalytics("settings", isSettingDialogOpenComputed);
 
 // ショートカットキー設定
 const isHotkeySettingDialogOpenComputed = computed({
@@ -71,6 +74,7 @@ const isHotkeySettingDialogOpenComputed = computed({
       isHotkeySettingDialogOpen: val,
     }),
 });
+useDialogAnalytics("hotkey_settings", isHotkeySettingDialogOpenComputed);
 
 // ツールバーのカスタム設定
 const isToolbarSettingDialogOpenComputed = computed({
@@ -80,6 +84,7 @@ const isToolbarSettingDialogOpenComputed = computed({
       isToolbarSettingDialogOpen: val,
     }),
 });
+useDialogAnalytics("toolbar_settings", isToolbarSettingDialogOpenComputed);
 
 // 利用規約表示
 const isAcceptTermsDialogOpenComputed = computed({
@@ -89,6 +94,7 @@ const isAcceptTermsDialogOpenComputed = computed({
       isAcceptTermsDialogOpen: val,
     }),
 });
+useDialogAnalytics("accept_terms", isAcceptTermsDialogOpenComputed);
 
 // 音声合成モデル管理
 const isModelManageDialogOpenComputed = computed({
@@ -98,6 +104,7 @@ const isModelManageDialogOpenComputed = computed({
       isModelManageDialogOpen: val,
     }),
 });
+useDialogAnalytics("model_management", isModelManageDialogOpenComputed);
 
 // キャラクター並び替え
 const orderedAllCharacterInfos = computed(
@@ -112,6 +119,7 @@ const isCharacterOrderDialogOpenComputed = computed({
       isCharacterOrderDialogOpen: val,
     }),
 });
+useDialogAnalytics("character_order", isCharacterOrderDialogOpenComputed);
 
 // デフォルトスタイル選択(トーク)
 const orderedTalkCharacterInfos = computed(() => {
@@ -130,6 +138,7 @@ const isDefaultStyleSelectDialogOpenComputed = computed({
       isDefaultStyleSelectDialogOpen: val,
     }),
 });
+useDialogAnalytics("default_style_select", isDefaultStyleSelectDialogOpenComputed);
 
 // エンジン管理
 const isEngineManageDialogOpenComputed = computed({
@@ -139,6 +148,7 @@ const isEngineManageDialogOpenComputed = computed({
       isEngineManageDialogOpen: val,
     }),
 });
+useDialogAnalytics("engine_management", isEngineManageDialogOpenComputed);
 
 // 読み方＆アクセント辞書
 const isDictionaryManageDialogOpenComputed = computed({
@@ -148,6 +158,7 @@ const isDictionaryManageDialogOpenComputed = computed({
       isDictionaryManageDialogOpen: val,
     }),
 });
+useDialogAnalytics("dictionary_management", isDictionaryManageDialogOpenComputed);
 
 const isAcceptRetrieveTelemetryDialogOpenComputed = computed({
   get: () =>
@@ -160,6 +171,7 @@ const isAcceptRetrieveTelemetryDialogOpenComputed = computed({
       isAcceptRetrieveTelemetryDialogOpen: val,
     }),
 });
+useDialogAnalytics("accept_telemetry", isAcceptRetrieveTelemetryDialogOpenComputed);
 
 // エディタのアップデート確認ダイアログ
 const canOpenNotificationDialog = computed(() => {
@@ -180,6 +192,7 @@ const isExportSongAudioDialogOpen = computed({
       isExportSongAudioDialogOpen: val,
     }),
 });
+useDialogAnalytics("export_song_audio", isExportSongAudioDialogOpen);
 
 // ソングのプロジェクトファイルのインポート時の設定ダイアログ
 const isImportSongProjectDialogOpenComputed = computed({
@@ -189,4 +202,5 @@ const isImportSongProjectDialogOpenComputed = computed({
       isImportSongProjectDialogOpen: val,
     }),
 });
+useDialogAnalytics("import_song_project", isImportSongProjectDialogOpenComputed);
 </script>

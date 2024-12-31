@@ -43,6 +43,7 @@ import {
   multiGenerateAndSaveAudioWithDialog,
   generateAndSaveOneAudioWithDialog,
 } from "@/components/Dialog/Dialog";
+import { useAnalytics } from "@/composables/useAnalytics";
 import { useStore } from "@/store";
 import { ToolbarButtonTagType } from "@/type/preload";
 import { getToolbarButtonName, getToolbarButtonIcon } from "@/store/utility";
@@ -79,7 +80,7 @@ registerHotkeyWithCleanup({
   name: "元に戻す",
   callback: () => {
     if (!uiLocked.value && canUndo.value) {
-      undo();
+      undo(true);
     }
   },
 });
@@ -88,7 +89,7 @@ registerHotkeyWithCleanup({
   name: "やり直す",
   callback: () => {
     if (!uiLocked.value && canRedo.value) {
-      redo();
+      redo(true);
     }
   },
 });
@@ -101,19 +102,34 @@ registerHotkeyWithCleanup({
       if (nowPlayingContinuously.value) {
         stop();
       } else {
-        void playContinuously();
+        void playContinuously(true);
       }
     }
   },
 });
 
-const undo = () => {
+const trackToolbarAction = (actionName: string) => {
+  useAnalytics().trackEvent("toolbar_action", {
+    action_name: actionName,
+  });
+};
+
+const undo = (fromHotkey: boolean = false) => {
+  if (fromHotkey === false) {
+    trackToolbarAction("undo");
+  }
   void store.actions.UNDO({ editor });
 };
-const redo = () => {
+const redo = (fromHotkey: boolean = false) => {
+  if (fromHotkey === false) {
+    trackToolbarAction("redo");
+  }
   void store.actions.REDO({ editor });
 };
-const playContinuously = async () => {
+const playContinuously = async (fromHotkey: boolean = false) => {
+  if (fromHotkey === false) {
+    trackToolbarAction("play_continuously");
+  }
   try {
     await store.actions.PLAY_CONTINUOUSLY_AUDIO();
   } catch (e) {
@@ -128,6 +144,7 @@ const playContinuously = async () => {
 const play = async () => {
   if (activeAudioKey.value == undefined)
     throw new Error("activeAudioKey is undefined");
+  trackToolbarAction("play");
   try {
     await store.actions.PLAY_AUDIO({
       audioKey: activeAudioKey.value,
@@ -142,6 +159,7 @@ const play = async () => {
   }
 };
 const stop = () => {
+  trackToolbarAction("stop");
   void store.actions.STOP_AUDIO();
 };
 const generateAndSaveSelectedAudio = async () => {
@@ -149,6 +167,8 @@ const generateAndSaveSelectedAudio = async () => {
     throw new Error("activeAudioKey is undefined");
 
   const selectedAudioKeys = store.getters.SELECTED_AUDIO_KEYS;
+  trackToolbarAction("generate_selected_audio");
+
   if (
     store.state.experimentalSetting.enableMultiSelect &&
     selectedAudioKeys.length > 1
@@ -167,6 +187,7 @@ const generateAndSaveSelectedAudio = async () => {
   }
 };
 const generateAndSaveAllAudio = async () => {
+  trackToolbarAction("generate_all_audio");
   await multiGenerateAndSaveAudioWithDialog({
     audioKeys: store.state.audioKeys,
     actions: store.actions,
@@ -174,15 +195,18 @@ const generateAndSaveAllAudio = async () => {
   });
 };
 const generateAndConnectAndSaveAudio = async () => {
+  trackToolbarAction("generate_connect_audio");
   await generateAndConnectAndSaveAudioWithDialog({
     actions: store.actions,
     disableNotifyOnGenerate: store.state.confirmedTips.notifyOnGenerate,
   });
 };
 const saveProject = async () => {
+  trackToolbarAction("save_project");
   await store.actions.SAVE_PROJECT_FILE({ overwrite: true });
 };
 const importTextFile = () => {
+  trackToolbarAction("import_text");
   void store.actions.COMMAND_IMPORT_FROM_FILE({});
 };
 
