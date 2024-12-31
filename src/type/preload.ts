@@ -269,6 +269,7 @@ export interface Sandbox {
   logWarn(...params: unknown[]): void;
   logInfo(...params: unknown[]): void;
   openLogDirectory(): void;
+  openDefaultEngineLogDirectory(): void;
   engineInfos(): Promise<EngineInfo[]>;
   restartEngine(engineId: EngineId): Promise<void>;
   openEngineDirectory(engineId: EngineId): void;

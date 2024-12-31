@@ -148,6 +148,11 @@ export type IpcIHData = {
     return: void;
   };
 
+  OPEN_DEFAULT_ENGINE_LOG_DIRECTORY: {
+    args: [];
+    return: void;
+  };
+
   ENGINE_INFOS: {
     args: [];
     return: EngineInfo[];

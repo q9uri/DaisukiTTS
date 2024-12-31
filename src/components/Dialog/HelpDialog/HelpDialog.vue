@@ -68,6 +68,15 @@
                       class="text-no-wrap text-bold q-mr-sm"
                       @click="openLogDirectory"
                     />
+                    <QBtn
+                      v-if="page.component === ContactInfo"
+                      outline
+                      icon="sym_r_description"
+                      label="音声合成エンジンのログフォルダを開く"
+                      textColor="display"
+                      class="text-no-wrap text-bold q-mr-sm"
+                      @click="openDefaultEngineLogDirectory"
+                    />
                   </QToolbar>
                 </QHeader>
                 <Component :is="page.component" v-bind="page.props" />
@@ -274,6 +283,7 @@ const selectedPageIndex = ref(0);
 // });
 
 const openLogDirectory = () => window.backend.openLogDirectory();
+const openDefaultEngineLogDirectory = () => window.backend.openDefaultEngineLogDirectory();
 </script>
 
 <style scoped lang="scss">

@@ -152,6 +152,10 @@ const api: Sandbox = {
     void ipcRendererInvokeProxy.OPEN_LOG_DIRECTORY();
   },
 
+  openDefaultEngineLogDirectory: () => {
+    void ipcRendererInvokeProxy.OPEN_DEFAULT_ENGINE_LOG_DIRECTORY();
+  },
+
   engineInfos: () => {
     return ipcRendererInvokeProxy.ENGINE_INFOS();
   },

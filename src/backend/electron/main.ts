@@ -659,8 +659,28 @@ registerIpcMainHandle<IpcMainHandle>({
   ZOOM_RESET: () => {
     win.webContents.setZoomFactor(1);
   },
+
   OPEN_LOG_DIRECTORY: () => {
     void shell.openPath(app.getPath("logs"));
+  },
+  OPEN_DEFAULT_ENGINE_LOG_DIRECTORY: () => {
+    // AivisSpeech Engine のログ保存先ディレクトリを OS ごとに取得
+    let logPath = "";
+    switch (process.platform) {
+      case "win32":
+        logPath = path.join(app.getPath("appData"), "AivisSpeech-Engine", "Logs");
+        break;
+      case "darwin":
+        logPath = path.join(app.getPath("appData"), "AivisSpeech-Engine", "Logs");
+        break;
+      case "linux":
+        logPath = path.join(app.getPath("home"), ".local", "share", "AivisSpeech-Engine", "Logs");
+        break;
+      default:
+        return;
+    }
+    // ログディレクトリを開く
+    void shell.openPath(logPath);
   },
 
   ENGINE_INFOS: () => {
