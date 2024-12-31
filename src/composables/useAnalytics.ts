@@ -1,8 +1,7 @@
-import { ref } from "vue";
 import ga4mp, { GA4Instance } from "@analytics-debugger/ga4mp";
 
 const GA4_MEASUREMENT_ID = "G-TEMWCS6D7B";
-const enabled = ref(false);
+let isEnabled = false;
 let ga4instance: GA4Instance | null = null;
 
 // GA4 の LocalStorage キー
@@ -136,19 +135,19 @@ function getOrCreateSession(): GA4SessionData {
  */
 export function useAnalytics() {
   const enable = () => {
-    enabled.value = true;
+    isEnabled = true;
   };
 
   const disable = () => {
-    enabled.value = false;
+    isEnabled = false;
   };
 
-  const trackEvent = (
+  const trackEvent = async (
     eventName: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     eventParameters?: Record<string, any>,
   ) => {
-    if (!enabled.value) return;
+    if (!isEnabled) return;
 
     // 新規セッション開始時またはセッションタイムアウト時のみ、新しいインスタンスを作成
     // セッションの継続タイムスタンプを記録するため、状態に関わらず毎回 getOrCreateSession() を呼ぶ必要がある
@@ -156,6 +155,11 @@ export function useAnalytics() {
     const client_id = getOrCreateClientId();
     const { session_id, session_count } = getOrCreateSession();
     if (shouldInitializeGA4) {
+      // 新規セッション取得前に document.title にタイトルを設定しておくことで、タイミング次第では
+      // テレメトリで送信されるタイトルにバージョン情報が含まれなくなる ("AivisSpeech" のみになってしまう) ことを防ぐ
+      // document.title への今後の変更は GA4MP 側には反映されない
+      const appInfo = await window.backend.getAppInfos();
+      window.document.title = `AivisSpeech ${appInfo.version}`;
       ga4instance = ga4mp([GA4_MEASUREMENT_ID], {
         debug: true,
         non_personalized_ads: true,

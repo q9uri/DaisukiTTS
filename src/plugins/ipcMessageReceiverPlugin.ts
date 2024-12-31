@@ -41,7 +41,7 @@ export const ipcMessageReceiver: Plugin = {
       DETECT_RESIZED: debounce(
         (_, { width, height }: { width: number; height: number }) => {
           // window.dataLayer?.push({ event: "windowResize", width, height });
-          useAnalytics().trackEvent("aisp_window_resize", { width, height });
+          void useAnalytics().trackEvent("aisp_window_resize", { width, height });
         },
         300,
       ),

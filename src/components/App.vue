@@ -189,6 +189,6 @@ onMounted(async () => {
   }
 
   // Google アナリティクスに page_view イベントを送信する
-  analytics.trackEvent("page_view");
+  void analytics.trackEvent("page_view");
 });
 </script>
