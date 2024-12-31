@@ -11,15 +11,15 @@ let ga4instance: GA4Instance | null = null;
 const GA4_CLIENT_ID_KEY = "_ga";
 const GA4_SESSION_KEY = `_ga_${GA4_MEASUREMENT_ID.replace("G-", "")}`;
 
-// セッションタイムアウト (30分、ミリ秒単位)
+// セッションタイムアウト (30分、秒単位)
 // ref: 公式のデフォルト値は30分
-const SESSION_TIMEOUT = 30 * 60 * 1000;
+const SESSION_TIMEOUT = 30 * 60;
 
 type GA4SessionData = {
   session_id: string;
   session_count: number;
-  session_start: number;
   engagement: 0 | 1;
+  timestamp: number;
 };
 
 /**
@@ -57,14 +57,14 @@ function parseGA4SessionString(sessionStr: string | null): GA4SessionData | null
 
   try {
     // Format: GS1.1.{session_id}.{session_count}.{engagement}.{timestamp}.0.0.0
-    const [prefix1, prefix2, session_id, session_count, engagement] = sessionStr.split(".");
+    const [prefix1, prefix2, session_id, session_count, engagement, timestamp] = sessionStr.split(".");
     if (prefix1 !== "GS1" || prefix2 !== "1") return null;
 
     return {
       session_id,
       session_count: Number(session_count),
-      session_start: Number(session_id), // session_id is timestamp
       engagement: Number(engagement) as 0 | 1,
+      timestamp: Number(timestamp),
     };
   } catch {
     return null;
@@ -75,41 +75,59 @@ function parseGA4SessionString(sessionStr: string | null): GA4SessionData | null
  * GA4 のセッションデータを作成する
  */
 function createGA4SessionString(data: GA4SessionData): string {
-  const timestamp = Math.floor(Date.now() / 1000);
   // Format: GS1.1.{session_id}.{session_count}.{engagement}.{timestamp}.0.0.0
-  return `GS1.1.${data.session_id}.${data.session_count}.${data.engagement}.${timestamp}.0.0.0`;
+  return `GS1.1.${data.session_id}.${data.session_count}.${data.engagement}.${data.timestamp}.0.0.0`;
+}
+
+/**
+ * セッションがタイムアウトしているかどうかを確認する
+ */
+function isSessionTimedOut(): boolean {
+  const sessionStr = localStorage.getItem(GA4_SESSION_KEY);
+  const sessionData = parseGA4SessionString(sessionStr);
+  if (!sessionData) return true;
+
+  const now = Math.floor(Date.now() / 1000);
+  return now - sessionData.timestamp > SESSION_TIMEOUT;
 }
 
 /**
  * セッションデータを取得または新規作成する
  */
-function getOrCreateSession(): { session_id: string; session_number: number } {
-  const now = Date.now();
+function getOrCreateSession(): GA4SessionData {
+  const now = Math.floor(Date.now() / 1000);
   const sessionStr = localStorage.getItem(GA4_SESSION_KEY);
   const sessionData = parseGA4SessionString(sessionStr);
 
   // セッションデータがない、またはセッションタイムアウトしている場合は新規作成する
-  if (!sessionData || now - sessionData.session_start * 1000 > SESSION_TIMEOUT) {
+  if (!sessionData || isSessionTimedOut()) {
     // 新規セッションを作成する
     const newSessionData: GA4SessionData = {
-      session_id: String(Math.floor(now / 1000)),
+      session_id: String(now),
       session_count: (sessionData?.session_count ?? 0) + 1,
-      session_start: Math.floor(now / 1000),
       engagement: 1, // 簡易実装のため、初期状態もエンゲージメントとする
+      timestamp: now,
     };
 
     localStorage.setItem(GA4_SESSION_KEY, createGA4SessionString(newSessionData));
-    return {
-      session_id: newSessionData.session_id,
-      session_number: newSessionData.session_count,
-    };
+
+    // session_start イベントを送信
+    // GA4 インスタンスの初期化を待ってからイベントを送信する
+    setTimeout(() => {
+      if (ga4instance) {
+        ga4instance.trackEvent("session_start");
+      }
+    }, 500);
+
+    return newSessionData;
   }
 
   // 既存のセッションを継続する
-  return {
-    session_id: sessionData.session_id,
-    session_number: sessionData.session_count,
-  };
+  // 最後のアクティビティ時刻を更新
+  sessionData.timestamp = now;
+  localStorage.setItem(GA4_SESSION_KEY, createGA4SessionString(sessionData));
+
+  return sessionData;
 }
 
 /**
@@ -131,19 +149,22 @@ export function useAnalytics() {
     eventParameters?: Record<string, any>,
   ) => {
     if (!enabled.value) return;
-    if (ga4instance == null) {
-      // まだ初期化されてないときのみ、GA4MP を初期化
-      const client_id = getOrCreateClientId();
-      const { session_id, session_number } = getOrCreateSession();
+
+    // 新規セッション開始時またはセッションタイムアウト時のみ、新しいインスタンスを作成
+    // セッションの継続タイムスタンプを記録するため、状態に関わらず毎回 getOrCreateSession() を呼ぶ必要がある
+    const shouldInitializeGA4 = ga4instance == null || isSessionTimedOut();
+    const client_id = getOrCreateClientId();
+    const { session_id, session_count } = getOrCreateSession();
+    if (shouldInitializeGA4) {
       ga4instance = ga4mp([GA4_MEASUREMENT_ID], {
         debug: true,
         non_personalized_ads: true,
         client_id: client_id,
         session_id: session_id,
-        session_number: session_number,
+        session_number: session_count,
       });
     }
-    ga4instance.trackEvent(eventName, eventParameters);
+    ga4instance!.trackEvent(eventName, eventParameters);
   };
 
   return {
