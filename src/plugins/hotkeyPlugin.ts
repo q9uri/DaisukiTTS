@@ -9,6 +9,7 @@
  */
 import { Plugin, inject, onMounted, onUnmounted } from "vue";
 import hotkeys from "hotkeys-js";
+import { useAnalytics } from "@/composables/useAnalytics";
 import {
   HotkeyActionNameType,
   HotkeyCombination,
@@ -212,6 +213,10 @@ export class HotkeyManager {
             }
           }
           e.preventDefault();
+          void useAnalytics().trackEvent("aisp_hotkey_press", {
+            action: setting.action,
+            combination: setting.combination,
+          });
           action.callback(e);
         },
       );
