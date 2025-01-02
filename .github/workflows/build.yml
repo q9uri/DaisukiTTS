@@ -345,7 +345,17 @@ jobs:
         env:
           MACOS_ARTIFACT_NAME: ${{ matrix.macos_artifact_name }}
         run: |
-          npm run electron:build -- --prepackaged prepackage/AivisSpeech.app
+          for i in {1..5}; do
+            npm run electron:build -- --prepackaged prepackage/AivisSpeech.app && break || {
+              if [ $i -lt 5 ]; then
+                echo "Attempt $i failed! Retrying in 10 seconds..."
+                sleep 10
+              else
+                echo "All attempts failed!"
+                exit 1
+              fi
+            }
+          done
 
       - name: Reset Code Signing Envs
         if: startsWith(matrix.os, 'windows-') && github.event.inputs.code_signing == 'true'
