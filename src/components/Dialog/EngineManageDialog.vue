@@ -100,7 +100,7 @@
           <!-- 右側のpane -->
           <template v-if="isAddingEngine">
             <div class="col-8 no-wrap text-no-wrap">
-              <div class="q-pa-lg column">
+              <div class="q-px-lg q-pt-lg column" style="width: 100%; height: 100%; padding-bottom: 14px;">
                 <div class="text-h5">音声合成エンジンの追加</div>
 
                 <div class="q-mt-lg">
@@ -214,7 +214,7 @@
             class="col-8 no-wrap text-no-wrap engine-detail"
           >
             <div class="model-detail-content">
-              <div class="q-pl-md q-mt-md flex">
+              <div class="q-px-md q-mt-md flex">
                 <img
                   v-if="selectedId in engineIcons"
                   :src="engineIcons[selectedId]"
@@ -231,7 +231,7 @@
                 </div>
               </div>
 
-              <div class="no-wrap q-pl-md">
+              <div class="no-wrap q-px-md">
                 <ul>
                   <li>
                     バージョン：{{
@@ -253,7 +253,7 @@
                   </li>
                 </ul>
               </div>
-              <div class="no-wrap q-pl-md">
+              <div class="no-wrap q-px-md">
                 <div class="text-h6 q-mx-sm q-mt-sm">機能</div>
                 <ul
                   v-if="
@@ -281,7 +281,7 @@
                 </ul>
                 <span v-else>（取得に失敗しました）</span>
               </div>
-              <div class="no-wrap q-pl-md">
+              <div class="no-wrap q-px-md">
                 <div class="text-h6 q-mx-sm q-mt-sm">場所</div>
                 <div
                   :class="

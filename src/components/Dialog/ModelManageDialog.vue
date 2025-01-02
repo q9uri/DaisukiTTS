@@ -141,7 +141,7 @@
               </QTabPanel>
             </QTabPanels>
           </div>
-          <div v-if="isInstalling" class="model-detail q-pa-lg column" style="width: 100%;">
+          <div v-if="isInstalling" class="model-detail q-px-lg q-pt-lg column" style="width: 100%; padding-bottom: 14px;">
             <div class="text-h5">音声合成モデルのインストール / 更新</div>
             <div class="q-mt-lg">
               <QBtnToggle
@@ -183,7 +183,7 @@
                 ]" />
               </div>
             </div>
-            <div class="row q-mt-auto right-pane-buttons">
+            <div class="row q-mt-auto">
               <QSpace />
               <QBtn outline icon="sym_r_close" label="キャンセル" textColor="display" class="text-no-wrap text-bold q-mr-sm"
                 @click="cancelInstall" />
