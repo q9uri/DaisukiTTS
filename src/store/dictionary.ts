@@ -64,7 +64,7 @@ export const dictionaryStore = createPartialStore<DictionaryStoreTypes>({
   ADD_WORD: {
     async action(
       { state, actions },
-      { surface, pronunciation, accentType, priority },
+      { surface, pronunciation, accentType, wordType, priority },
     ) {
       // 同じ単語IDで登録するために、１つのエンジンで登録したあと全エンジンに同期する。
       const engineId: EngineId | undefined = state.engineIds[0];
@@ -80,6 +80,7 @@ export const dictionaryStore = createPartialStore<DictionaryStoreTypes>({
             surface,
             pronunciation,
             accentType,
+            wordType,
             priority,
           }),
         );
@@ -91,7 +92,7 @@ export const dictionaryStore = createPartialStore<DictionaryStoreTypes>({
   REWRITE_WORD: {
     async action(
       { state, actions },
-      { wordUuid, surface, pronunciation, accentType, priority },
+      { wordUuid, surface, pronunciation, accentType, wordType, priority },
     ) {
       if (state.engineIds.length === 0)
         throw new Error("At least one engine must be registered");
@@ -106,6 +107,7 @@ export const dictionaryStore = createPartialStore<DictionaryStoreTypes>({
               surface,
               pronunciation,
               accentType,
+              wordType,
               priority,
             }),
           );

@@ -188,6 +188,22 @@
                   </div>
                 </div>
               </div>
+              <div class="row q-pl-md q-mt-lg text-h6">品詞</div>
+              <div class="row q-pl-md q-mt-sm q-mb-md desc-row">
+                登録する単語の品詞を選択してください。
+              </div>
+              <div class="row q-pl-md q-pr-md">
+                <QSelect
+                  v-model="wordType"
+                  class="word-input"
+                  outlined
+                  :options="Object.entries(wordTypeLabels).map(([value, label]) => ({ value, label }))"
+                  :disable="uiLocked"
+                  dense
+                  emitValue
+                  mapOptions
+                />
+              </div>
               <div class="row q-pl-md q-mt-lg text-h6">単語優先度</div>
               <div class="row q-pl-md q-mt-sm q-mb-lg desc-row">
                 単語を登録しても反映されない場合は優先度を高くしてください。
@@ -265,19 +281,20 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import { QInput } from "quasar";
+import { QInput, QSelect } from "quasar";
 import AudioAccent from "@/components/Talk/AudioAccent.vue";
 import ContextMenu from "@/components/Menu/ContextMenu/Container.vue";
 import { useRightClickContextMenu } from "@/composables/useRightClickContextMenu";
 import { useStore } from "@/store";
 import type { FetchAudioResult } from "@/store/type";
-import { AccentPhrase, UserDictWord } from "@/openapi";
+import { AccentPhrase, UserDictWord, WordTypes } from "@/openapi";
 import {
   convertHiraToKana,
   convertLongVowel,
   createKanaRegex,
 } from "@/domain/japanese";
 
+const defaultWordType = WordTypes.ProperNoun;
 const defaultDictPriority = 5;
 
 const props = defineProps<{
@@ -510,6 +527,30 @@ const computeDisplayAccent = () => {
   return accent;
 };
 
+const wordType = ref<WordTypes>(defaultWordType);
+const wordTypeLabels = {
+  [WordTypes.ProperNoun]: "固有名詞",
+  [WordTypes.CommonNoun]: "一般名詞",
+  [WordTypes.Verb]: "動詞",
+  [WordTypes.Adjective]: "形容詞",
+  [WordTypes.Suffix]: "接尾辞",
+};
+
+// 品詞フィールドから WordTypes を推定する関数
+const getWordTypeFromPartOfSpeech = (dictData: UserDictWord): WordTypes => {
+  const { partOfSpeech, partOfSpeechDetail1 } = dictData;
+  if (partOfSpeech === "名詞") {
+    if (partOfSpeechDetail1 === "固有名詞") return WordTypes.ProperNoun;
+    if (partOfSpeechDetail1 === "接尾") return WordTypes.Suffix;
+    return WordTypes.CommonNoun;
+  }
+  if (partOfSpeech === "動詞") return WordTypes.Verb;
+  if (partOfSpeech === "形容詞") return WordTypes.Adjective;
+
+  // デフォルトは固有名詞
+  return WordTypes.ProperNoun;
+};
+
 const wordPriority = ref(defaultDictPriority);
 const wordPriorityLabels = {
   0: "最低",
@@ -527,11 +568,13 @@ const isWordChanged = computed(() => {
   // 一旦代入することで、userDictそのものが更新された時もcomputedするようにする
   const dict = userDict.value;
   const dictData = dict[selectedId.value];
+  const currentWordType = getWordTypeFromPartOfSpeech(dictData);
   return (
     dictData &&
     (dictData.surface !== surface.value ||
       dictData.yomi !== yomi.value ||
       dictData.accentType !== computeRegisteredAccent() ||
+      currentWordType !== wordType.value ||
       dictData.priority !== wordPriority.value)
   );
 });
@@ -549,6 +592,7 @@ const saveWord = async () => {
         surface: surface.value,
         pronunciation: yomi.value,
         accentType: accent,
+        wordType: wordType.value,
         priority: wordPriority.value,
       });
     } catch {
@@ -574,6 +618,7 @@ const saveWord = async () => {
           surface: surface.value,
           pronunciation: yomi.value,
           accentType: accent,
+          wordType: wordType.value,
           priority: wordPriority.value,
         }),
       );
@@ -663,6 +708,7 @@ const selectWord = (id: string) => {
   selectedId.value = id;
   surface.value = userDict.value[id].surface;
   void setYomi(userDict.value[id].yomi, true);
+  wordType.value = getWordTypeFromPartOfSpeech(userDict.value[id]);
   wordPriority.value = userDict.value[id].priority;
   toWordSelectedState();
 };
@@ -681,6 +727,7 @@ const toInitialState = () => {
   selectedId.value = "";
   surface.value = "";
   void setYomi("");
+  wordType.value = defaultWordType;
   wordPriority.value = defaultDictPriority;
 
   // 辞書の最初の項目を選択する

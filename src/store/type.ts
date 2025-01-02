@@ -19,6 +19,7 @@ import {
   UserDictWord,
   MorphableTargetInfo,
   FrameAudioQuery,
+  WordTypes,
   Note as NoteForRequestToEngine,
 } from "@/openapi";
 import {
@@ -2253,6 +2254,7 @@ export type DictionaryStoreTypes = {
       surface: string;
       pronunciation: string;
       accentType: number;
+      wordType: WordTypes;
       priority: number;
     }): Promise<void>;
   };
@@ -2262,6 +2264,7 @@ export type DictionaryStoreTypes = {
       surface: string;
       pronunciation: string;
       accentType: number;
+      wordType: WordTypes;
       priority: number;
     }): Promise<void>;
   };
