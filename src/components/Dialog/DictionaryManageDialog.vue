@@ -81,138 +81,140 @@
             v-show="wordEditing"
             class="col-8 no-wrap text-no-wrap word-editor"
           >
-            <div class="row q-pl-md q-pr-md q-mt-lg">
-              <QInput
-                ref="surfaceInput"
-                v-model="surface"
-                class="word-input"
-                outlined
-                label="単語"
-                placeholder="単語を入力"
-                :disable="uiLocked"
-                @focus="clearSurfaceInputSelection()"
-                @blur="setSurface(surface)"
-                @keydown.enter="yomiFocus"
-              >
-                <ContextMenu
-                  ref="surfaceContextMenu"
-                  :header="surfaceContextMenuHeader"
-                  :menudata="surfaceContextMenudata"
-                  @beforeShow="startSurfaceContextMenuOperation()"
-                  @beforeHide="endSurfaceContextMenuOperation()"
-                />
-              </QInput>
-            </div>
-            <div class="row q-pl-md q-pr-md q-pt-md">
-              <QInput
-                ref="yomiInput"
-                v-model="yomi"
-                class="word-input q-pb-none"
-                outlined
-                label="読み"
-                placeholder="読みを入力"
-                :error="!isOnlyHiraOrKana"
-                :disable="uiLocked"
-                @focus="clearYomiInputSelection()"
-                @blur="setYomi(yomi)"
-                @keydown.enter="setYomiWhenEnter"
-              >
-                <template #error>
-                  読みに使える文字はひらがなとカタカナのみです。
-                </template>
-                <ContextMenu
-                  ref="yomiContextMenu"
-                  :header="yomiContextMenuHeader"
-                  :menudata="yomiContextMenudata"
-                  @beforeShow="startYomiContextMenuOperation()"
-                  @beforeHide="endYomiContextMenuOperation()"
-                />
-              </QInput>
-            </div>
-            <div class="row q-pl-md q-mt-lg text-h6">アクセント調整</div>
-            <div class="row q-pl-md q-mt-sm q-mb-md desc-row">
-              語尾のアクセントを考慮するため、「が」が自動で挿入されます。
-            </div>
-            <div class="row q-px-md" style="height: 130px">
-              <div class="play-button">
-                <QBtn
-                  v-if="!nowPlaying && !nowGenerating"
-                  fab
-                  color="primary"
-                  textColor="display-on-primary"
-                  icon="sym_r_play_arrow"
-                  @click="play"
-                />
-                <QBtn
-                  v-else
-                  fab
-                  color="primary"
-                  textColor="display-on-primary"
-                  icon="sym_r_stop"
-                  :disable="nowGenerating"
-                  @click="stop"
-                />
-              </div>
-              <div
-                ref="accentPhraseTable"
-                class="accent-phrase-table overflow-hidden-y"
-              >
-                <div v-if="accentPhrase" class="mora-table">
-                  <AudioAccent
-                    :accentPhrase
-                    :accentPhraseIndex="0"
-                    :uiLocked
-                    :onChangeAccent="changeAccent"
+            <div class="model-detail-content">
+              <div class="row q-pl-md q-pr-md q-mt-lg">
+                <QInput
+                  ref="surfaceInput"
+                  v-model="surface"
+                  class="word-input"
+                  outlined
+                  label="単語"
+                  placeholder="単語を入力"
+                  :disable="uiLocked"
+                  @focus="clearSurfaceInputSelection()"
+                  @blur="setSurface(surface)"
+                  @keydown.enter="yomiFocus"
+                >
+                  <ContextMenu
+                    ref="surfaceContextMenu"
+                    :header="surfaceContextMenuHeader"
+                    :menudata="surfaceContextMenudata"
+                    @beforeShow="startSurfaceContextMenuOperation()"
+                    @beforeHide="endSurfaceContextMenuOperation()"
                   />
-                  <template
-                    v-for="(mora, moraIndex) in accentPhrase.moras"
-                    :key="moraIndex"
-                  >
-                    <div
-                      class="text-cell"
-                      :style="{
-                        gridColumn: `${moraIndex * 2 + 1} / span 1`,
-                      }"
-                    >
-                      {{ mora.text }}
-                    </div>
-                    <div
-                      v-if="moraIndex < accentPhrase.moras.length - 1"
-                      class="splitter-cell"
-                      :style="{
-                        gridColumn: `${moraIndex * 2 + 2} / span 1`,
-                      }"
-                    />
+                </QInput>
+              </div>
+              <div class="row q-pl-md q-pr-md q-pt-md">
+                <QInput
+                  ref="yomiInput"
+                  v-model="yomi"
+                  class="word-input q-pb-none"
+                  outlined
+                  label="読み"
+                  placeholder="読みを入力"
+                  :error="!isOnlyHiraOrKana"
+                  :disable="uiLocked"
+                  @focus="clearYomiInputSelection()"
+                  @blur="setYomi(yomi)"
+                  @keydown.enter="setYomiWhenEnter"
+                >
+                  <template #error>
+                    読みに使える文字はひらがなとカタカナのみです。
                   </template>
+                  <ContextMenu
+                    ref="yomiContextMenu"
+                    :header="yomiContextMenuHeader"
+                    :menudata="yomiContextMenudata"
+                    @beforeShow="startYomiContextMenuOperation()"
+                    @beforeHide="endYomiContextMenuOperation()"
+                  />
+                </QInput>
+              </div>
+              <div class="row q-pl-md q-mt-lg text-h6">アクセント調整</div>
+              <div class="row q-pl-md q-mt-sm q-mb-md desc-row">
+                語尾のアクセントを考慮するため、「が」が自動で挿入されます。
+              </div>
+              <div class="row q-px-md" style="height: 130px">
+                <div class="play-button">
+                  <QBtn
+                    v-if="!nowPlaying && !nowGenerating"
+                    fab
+                    color="primary"
+                    textColor="display-on-primary"
+                    icon="sym_r_play_arrow"
+                    @click="play"
+                  />
+                  <QBtn
+                    v-else
+                    fab
+                    color="primary"
+                    textColor="display-on-primary"
+                    icon="sym_r_stop"
+                    :disable="nowGenerating"
+                    @click="stop"
+                  />
+                </div>
+                <div
+                  ref="accentPhraseTable"
+                  class="accent-phrase-table overflow-hidden-y"
+                >
+                  <div v-if="accentPhrase" class="mora-table">
+                    <AudioAccent
+                      :accentPhrase
+                      :accentPhraseIndex="0"
+                      :uiLocked
+                      :onChangeAccent="changeAccent"
+                    />
+                    <template
+                      v-for="(mora, moraIndex) in accentPhrase.moras"
+                      :key="moraIndex"
+                    >
+                      <div
+                        class="text-cell"
+                        :style="{
+                          gridColumn: `${moraIndex * 2 + 1} / span 1`,
+                        }"
+                      >
+                        {{ mora.text }}
+                      </div>
+                      <div
+                        v-if="moraIndex < accentPhrase.moras.length - 1"
+                        class="splitter-cell"
+                        :style="{
+                          gridColumn: `${moraIndex * 2 + 2} / span 1`,
+                        }"
+                      />
+                    </template>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="row q-pl-md q-mt-lg text-h6">単語優先度</div>
-            <div class="row q-pl-md q-mt-sm q-mb-lg desc-row">
-              単語を登録しても反映されない場合は優先度を高くしてください。
-            </div>
-            <div
-              class="row q-px-md"
-              :style="{
-                justifyContent: 'center',
-              }"
-            >
-              <QSlider
-                v-model="wordPriority"
-                snap
-                dense
-                color="primary"
-                markers
-                :min="0"
-                :max="10"
-                :step="1"
-                :markerLabels="wordPriorityLabels"
+              <div class="row q-pl-md q-mt-lg text-h6">単語優先度</div>
+              <div class="row q-pl-md q-mt-sm q-mb-lg desc-row">
+                単語を登録しても反映されない場合は優先度を高くしてください。
+              </div>
+              <div
+                class="row q-px-md q-pb-md"
                 :style="{
-                  width: '80%',
+                  justifyContent: 'center',
                 }"
-              />
+              >
+                <QSlider
+                  v-model="wordPriority"
+                  snap
+                  dense
+                  color="primary"
+                  markers
+                  :min="0"
+                  :max="10"
+                  :step="1"
+                  :markerLabels="wordPriorityLabels"
+                  :style="{
+                    width: '80%',
+                  }"
+                />
+              </div>
             </div>
-            <div class="row q-px-md q-mt-sm save-delete-reset-buttons">
+            <div class="fixed-bottom-buttons">
               <QSpace />
               <QBtn
                 v-show="!!selectedId"
@@ -796,7 +798,22 @@ const {
     100vh - #{vars.$menubar-height + vars.$toolbar-height +
       vars.$window-border-width}
   ) !important;
-  overflow: auto;
+}
+
+.model-detail-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+  height: calc(100% - 66px);
+}
+
+.fixed-bottom-buttons {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px;
+  padding-top: 14px;
+  height: 66px;
+  border-top: 2px solid var(--color-splitter);
 }
 
 .word-input {

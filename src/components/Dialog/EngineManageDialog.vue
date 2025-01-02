@@ -98,220 +98,207 @@
           </div>
 
           <!-- 右側のpane -->
-          <div
-            v-if="isAddingEngine"
-            class="col-8 no-wrap text-no-wrap engine-detail"
-          >
-            <div class="q-pl-md q-mt-md">
-              <div class="text-h5 q-ma-sm">音声合成エンジンの追加</div>
+          <template v-if="isAddingEngine">
+            <div class="col-8 no-wrap text-no-wrap">
+              <div class="q-pa-lg column">
+                <div class="text-h5">音声合成エンジンの追加</div>
 
-              <div class="q-ma-sm q-mt-lg">
-                <QBtnToggle
-                  v-model="engineLoaderType"
-                  :options="[
-                    { value: 'vvpp', label: 'VVPP ファイル' },
-                    { value: 'dir', label: '既存エンジン' },
-                  ]"
-                  color="surface"
-                  unelevated
-                  textColor="display"
-                  toggleColor="primary"
-                  toggleTextColor="display-on-primary"
-                />
-              </div>
-            </div>
+                <div class="q-mt-lg">
+                  <QBtnToggle
+                    v-model="engineLoaderType"
+                    :options="[
+                      { value: 'vvpp', label: 'VVPP ファイル' },
+                      { value: 'dir', label: '既存エンジン' },
+                    ]"
+                    color="surface"
+                    unelevated
+                    textColor="display"
+                    toggleColor="primary"
+                    toggleTextColor="display-on-primary"
+                  />
+                </div>
 
-            <div v-if="engineLoaderType === 'vvpp'" class="no-wrap q-px-md">
-              <div class="q-mt-md q-ma-sm">
-                VVPP ファイルで音声合成エンジンをインストールします。
-              </div>
-              <div class="q-ma-sm q-mt-md">
-                <QInput
-                  ref="vvppFilePathInput"
-                  v-model="vvppFilePath"
-                  dense
-                  readonly
-                  placeholder="VVPP ファイルの場所"
-                  @click="selectVvppFile"
-                >
-                  <template #append>
-                    <QBtn
-                      square
-                      dense
-                      flat
-                      color="primary"
-                      icon="sym_r_folder_open"
-                      @click="selectVvppFile"
-                    >
-                      <QTooltip :delay="150" anchor="bottom left">
-                        ファイル選択
-                      </QTooltip>
-                    </QBtn>
-                  </template>
-                  <template #error>
-                    {{
-                      newEngineDirValidationState
-                        ? getEngineDirValidationMessage(
-                            newEngineDirValidationState,
-                          )
-                        : undefined
-                    }}
-                  </template>
-                </QInput>
-              </div>
-            </div>
-            <div v-if="engineLoaderType === 'dir'" class="no-wrap q-px-md">
-              <div class="q-mt-md q-ma-sm">
-                PC 内にある音声合成エンジンを追加します。
-              </div>
-              <div class="q-ma-sm q-mt-md">
-                <QInput
-                  ref="newEngineDirInput"
-                  v-model="newEngineDir"
-                  dense
-                  readonly
-                  :error="
-                    newEngineDirValidationState != undefined &&
-                    newEngineDirValidationState !== 'ok'
-                  "
-                  placeholder="音声合成エンジンフォルダの場所"
-                  @click="selectEngineDir"
-                >
-                  <template #append>
-                    <QBtn
-                      square
-                      dense
-                      flat
-                      color="primary"
-                      icon="sym_r_folder_open"
-                      @click="selectEngineDir"
-                    >
-                      <QTooltip :delay="150" anchor="bottom left">
-                        フォルダ選択
-                      </QTooltip>
-                    </QBtn>
-                  </template>
-                  <template #error>
-                    {{
-                      newEngineDirValidationState
-                        ? getEngineDirValidationMessage(
-                            newEngineDirValidationState,
-                          )
-                        : undefined
-                    }}
-                  </template>
-                </QInput>
-              </div>
-            </div>
-            <div class="row q-px-md right-pane-buttons">
-              <QSpace />
+                <div class="q-mt-lg">
+                  {{ engineLoaderType === 'vvpp' ? 'VVPP ファイルで音声合成エンジンをインストールします。' : 'PC 内にある音声合成エンジンを追加します。' }}
+                </div>
 
-              <QBtn
-                outline
-                icon="sym_r_close"
-                label="キャンセル"
-                textColor="display"
-                class="text-no-wrap text-bold q-mr-sm"
-                @click="toInitialState"
-              />
-              <QBtn
-                outline
-                icon="sym_r_add"
-                label="追加"
-                textColor="primary"
-                class="text-no-wrap text-bold"
-                :disabled="!canAddEngine"
-                @click="addEngine"
-              />
+                <div class="q-mt-md">
+                  <QInput
+                    v-if="engineLoaderType === 'vvpp'"
+                    ref="vvppFilePathInput"
+                    v-model="vvppFilePath"
+                    label="VVPP ファイル (.vvpp) を選択"
+                    dense
+                    readonly
+                    @click="selectVvppFile"
+                  >
+                    <template #append>
+                      <QBtn
+                        square
+                        dense
+                        flat
+                        color="primary"
+                        icon="sym_r_folder_open"
+                        @click="selectVvppFile"
+                      >
+                        <QTooltip :delay="150" anchor="bottom left">
+                          ファイル選択
+                        </QTooltip>
+                      </QBtn>
+                    </template>
+                  </QInput>
+                  <QInput
+                    v-else
+                    ref="newEngineDirInput"
+                    v-model="newEngineDir"
+                    label="音声合成エンジンフォルダの場所"
+                    dense
+                    readonly
+                    :error="
+                      newEngineDirValidationState != undefined &&
+                      newEngineDirValidationState !== 'ok'
+                    "
+                    @click="selectEngineDir"
+                  >
+                    <template #append>
+                      <QBtn
+                        square
+                        dense
+                        flat
+                        color="primary"
+                        icon="sym_r_folder_open"
+                        @click="selectEngineDir"
+                      >
+                        <QTooltip :delay="150" anchor="bottom left">
+                          フォルダ選択
+                        </QTooltip>
+                      </QBtn>
+                    </template>
+                    <template #error>
+                      {{
+                        newEngineDirValidationState
+                          ? getEngineDirValidationMessage(
+                              newEngineDirValidationState,
+                            )
+                          : undefined
+                      }}
+                    </template>
+                  </QInput>
+                </div>
+
+                <div class="row q-mt-auto">
+                  <QSpace />
+                  <QBtn
+                    outline
+                    icon="sym_r_close"
+                    label="キャンセル"
+                    textColor="display"
+                    class="text-no-wrap text-bold q-mr-sm"
+                    @click="toInitialState"
+                  />
+                  <QBtn
+                    outline
+                    icon="sym_r_add"
+                    label="追加"
+                    textColor="primary"
+                    class="text-no-wrap text-bold"
+                    :disabled="!canAddEngine"
+                    @click="addEngine"
+                  />
+                </div>
+              </div>
             </div>
-          </div>
+          </template>
           <div
             v-else-if="selectedId"
             class="col-8 no-wrap text-no-wrap engine-detail"
           >
-            <div class="q-pl-md q-mt-md flex">
-              <img
-                v-if="selectedId in engineIcons"
-                :src="engineIcons[selectedId]"
-                :alt="engineInfos[selectedId].name"
-                class="engine-icon"
-              />
-              <div v-else class="q-mt-sm inline-block">
-                <QAvatar rounded color="primary" size="2rem">
-                  <span class="text-display-on-primary"> ? </span>
-                </QAvatar>
+            <div class="model-detail-content">
+              <div class="q-pl-md q-mt-md flex">
+                <img
+                  v-if="selectedId in engineIcons"
+                  :src="engineIcons[selectedId]"
+                  :alt="engineInfos[selectedId].name"
+                  class="engine-icon"
+                />
+                <div v-else class="q-mt-sm inline-block">
+                  <QAvatar rounded color="primary" size="2rem">
+                    <span class="text-display-on-primary"> ? </span>
+                  </QAvatar>
+                </div>
+                <div class="text-h5 q-ma-sm">
+                  {{ engineInfos[selectedId].name }}
+                </div>
               </div>
-              <div class="text-h5 q-ma-sm">
-                {{ engineInfos[selectedId].name }}
-              </div>
-            </div>
 
-            <div class="no-wrap q-pl-md">
-              <ul>
-                <li>
-                  バージョン：{{
-                    engineVersions[selectedId]
-                      ? engineVersions[selectedId]
-                      : "（取得に失敗しました）"
-                  }}
-                </li>
-                <li>
-                  URL：
-                  <a
-                    v-if="engineManifests[selectedId]"
-                    :href="engineManifests[selectedId].url"
-                    class="text-display-hyperlink"
-                    target="_blank"
-                    >{{ engineManifests[selectedId].url }}</a
-                  >
-                  <span v-else>（取得に失敗しました）</span>
-                </li>
-              </ul>
-            </div>
-            <div class="no-wrap q-pl-md">
-              <div class="text-h6 q-ma-sm">機能</div>
-              <ul
-                v-if="
-                  engineManifests[selectedId] &&
-                  engineManifests[selectedId].supportedFeatures
-                "
-              >
-                <template
-                  v-for="(value, feature) in engineManifests[selectedId]
-                    .supportedFeatures != null
-                    ? engineManifests[selectedId].supportedFeatures
-                    : null"
-                  :key="feature"
-                >
-                  <li
-                    v-if="feature != 'manageLibrary'"
-                    :class="value ? '' : 'text-warning'"
-                  >
-                    {{ getFeatureName(feature) }}：{{
-                      value ? "対応" : "非対応"
+              <div class="no-wrap q-pl-md">
+                <ul>
+                  <li>
+                    バージョン：{{
+                      engineVersions[selectedId]
+                        ? engineVersions[selectedId]
+                        : "（取得に失敗しました）"
                     }}
                   </li>
-                </template>
-              </ul>
-              <span v-else>（取得に失敗しました）</span>
-            </div>
-            <div class="no-wrap q-pl-md">
-              <div class="text-h6 q-ma-sm">場所</div>
-              <div
-                :class="
-                  'q-ma-sm' + (engineInfos[selectedId].path ? '' : ' disabled')
-                "
-              >
-                <QInput
-                  ref="pathInput"
-                  v-model="engineDir"
-                  disabled
-                  dense
-                  readonly
-                />
+                  <li>
+                    URL：
+                    <a
+                      v-if="engineManifests[selectedId]"
+                      :href="engineManifests[selectedId].url"
+                      class="text-display-hyperlink"
+                      target="_blank"
+                      >{{ engineManifests[selectedId].url }}</a
+                    >
+                    <span v-else>（取得に失敗しました）</span>
+                  </li>
+                </ul>
+              </div>
+              <div class="no-wrap q-pl-md">
+                <div class="text-h6 q-mx-sm q-mt-sm">機能</div>
+                <ul
+                  v-if="
+                    engineManifests[selectedId] &&
+                    engineManifests[selectedId].supportedFeatures
+                  "
+                  class="q-mt-sm"
+                >
+                  <template
+                    v-for="(value, feature) in engineManifests[selectedId]
+                      .supportedFeatures != null
+                      ? engineManifests[selectedId].supportedFeatures
+                      : null"
+                    :key="feature"
+                  >
+                    <li
+                      v-if="feature != 'manageLibrary'"
+                      :class="value ? '' : 'text-warning'"
+                    >
+                      {{ getFeatureName(feature) }}：{{
+                        value ? "対応" : "非対応"
+                      }}
+                    </li>
+                  </template>
+                </ul>
+                <span v-else>（取得に失敗しました）</span>
+              </div>
+              <div class="no-wrap q-pl-md">
+                <div class="text-h6 q-mx-sm q-mt-sm">場所</div>
+                <div
+                  :class="
+                    'q-mx-sm q-mt-sm q-mb-md' + (engineInfos[selectedId].path ? '' : ' disabled')
+                  "
+                >
+                  <QInput
+                    ref="pathInput"
+                    v-model="engineDir"
+                    disabled
+                    dense
+                    readonly
+                  />
+                </div>
               </div>
             </div>
-            <div class="row q-px-md right-pane-buttons">
+            <div class="fixed-bottom-buttons">
               <QSpace />
 
               <QBtn
@@ -745,15 +732,22 @@ function findDefaultEngineId() {
     100vh - #{vars.$menubar-height + vars.$toolbar-height +
       vars.$window-border-width}
   ) !important;
-  overflow: auto;
 }
 
-.right-pane-buttons {
-  padding: 20px;
-
-  display: flex;
+.model-detail-content {
   flex: 1;
-  align-items: flex-end;
+  overflow-y: auto;
+  padding: 0;
+  height: calc(100% - 66px);
+}
+
+.fixed-bottom-buttons {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px;
+  padding-top: 14px;
+  height: 66px;
+  border-top: 2px solid var(--color-splitter);
 }
 
 .engine-icon {
