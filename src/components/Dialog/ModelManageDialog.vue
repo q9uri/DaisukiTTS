@@ -174,13 +174,17 @@
               </div>
             </div>
             <div v-else>
-              <div class="q-mt-lg">
-                AIVMX ファイルのダウンロード URL を指定して、音声合成モデルをインストール / 更新します。
+              <div class="q-mt-lg" style="line-height: 1.65;">
+                AIVMX ファイルのダウンロード URL を指定して、音声合成モデルをインストール / 更新します。<br>
+                AivisHub のモデル詳細ページの URL を指定することもできます。
               </div>
               <div class="q-mt-sm q-mt-md">
-                <QInput v-model="installUrl" label="AIVMX ファイルのダウンロード URL を指定" dense :rules="[
-                  (url) => isValidUrl(url) || 'URL が不正です。',
-                ]" />
+                <QInput v-model="installUrl" dense
+                  label="例: https://hub.aivis-project.com/aivm-models/(音声合成モデルのUUID)"
+                  :rules="[
+                    (url) => isValidUrl(url) || 'URL が不正です。',
+                  ]"
+                  />
               </div>
             </div>
             <div class="row q-mt-auto">
