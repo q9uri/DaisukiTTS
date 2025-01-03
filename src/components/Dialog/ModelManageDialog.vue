@@ -179,7 +179,7 @@
               </div>
               <div class="q-mt-sm q-mt-md">
                 <QInput v-model="installUrl" label="AIVMX ファイルのダウンロード URL を指定" dense :rules="[
-                  (url) => /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/i.test(url) || 'URL が不正です。',
+                  (url) => isValidUrl(url) || 'URL が不正です。',
                 ]" />
               </div>
             </div>
@@ -327,9 +327,13 @@ const installMethod = ref("file");
 const selectedFile = ref<File | null>(null);
 const installUrl = ref("");
 
+const isValidUrl = (url: string): boolean => {
+  return /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/i.test(url);
+};
+
 const canInstall = computed(() => {
-  return (installMethod.value === "file" && selectedFile.value!= null) ||
-         (installMethod.value === "url" && installUrl.value.trim() !== "");
+  return (installMethod.value === "file" && selectedFile.value != null) ||
+         (installMethod.value === "url" && installUrl.value.trim() !== "" && isValidUrl(installUrl.value));
 });
 
 const cancelInstall = () => {
