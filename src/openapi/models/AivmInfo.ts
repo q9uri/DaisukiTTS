@@ -61,6 +61,12 @@ export interface AivmInfo {
     filePath: string;
     /**
      * 
+     * @type {number}
+     * @memberof AivmInfo
+     */
+    fileSize: number;
+    /**
+     * 
      * @type {AivmManifest}
      * @memberof AivmInfo
      */
@@ -82,6 +88,7 @@ export function instanceOfAivmInfo(value: object): boolean {
     isInstance = isInstance && "isUpdateAvailable" in value;
     isInstance = isInstance && "latestVersion" in value;
     isInstance = isInstance && "filePath" in value;
+    isInstance = isInstance && "fileSize" in value;
     isInstance = isInstance && "manifest" in value;
     isInstance = isInstance && "speakers" in value;
 
@@ -102,6 +109,7 @@ export function AivmInfoFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
         'isUpdateAvailable': json['is_update_available'],
         'latestVersion': json['latest_version'],
         'filePath': json['file_path'],
+        'fileSize': json['file_size'],
         'manifest': AivmManifestFromJSON(json['manifest']),
         'speakers': ((json['speakers'] as Array<any>).map(LibrarySpeakerFromJSON)),
     };
@@ -120,6 +128,7 @@ export function AivmInfoToJSON(value?: AivmInfo | null): any {
         'is_update_available': value.isUpdateAvailable,
         'latest_version': value.latestVersion,
         'file_path': value.filePath,
+        'file_size': value.fileSize,
         'manifest': AivmManifestToJSON(value.manifest),
         'speakers': ((value.speakers as Array<any>).map(LibrarySpeakerToJSON)),
     };

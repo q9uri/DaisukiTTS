@@ -63,7 +63,8 @@
                       </span>
                     </div>
                     <div class="col-auto q-ml-auto" style="font-size: 13.5px; color: #D2D3D4;">
-                      <span>{{ activeAivmInfo.manifest.speakers.length }} Speakers / Version {{ activeAivmInfo.manifest.version }}</span>
+                      <span>Version {{ activeAivmInfo.manifest.version }} / </span>
+                      <span>{{ formatBytes(activeAivmInfo.fileSize) }}</span>
                       <span v-if="activeAivmInfo.isUpdateAvailable" class="q-ml-xs text-primary">
                         (Version {{ activeAivmInfo.latestVersion }} に更新できます)
                       </span>
@@ -203,6 +204,7 @@
 <script setup lang="ts">
 
 import { computed, ref, watch, onUnmounted } from "vue";
+import { formatBytes } from "@/helpers/fileHelper";
 import { AivmInfo, ResponseError } from "@/openapi";
 import { useStore } from "@/store";
 
