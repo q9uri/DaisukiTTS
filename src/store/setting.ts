@@ -264,7 +264,8 @@ export const settingStore = createPartialStore<SettingStoreTypes>({
         acceptRetrieveTelemetry: acceptRetrieveTelemetry == "Accepted",
       });
       */
-      if (acceptRetrieveTelemetry !== state.acceptRetrieveTelemetry) {
+      const currentAcceptRetrieveTelemetry = state.acceptRetrieveTelemetry;
+      if (acceptRetrieveTelemetry !== currentAcceptRetrieveTelemetry) {
         void useAnalytics().trackEvent("aisp_accept_retrieve_telemetry_update", {
           acceptRetrieveTelemetry: acceptRetrieveTelemetry == "Accepted",
         });
@@ -288,7 +289,8 @@ export const settingStore = createPartialStore<SettingStoreTypes>({
         acceptTerms: acceptTerms == "Accepted",
       });
       */
-      if (acceptTerms !== state.acceptTerms) {
+      const currentAcceptTerms = state.acceptTerms;
+      if (acceptTerms !== currentAcceptTerms) {
         void useAnalytics().trackEvent("aisp_accept_terms_update", {
           acceptTerms: acceptTerms == "Accepted",
         });
