@@ -189,8 +189,8 @@
                 </div>
               </div>
               <div class="row q-pl-md q-mt-lg text-h6">品詞</div>
-              <div class="row q-pl-md q-mt-sm q-mb-md desc-row">
-                登録する単語の品詞を選択してください。
+              <div class="row q-pl-md q-mt-sm q-mb-md desc-row" style="white-space: normal;">
+                登録する単語の品詞を選択してください。適切に設定すると、ユーザー辞書の適用精度が向上します。
               </div>
               <div class="row q-pl-md q-pr-md">
                 <QSelect
@@ -722,6 +722,7 @@ const newWord = () => {
   selectedId.value = "";
   surface.value = "";
   void setYomi("");
+  wordType.value = defaultWordType;
   wordPriority.value = defaultDictPriority;
   editWord();
 };
