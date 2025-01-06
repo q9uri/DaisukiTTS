@@ -542,7 +542,10 @@ const wordTypeLabels = {
 };
 
 // 品詞フィールドから WordTypes を推定する関数
-const getWordTypeFromPartOfSpeech = (dictData: UserDictWord): WordTypes => {
+const getWordTypeFromPartOfSpeech = (dictData: UserDictWord | undefined): WordTypes => {
+  // 基本ないが、もし dictData が undefined の場合は固有名詞として扱う
+  if (!dictData) return WordTypes.ProperNoun;
+
   const { partOfSpeech, partOfSpeechDetail1, partOfSpeechDetail2, partOfSpeechDetail3 } = dictData;
   if (partOfSpeech === "名詞") {
     if (partOfSpeechDetail1 === "固有名詞") {
