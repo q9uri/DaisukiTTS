@@ -530,6 +530,11 @@ const computeDisplayAccent = () => {
 const wordType = ref<WordTypes>(defaultWordType);
 const wordTypeLabels = {
   [WordTypes.ProperNoun]: "固有名詞",
+  [WordTypes.LocationName]: "地名",
+  [WordTypes.OrganizationName]: "組織・施設名",
+  [WordTypes.PersonName]: "人名",
+  [WordTypes.PersonFamilyName]: "人名 - 姓",
+  [WordTypes.PersonGivenName]: "人名 - 名",
   [WordTypes.CommonNoun]: "一般名詞",
   [WordTypes.Verb]: "動詞",
   [WordTypes.Adjective]: "形容詞",
@@ -538,9 +543,28 @@ const wordTypeLabels = {
 
 // 品詞フィールドから WordTypes を推定する関数
 const getWordTypeFromPartOfSpeech = (dictData: UserDictWord): WordTypes => {
-  const { partOfSpeech, partOfSpeechDetail1 } = dictData;
+  const { partOfSpeech, partOfSpeechDetail1, partOfSpeechDetail2, partOfSpeechDetail3 } = dictData;
   if (partOfSpeech === "名詞") {
-    if (partOfSpeechDetail1 === "固有名詞") return WordTypes.ProperNoun;
+    if (partOfSpeechDetail1 === "固有名詞") {
+      if (partOfSpeechDetail2 === "地域" && partOfSpeechDetail3 === "一般") {
+        return WordTypes.LocationName;
+      }
+      if (partOfSpeechDetail2 === "組織") {
+        return WordTypes.OrganizationName;
+      }
+      if (partOfSpeechDetail2 === "人名") {
+        if (partOfSpeechDetail3 === "一般") {
+          return WordTypes.PersonName;
+        }
+        if (partOfSpeechDetail3 === "姓") {
+          return WordTypes.PersonFamilyName;
+        }
+        if (partOfSpeechDetail3 === "名") {
+          return WordTypes.PersonGivenName;
+        }
+      }
+      return WordTypes.ProperNoun;
+    }
     if (partOfSpeechDetail1 === "接尾") return WordTypes.Suffix;
     return WordTypes.CommonNoun;
   }

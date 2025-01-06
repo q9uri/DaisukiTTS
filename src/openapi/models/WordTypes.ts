@@ -19,6 +19,11 @@
  */
 export const WordTypes = {
     ProperNoun: 'PROPER_NOUN',
+    LocationName: 'LOCATION_NAME',
+    OrganizationName: 'ORGANIZATION_NAME',
+    PersonName: 'PERSON_NAME',
+    PersonFamilyName: 'PERSON_FAMILY_NAME',
+    PersonGivenName: 'PERSON_GIVEN_NAME',
     CommonNoun: 'COMMON_NOUN',
     Verb: 'VERB',
     Adjective: 'ADJECTIVE',
