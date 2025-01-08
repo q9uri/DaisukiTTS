@@ -70,7 +70,7 @@
                   <QItemLabel class="text-display">{{
                     value.surface
                   }}</QItemLabel>
-                  <QItemLabel caption>{{ value.yomi }}</QItemLabel>
+                  <QItemLabel caption>{{ value.yomi }} [{{ wordTypeLabels[getWordTypeFromPartOfSpeech(value)] }}]</QItemLabel>
                 </QItemSection>
               </QItem>
             </QList>
@@ -82,7 +82,7 @@
             class="col-8 no-wrap text-no-wrap word-editor"
           >
             <div class="model-detail-content">
-              <div class="row q-pl-md q-pr-md q-mt-lg">
+              <div class="row q-px-md q-pr-md q-mt-lg">
                 <QInput
                   ref="surfaceInput"
                   v-model="surface"
@@ -104,7 +104,7 @@
                   />
                 </QInput>
               </div>
-              <div class="row q-pl-md q-pr-md q-pt-md">
+              <div class="row q-px-md q-pr-md q-pt-md">
                 <QInput
                   ref="yomiInput"
                   v-model="yomi"
@@ -130,9 +130,16 @@
                   />
                 </QInput>
               </div>
-              <div class="row q-pl-md q-mt-lg text-h6">アクセント調整</div>
-              <div class="row q-pl-md q-mt-sm q-mb-md desc-row">
-                語尾のアクセントを考慮するため、「が」が自動で挿入されます。
+              <div class="row no-wrap q-px-md q-mb-lg desc-row" style="align-items: center; margin-top: 24px; white-space: normal;">
+                <QIcon name="sym_r_warning" color="warning" size="19px" class="q-mr-sm" />
+                <div>
+                  英単語・数字・記号を含む単語は、辞書に反映されないことがあります。<br>
+                  英単語はカタカナ表記にすると反映される場合もありますが、必ずしも反映されるとは限りません。
+                </div>
+              </div>
+              <div class="row q-px-md q-mt-lg text-h6">アクセント調整</div>
+              <div class="row q-px-md q-mt-sm q-mb-md desc-row">
+                語尾のアクセントを考慮して調整できるように、自動的に「が」が挿入されます。
               </div>
               <div class="row q-px-md" style="height: 130px">
                 <div class="play-button">
@@ -188,11 +195,11 @@
                   </div>
                 </div>
               </div>
-              <div class="row q-pl-md q-mt-lg text-h6">品詞</div>
-              <div class="row q-pl-md q-mt-sm q-mb-md desc-row" style="white-space: normal;">
+              <div class="row q-px-md q-mt-lg text-h6">品詞</div>
+              <div class="row q-px-md q-mt-sm q-mb-md desc-row" style="white-space: normal;">
                 登録する単語の品詞を選択してください。適切に設定すると、ユーザー辞書の適用精度が向上します。
               </div>
-              <div class="row q-pl-md q-pr-md">
+              <div class="row q-px-md q-pr-md">
                 <QSelect
                   v-model="wordType"
                   class="word-input"
@@ -204,9 +211,9 @@
                   mapOptions
                 />
               </div>
-              <div class="row q-pl-md q-mt-lg text-h6">単語優先度</div>
-              <div class="row q-pl-md q-mt-sm q-mb-lg desc-row">
-                単語を登録しても反映されない場合は優先度を高くしてください。
+              <div class="row q-px-md q-mt-lg text-h6">単語優先度</div>
+              <div class="row q-px-md q-mt-sm q-mb-lg desc-row">
+                単語を登録しても反映されないときは、単語優先度を徐々に上げてみてください。
               </div>
               <div
                 class="row q-px-md q-pb-md"
@@ -513,7 +520,7 @@ const stop = () => {
 // アクセントが自動追加される「ガ」に指定されている場合、
 // 実際に登録するaccentの値は0となるので、そうなるように処理する
 const computeRegisteredAccent = () => {
-  if (!accentPhrase.value) throw new Error();
+  if (!accentPhrase.value) return 0;  // エラーにさせないために0を返す
   let accent = accentPhrase.value.accent;
   accent = accent === accentPhrase.value.moras.length ? 0 : accent;
   return accent;
@@ -521,14 +528,14 @@ const computeRegisteredAccent = () => {
 // computeの逆
 // 辞書から得たaccentが0の場合に、自動で追加される「ガ」の位置にアクセントを表示させるように処理する
 const computeDisplayAccent = () => {
-  if (!accentPhrase.value || !selectedId.value) throw new Error();
+  if (!accentPhrase.value || !selectedId.value) return 0;  // エラーにさせないために0を返す
   let accent = userDict.value[selectedId.value].accentType;
   accent = accent === 0 ? accentPhrase.value.moras.length : accent;
   return accent;
 };
 
 const wordType = ref<WordTypes>(defaultWordType);
-const wordTypeLabels = {
+const wordTypeLabels = ref({
   [WordTypes.ProperNoun]: "固有名詞",
   [WordTypes.LocationName]: "地名",
   [WordTypes.OrganizationName]: "組織・施設名",
@@ -539,7 +546,7 @@ const wordTypeLabels = {
   [WordTypes.Verb]: "動詞",
   [WordTypes.Adjective]: "形容詞",
   [WordTypes.Suffix]: "接尾辞",
-};
+});
 
 // 品詞フィールドから WordTypes を推定する関数
 const getWordTypeFromPartOfSpeech = (dictData: UserDictWord | undefined): WordTypes => {
@@ -896,7 +903,7 @@ const {
 }
 
 .desc-row {
-  color: rgba(colors.$display-rgb, 0.5);
+  color: rgba(colors.$display-rgb, 0.7);
   font-size: 12px;
 }
 
