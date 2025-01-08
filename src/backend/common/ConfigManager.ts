@@ -276,7 +276,8 @@ const migrations: [string, (store: Record<string, unknown>) => unknown][] = [
   */
   // ----- 以下は AivisSpeech 固有のマイグレーション処理 -----
   [
-    ">=1.1",
+    // 1.1.0 未満 -> 1.1.0-dev 以上へのマイグレーション
+    ">=1.1.0-dev",
     (config) => {
 
       // プリセット機能を実験的機能から通常機能に
