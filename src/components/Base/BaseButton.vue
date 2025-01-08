@@ -40,6 +40,7 @@ defineEmits<{
   gap: vars.$gap-1;
   border: 1px solid;
   cursor: pointer;
+  transition: background-color 0.15s ease;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 
   &:active:not(:disabled) {

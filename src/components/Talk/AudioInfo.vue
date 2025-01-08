@@ -521,7 +521,7 @@ const parameterConfigs = computed<ParameterConfig[]>(() => [
     ? ([
       {
         label: "間の長さ",
-        tooltip: "文内の間の長さを調整できます",
+        tooltip: "句読点などの間の長さを調整できます",
         sliderProps: {
           modelValue: () => query.value?.pauseLengthScale ?? null,
           disable: () =>
