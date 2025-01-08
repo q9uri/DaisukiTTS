@@ -738,7 +738,7 @@ const acceptRetrieveTelemetryComputed = computed({
 
     void store.actions.SHOW_MESSAGE_DIALOG({
       type: "warning-light",
-      title: "ソフトウェア利用状況のデータ収集を無効化しました",
+      title: "データ収集を無効化しました",
       message:
         "ソフトウェア利用状況のデータ収集を完全に無効にするには、AivisSpeech を再起動する必要があります。",
       ok: "OK",

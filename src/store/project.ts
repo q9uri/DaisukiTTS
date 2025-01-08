@@ -269,7 +269,7 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
           ) {
             await showMessageDialog({
               type: "info",
-              title: "プロジェクトファイルの保存先が変更されました",
+              title: "プロジェクトファイルの保存先が変わりました",
               message: `編集中のプロジェクトが ${filePath} に切り替わりました。`,
             });
           }

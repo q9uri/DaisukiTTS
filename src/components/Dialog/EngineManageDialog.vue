@@ -479,6 +479,7 @@ const addEngine = async () => {
     message:
       "この操作はコンピュータに損害を与える可能性があります。音声合成エンジンの配布元が信頼できない場合は追加しないでください。",
     actionName: "追加する",
+    isPrimaryColorButton: true,
   });
   if (result === "OK") {
     if (engineLoaderType.value === "dir") {

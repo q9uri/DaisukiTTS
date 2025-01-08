@@ -33,7 +33,7 @@
           :outline="index === props.buttons.length - 1"
           :label="buttonObject.text"
           :color="buttonObject.color"
-          :textColor="index === props.buttons.length - 1 ? 'display' : undefined"
+          :textColor="buttonObject.color"
           class="text-no-wrap text-bold"
           :style="index === props.buttons.length - 1 ? { padding: '0px 16px !important' } : undefined"
           @click="onClick(index)"

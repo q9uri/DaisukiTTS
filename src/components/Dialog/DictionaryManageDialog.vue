@@ -61,10 +61,7 @@
                 clickable
                 :active="selectedId === key"
                 activeClass="active-word"
-                @click="
-                  selectWord(key);
-                  editWord();
-                "
+                @click="selectWord(key)"
               >
                 <QItemSection>
                   <QItemLabel class="text-display">{{
@@ -637,7 +634,6 @@ const saveWord = async () => {
     }
     await loadingDictProcess();
     selectWord(selectedId.value);
-    editWord();
   } else {
     try {
       void store.actions.SHOW_LOADING_SCREEN({
@@ -705,7 +701,6 @@ const resetWord = async () => {
   });
   if (result === "OK") {
     selectWord(selectedId.value);
-    editWord();
   }
 };
 const discardOrNotDialog = async (okCallback: () => void) => {
@@ -737,12 +732,21 @@ const editWord = () => {
   toWordEditingState();
 };
 const selectWord = (id: string) => {
-  selectedId.value = id;
-  surface.value = userDict.value[id].surface;
-  void setYomi(userDict.value[id].yomi, true);
-  wordType.value = getWordTypeFromPartOfSpeech(userDict.value[id]);
-  wordPriority.value = userDict.value[id].priority;
-  toWordSelectedState();
+  const selectWordImpl = () => {
+    selectedId.value = id;
+    surface.value = userDict.value[id].surface;
+    void setYomi(userDict.value[id].yomi, true);
+    wordType.value = getWordTypeFromPartOfSpeech(userDict.value[id]);
+    wordPriority.value = userDict.value[id].priority;
+    toWordSelectedState();
+    editWord();
+  };
+
+  if (wordEditing.value && isWordChanged.value) {
+    void discardOrNotDialog(selectWordImpl);
+  } else {
+    selectWordImpl();
+  }
 };
 const cancel = () => {
   toInitialState();
@@ -766,7 +770,6 @@ const toInitialState = () => {
   if (Object.keys(userDict.value).length > 0) {
     const firstKey = Object.keys(userDict.value)[0];
     selectWord(firstKey);
-    editWord();
   }
 };
 // 単語が選択されているだけの状態
