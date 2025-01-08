@@ -39,7 +39,7 @@ const handler = (acceptTerms: boolean) => {
   void store.actions.SET_ACCEPT_TERMS({
     acceptTerms: acceptTerms ? "Accepted" : "Rejected",
   });
-  if (acceptTerms) {
+  if (!acceptTerms) {
     void store.actions.CHECK_EDITED_AND_NOT_SAVE({
       closeOrReload: "close",
     });
