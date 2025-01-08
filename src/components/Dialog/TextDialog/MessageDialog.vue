@@ -13,7 +13,6 @@
     <QCard class="q-py-sm q-px-sm dialog-card">
       <QCardSection class="message-dialog-title">
         <QIcon
-          v-if="props.type !== 'none'"
           :name="`sym_r_${iconName}`"
           class="text-h5 q-mr-sm"
           :color

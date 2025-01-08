@@ -378,7 +378,7 @@ export const settingStore = createPartialStore<SettingStoreTypes>({
         // 対応するGPUがない場合に変更を続行するか問う
         if (useGpu && !isAvailableGPUMode) {
           const result = await showQuestionDialog({
-            type: "warning",
+            type: "warning-light",
             title: "対応する GPU デバイスが見つかりません",
             message:
               "GPU モードの利用には対応する GPU デバイスが必要です。\n" +
@@ -403,7 +403,6 @@ export const settingStore = createPartialStore<SettingStoreTypes>({
         // FIXME: useGpu設定を保存してからエンジン起動を試すのではなく、逆にしたい
         if (!result.success && useGpu) {
           await showAlertDialog({
-            type: "error",
             title: "GPU モードに変更できませんでした",
             message:
               "GPU モードで音声合成エンジンを起動できなかったため、CPU モードに戻します。",

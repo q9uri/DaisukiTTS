@@ -582,7 +582,6 @@ const loadDraggedFile = (event: { dataTransfer: DataTransfer | null }) => {
       break;
     default:
       void store.actions.SHOW_ALERT_DIALOG({
-        type: "error",
         title: "対応していないファイルです",
         message:
           "テキストファイル (.txt) と AivisSpeech プロジェクトファイル (.aisp) に対応しています。",

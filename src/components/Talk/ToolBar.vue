@@ -135,7 +135,6 @@ const playContinuously = async (fromHotkey: boolean = false) => {
   } catch (e) {
     const msg = handlePossiblyNotMorphableError(e);
     void store.actions.SHOW_ALERT_DIALOG({
-      type: "error",
       title: "再生に失敗しました",
       message: msg ?? "音声合成エンジンの再起動をお試しください。",
     });
@@ -152,7 +151,6 @@ const play = async () => {
   } catch (e) {
     const msg = handlePossiblyNotMorphableError(e);
     void store.actions.SHOW_ALERT_DIALOG({
-      type: "error",
       title: "再生に失敗しました",
       message: msg ?? "音声合成エンジンの再起動をお試しください。",
     });

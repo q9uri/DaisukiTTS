@@ -823,7 +823,11 @@ export const singingStore = createPartialStore<SingingStoreTypes>({
       // 指定されたstyleIdに対して、エンジン側の初期化を行う
       const isInitialized = await actions.IS_INITIALIZED_ENGINE_SPEAKER(singer);
       if (!isInitialized) {
-        await actions.INITIALIZE_ENGINE_SPEAKER(singer);
+        await actions.INITIALIZE_ENGINE_CHARACTER({
+          engineId: singer.engineId,
+          styleId: singer.styleId,
+          uiLock: false,
+        });
       }
     },
   },
@@ -1722,9 +1726,8 @@ export const singingStore = createPartialStore<SingingStoreTypes>({
       const sinkId = device === "default" ? "" : device;
       audioContext.setSinkId(sinkId).catch((err: unknown) => {
         void showAlertDialog({
-          type: "error",
-          title: "エラー",
-          message: "再生デバイスが見つかりません",
+          title: "エラーが発生しました",
+          message: "設定で指定された再生デバイスが見つかりません。",
         });
         throw err;
       });

@@ -17,6 +17,7 @@ import { EditorType } from "@/type/preload";
 import { IsEqual } from "@/type/utility";
 import {
   showAlertDialog,
+  showMessageDialog,
   showQuestionDialog,
 } from "@/components/Dialog/Dialog";
 
@@ -223,8 +224,7 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
             return err.message;
           })();
           await showAlertDialog({
-            type: "error",
-            title: "エラー",
+            title: "エラーが発生しました",
             message: `プロジェクトファイルの読み込みに失敗しました。\n${message}`,
           });
           return false;
@@ -267,9 +267,9 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
             context.state.projectFilePath &&
             context.state.projectFilePath != filePath
           ) {
-            await showAlertDialog({
+            await showMessageDialog({
               type: "info",
-              title: "プロジェクトファイルの保存先の変更",
+              title: "プロジェクトファイルの保存先が変更されました",
               message: `編集中のプロジェクトが ${filePath} に切り替わりました。`,
             });
           }
@@ -326,8 +326,7 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
             return err.message;
           })();
           await showAlertDialog({
-            type: "error",
-            title: "エラー",
+            title: "エラーが発生しました",
             message: `プロジェクトファイルの保存に失敗しました。\n${message}`,
           });
           return false;
@@ -347,13 +346,16 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
       if (additionalMessage) {
         message += "\n" + additionalMessage;
       }
-      message += "\n変更を保存しますか？";
 
       const result: number = await showQuestionDialog({
         type: "warning",
-        title: "変更の保存確認",
+        title: "プロジェクトを保存しますか？",
         message,
-        buttons: ["キャンセル", "破棄", "保存"],
+        buttons: [
+          "キャンセル",
+          { text: "破棄する", color: "warning" },
+          { text: "保存する", color: "primary" },
+        ],
         cancel: 0,
       });
       if (result == 2) {

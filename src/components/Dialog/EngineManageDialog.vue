@@ -474,12 +474,11 @@ const getEngineDirValidationMessage = (result: EngineDirValidationResult) => {
 };
 
 const addEngine = async () => {
-  const result = await store.actions.SHOW_WARNING_DIALOG({
-    type: "warning-light",
-    title: "音声合成エンジン追加の確認",
+  const result = await store.actions.SHOW_CONFIRM_DIALOG({
+    title: "音声合成エンジンを追加しますか？",
     message:
       "この操作はコンピュータに損害を与える可能性があります。音声合成エンジンの配布元が信頼できない場合は追加しないでください。",
-    actionName: "追加",
+    actionName: "追加する",
   });
   if (result === "OK") {
     if (engineLoaderType.value === "dir") {
@@ -491,7 +490,7 @@ const addEngine = async () => {
       );
 
       void requireReload(
-        "音声合成エンジンを追加しました。反映には再読み込みが必要です。今すぐ再読み込みしますか？",
+        "音声合成エンジンを追加しました。反映には再読み込みが必要です。",
       );
     } else {
       const success = await lockUi(
@@ -500,7 +499,7 @@ const addEngine = async () => {
       );
       if (success) {
         void requireReload(
-          "音声合成エンジンを追加しました。反映には再読み込みが必要です。今すぐ再読み込みしますか？",
+          "音声合成エンジンを追加しました。反映には再読み込みが必要です。",
         );
       }
     }
@@ -517,10 +516,11 @@ const deleteEngine = async () => {
     throw new Error("default engine cannot be deleted");
   }
 
-  const result = await store.actions.SHOW_CONFIRM_DIALOG({
-    title: "音声合成エンジン削除の確認",
-    message: "選択中の音声合成エンジンを削除します。よろしいですか？",
-    actionName: "削除",
+  const result = await store.actions.SHOW_WARNING_DIALOG({
+    title: "音声合成エンジンを削除しますか？",
+    message: `音声合成エンジン「${engineInfo.name}」を削除します。`,
+    actionName: "削除する",
+    isWarningColorButton: true,
   });
   if (result === "OK") {
     switch (engineInfo.type) {
@@ -535,7 +535,7 @@ const deleteEngine = async () => {
           }),
         );
         void requireReload(
-          "音声合成エンジンを削除しました。反映には再読み込みが必要です。今すぐ再読み込みしますか？",
+          "音声合成エンジンを削除しました。反映には再読み込みが必要です。",
         );
         break;
       }
@@ -545,9 +545,7 @@ const deleteEngine = async () => {
           store.actions.UNINSTALL_VVPP_ENGINE(engineId),
         );
         if (success) {
-          void requireReload(
-            "音声合成エンジンの削除には再読み込みが必要です。今すぐ再読み込みしますか？",
-          );
+          void requireReload("音声合成エンジンの削除には再読み込みが必要です。");
         }
         break;
       }
@@ -576,12 +574,13 @@ const restartSelectedEngine = () => {
 };
 
 const requireReload = async (message: string) => {
-  const result = await store.actions.SHOW_WARNING_DIALOG({
+  const result = await store.actions.SHOW_CONFIRM_DIALOG({
     type: "warning-light",
-    title: "再読み込みが必要です",
+    title: "再読み込みしますか？",
     message: message,
-    actionName: "再読み込み",
+    actionName: "再読み込みする",
     cancel: "後で",
+    isPrimaryColorButton: true,
   });
   toInitialState();
   if (result === "OK") {

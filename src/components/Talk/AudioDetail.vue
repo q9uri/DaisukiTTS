@@ -255,7 +255,6 @@ const play = async () => {
     // AivisSpeech Engine から音声合成エラーが返された
     if (e instanceof Error && e.message === "Response returned an error code") {
       void store.actions.SHOW_ALERT_DIALOG({
-        type: "error",
         title: "音声合成に失敗しました",
         message:
           msg ??
@@ -263,7 +262,6 @@ const play = async () => {
       });
     } else {
       void store.actions.SHOW_ALERT_DIALOG({
-        type: "error",
         title: "再生に失敗しました",
         message: msg ?? "音声合成エンジンの再起動をお試しください。",
       });

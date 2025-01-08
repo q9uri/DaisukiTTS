@@ -736,9 +736,9 @@ const acceptRetrieveTelemetryComputed = computed({
       return;
     }
 
-    void store.actions.SHOW_ALERT_DIALOG({
+    void store.actions.SHOW_MESSAGE_DIALOG({
       type: "warning-light",
-      title: "ソフトウェア利用状況のデータ収集の無効化",
+      title: "ソフトウェア利用状況のデータ収集を無効化しました",
       message:
         "ソフトウェア利用状況のデータ収集を完全に無効にするには、AivisSpeech を再起動する必要があります。",
       ok: "OK",
@@ -842,11 +842,10 @@ const outputSamplingRate = computed({
   set: async (outputSamplingRate: SamplingRateOption) => {
     if (outputSamplingRate !== "engineDefault") {
       const result = await store.actions.SHOW_CONFIRM_DIALOG({
-        title: "出力サンプリングレートを変更します",
+        title: "出力サンプリングレートを変更しますか？",
         message:
-          "出力サンプリングレートを変更しても、音声の品質は上がりません。また、音声の生成処理に若干時間がかかる場合があります。\nそれでも変更しますか？",
+          "出力サンプリングレートを変更しても、音質は向上しません。また、音声の生成処理に若干時間がかかる場合があります。",
         actionName: "変更する",
-        cancel: "変更しない",
       });
       if (result !== "OK") {
         return;

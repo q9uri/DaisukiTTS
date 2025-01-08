@@ -1,10 +1,9 @@
 import { ExhaustiveError } from "@/type/utility";
 
-export type DialogType = "none" | "info" | "error" | "question" | "warning" | "warning-light";
+export type DialogType = "info" | "error" | "question" | "warning" | "warning-light";
+
 export const getIcon = (dialogType: DialogType) => {
   switch (dialogType) {
-    case "info":
-      return "info";
     case "error":
       return "error";
     case "question":
@@ -13,8 +12,8 @@ export const getIcon = (dialogType: DialogType) => {
       return "warning";
     case "warning-light":
       return "warning";
-    case "none":
-      return "";
+    case "info":
+      return "info";
     default:
       throw new ExhaustiveError(dialogType);
   }
@@ -23,17 +22,15 @@ export const getIcon = (dialogType: DialogType) => {
 export const getColor = (dialogType: DialogType) => {
   switch (dialogType) {
     case "error":
+      return "warning";
+    case "question":
+      return "warning-light";
     case "warning":
-      // TODO：warning用の色を用意する
       return "warning";
     case "warning-light":
       return "warning-light";
-    case "question":
-      return "warning-light";
     case "info":
       return "primary";
-    case "none":
-      return "display";
     default:
       throw new ExhaustiveError(dialogType);
   }

@@ -13,7 +13,6 @@
     <QCard class="q-py-sm q-px-sm dialog-card">
       <QCardSection class="question-dialog-title">
         <QIcon
-          v-if="props.type !== 'none'"
           :name="`sym_r_${iconName}`"
           class="text-h5 q-mr-sm"
           :color
@@ -27,13 +26,13 @@
       <QCardActions style="padding-top: 12px !important" align="right">
         <QSpace />
         <QBtn
-          v-for="(button, index) in props.buttons"
+          v-for="(buttonObject, index) in buttonObjects"
           ref="buttons"
           :key="index"
           :flat="index !== props.buttons.length - 1"
           :outline="index === props.buttons.length - 1"
-          :label="button"
-          color="display"
+          :label="buttonObject.text"
+          :color="buttonObject.color"
           :textColor="index === props.buttons.length - 1 ? 'display' : undefined"
           class="text-no-wrap text-bold"
           :style="index === props.buttons.length - 1 ? { padding: '0px 16px !important' } : undefined"
@@ -55,7 +54,7 @@ const props = withDefaults(
     type: DialogType;
     title: string;
     message: string;
-    buttons: string[];
+    buttons: (string | { text: string; color: string })[];
     persistent?: boolean | undefined;
     default?: number | undefined;
   }>(),
@@ -70,6 +69,12 @@ defineEmits({
 
 const iconName = computed(() => getIcon(props.type));
 const color = computed(() => getColor(props.type));
+const buttonObjects = computed(() =>
+  props.buttons.map((button) =>
+    typeof button === "string" ? { text: button, color: "display" } : button,
+  ),
+);
+
 const { dialogRef, onDialogOK, onDialogHide } = useDialogPluginComponent();
 
 const buttonsRef = useTemplateRef<QBtn[]>("buttons");
@@ -106,5 +111,10 @@ const onClick = (index: number) => {
   word-break: break-all;
   white-space: pre-wrap;
   line-height: 1.65;
+}
+
+// primary色のボタンのテキスト色は特別扱い
+.q-btn.bg-primary {
+  color: var(--color-display-on-primary) !important;
 }
 </style>

@@ -223,11 +223,11 @@ watch(
 );
 
 const applyDefaultSetting = async () => {
-  const result = await store.actions.SHOW_CONFIRM_DIALOG({
-    title: "ツールバーの順序をリセット",
-    message: "ツールバーの順序をデフォルトに戻します。\nよろしいですか？",
-    actionName: "リセット",
-    cancel: "キャンセル",
+  const result = await store.actions.SHOW_WARNING_DIALOG({
+    title: "ツールバーをデフォルトに戻しますか？",
+    message: "今までのカスタマイズ内容は破棄されます。",
+    actionName: "デフォルトに戻す",
+    isWarningColorButton: true,
   });
   if (result === "OK") {
     toolbarButtons.value = [...defaultSetting];
@@ -245,8 +245,9 @@ const finishOrNotDialog = async () => {
     const result = await store.actions.SHOW_WARNING_DIALOG({
       title: "カスタマイズを終了しますか？",
       message:
-        "保存せずに終了すると、カスタマイズは破棄されてリセットされます。",
-      actionName: "終了",
+        "保存せずに終了すると、カスタマイズ内容は破棄されます。",
+      actionName: "終了する",
+      isWarningColorButton: true,
     });
     if (result === "OK") {
       toolbarButtons.value = [...store.state.toolbarSetting];

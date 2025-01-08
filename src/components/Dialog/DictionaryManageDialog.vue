@@ -342,7 +342,6 @@ const loadingDictProcess = async () => {
     );
   } catch {
     const result = await store.actions.SHOW_ALERT_DIALOG({
-      type: "error",
       title: "辞書の取得に失敗しました",
       message: "音声合成エンジンの再起動をお試しください。",
     });
@@ -355,7 +354,6 @@ const loadingDictProcess = async () => {
     await createUILockAction(store.actions.SYNC_ALL_USER_DICT());
   } catch {
     await store.actions.SHOW_ALERT_DIALOG({
-      type: "error",
       title: "辞書の同期に失敗しました",
       message: "音声合成エンジンの再起動をお試しください。",
     });
@@ -499,7 +497,6 @@ const play = async () => {
     window.backend.logError(e);
     nowGenerating.value = false;
     void store.actions.SHOW_ALERT_DIALOG({
-      type: "error",
       title: "音声の生成に失敗しました",
       message: "音声合成エンジンの再起動をお試しください。",
     });
@@ -631,7 +628,6 @@ const saveWord = async () => {
       });
     } catch {
       void store.actions.SHOW_ALERT_DIALOG({
-        type: "error",
         title: "単語の更新に失敗しました",
         message: "音声合成エンジンの再起動をお試しください。",
       });
@@ -658,7 +654,6 @@ const saveWord = async () => {
       );
     } catch {
       void store.actions.SHOW_ALERT_DIALOG({
-        type: "error",
         title: "単語の登録に失敗しました",
         message: "音声合成エンジンの再起動をお試しください。",
       });
@@ -673,9 +668,10 @@ const saveWord = async () => {
 const isDeletable = computed(() => !!selectedId.value);
 const deleteWord = async () => {
   const result = await store.actions.SHOW_WARNING_DIALOG({
-    title: "登録された単語を削除しますか？",
-    message: "削除された単語は元に戻せません。",
-    actionName: "削除",
+    title: "単語を削除しますか？",
+    message: `単語「${userDict.value[selectedId.value].surface}」を削除します。`,
+    actionName: "削除する",
+    isWarningColorButton: true,
   });
   if (result === "OK") {
     try {
@@ -689,7 +685,6 @@ const deleteWord = async () => {
       );
     } catch {
       void store.actions.SHOW_ALERT_DIALOG({
-        type: "error",
         title: "単語の削除に失敗しました",
         message: "音声合成エンジンの再起動をお試しください。",
       });
@@ -703,9 +698,10 @@ const deleteWord = async () => {
 };
 const resetWord = async () => {
   const result = await store.actions.SHOW_WARNING_DIALOG({
-    title: "単語の変更をリセットしますか？",
-    message: "単語の変更は破棄されてリセットされます。",
-    actionName: "リセット",
+    title: "単語の変更内容をリセットしますか？",
+    message: "保存されていない変更内容は失われます。",
+    actionName: "リセットする",
+    isWarningColorButton: true,
   });
   if (result === "OK") {
     selectWord(selectedId.value);
@@ -716,8 +712,9 @@ const discardOrNotDialog = async (okCallback: () => void) => {
   if (isWordChanged.value) {
     const result = await store.actions.SHOW_WARNING_DIALOG({
       title: "単語の追加・変更を破棄しますか？",
-      message: "破棄すると、単語の追加・変更はリセットされます。",
-      actionName: "破棄",
+      message: "保存されていない変更内容は失われます。",
+      actionName: "破棄する",
+      isWarningColorButton: true,
     });
     if (result === "OK") {
       okCallback();

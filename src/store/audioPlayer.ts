@@ -110,9 +110,8 @@ export const audioPlayerStore = createPartialStore<AudioPlayerStoreTypes>({
             };
             audioElement.addEventListener("canplay", stop);
             void showAlertDialog({
-              type: "error",
-              title: "エラー",
-              message: "再生デバイスが見つかりません",
+              title: "エラーが発生しました",
+              message: "設定で指定された再生デバイスが見つかりません。",
             });
             throw err;
           });
