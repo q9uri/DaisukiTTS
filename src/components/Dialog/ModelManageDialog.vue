@@ -577,11 +577,12 @@ onUnmounted(() => {
 @use "@/styles/variables" as vars;
 
 .q-item--active {
-  background: rgba(colors.$primary-rgb, 0.4) !important;
+  background: hsl(206 66% 32% / 1);
+  border-right: 4px solid colors.$primary;
 }
 
 .loaded-model:not(.q-item--active) {
-  background: rgba(134, 223, 159, 0.1);
+  background: rgba(53, 227, 147, 0.1);
 }
 
 .model-list {

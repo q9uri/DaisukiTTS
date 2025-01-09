@@ -300,7 +300,8 @@ const openDefaultEngineLogDirectory = () => window.backend.openDefaultEngineLogD
 }
 
 .selected-item {
-  background-color: rgba(var(--color-toolbar-rgb), 0.75);
+  background-color: hsl(206 66% 32% / 1);
+  border-right: 4px solid colors.$primary;
   color: colors.$display;
 }
 

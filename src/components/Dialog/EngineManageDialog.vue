@@ -714,7 +714,8 @@ function findDefaultEngineId() {
 }
 
 .active-engine {
-  background: rgba(colors.$primary-rgb, 0.4);
+  background: hsl(206 66% 32% / 1);
+  border-right: 4px solid colors.$primary;
 }
 
 .engine-list-disable-overlay {

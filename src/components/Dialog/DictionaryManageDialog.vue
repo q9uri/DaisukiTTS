@@ -541,7 +541,8 @@ provide<DictionaryManageDialogContext>(dictionaryManageDialogContextKey, {
 }
 
 .active-word {
-  background: rgba(colors.$primary-rgb, 0.4);
+  background: hsl(206 66% 32% / 1);
+  border-right: 4px solid colors.$primary;
 }
 
 .loading-dict {
