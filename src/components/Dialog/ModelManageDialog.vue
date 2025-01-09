@@ -24,14 +24,19 @@
             ></div>
             <QList class="model-list">
               <QItem v-for="aivmInfo in Object.values(aivmInfoDict)" :key="aivmInfo.manifest.uuid" v-ripple class="q-pr-none" clickable
-                :active="activeAivmUuid === aivmInfo.manifest.uuid" @click="activeAivmUuid = aivmInfo.manifest.uuid">
+                :active="activeAivmUuid === aivmInfo.manifest.uuid"
+                :class="{ 'loaded-model': aivmInfo.isLoaded }"
+                @click="activeAivmUuid = aivmInfo.manifest.uuid">
                 <QItemSection avatar>
                   <QAvatar rounded color="primary">
                     <img :src="aivmInfo.manifest.speakers[0].icon" />
                   </QAvatar>
                 </QItemSection>
                 <QItemSection>
-                  <QItemLabel class="text-display">{{ aivmInfo.manifest.name }}</QItemLabel>
+                  <QItemLabel class="text-display">
+                    {{ aivmInfo.manifest.name }}
+                    <QIcon v-if="aivmInfo.isLoaded" name="sym_r_power" size="16px" class="power-icon text-power-on" />
+                  </QItemLabel>
                   <QItemLabel caption class="engine-path">
                     {{ aivmInfo.manifest.speakers.length }} Speakers / Version {{ aivmInfo.manifest.version }}
                     <QBadge v-if="aivmInfo.isUpdateAvailable" color="primary"
@@ -572,7 +577,11 @@ onUnmounted(() => {
 @use "@/styles/variables" as vars;
 
 .q-item--active {
-  background: rgba(colors.$primary-rgb, 0.4);
+  background: rgba(colors.$primary-rgb, 0.4) !important;
+}
+
+.loaded-model:not(.q-item--active) {
+  background: rgba(134, 223, 159, 0.1);
 }
 
 .model-list {
@@ -709,6 +718,11 @@ onUnmounted(() => {
   font-weight: 400;
   line-height: 1.6;
   word-wrap: break-word;
+}
+
+.power-icon {
+  margin-top: -2px;
+  vertical-align: middle;
 }
 
 </style>
