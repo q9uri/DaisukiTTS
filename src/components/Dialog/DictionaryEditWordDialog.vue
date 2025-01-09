@@ -185,7 +185,7 @@
         v-show="!!selectedId"
         outline
         icon="sym_r_settings_backup_restore"
-        label="リセット"
+        label="変更を破棄"
         textColor="warning"
         class="text-no-wrap text-bold q-mr-sm"
         :disable="uiLocked || !isWordChanged"
@@ -405,10 +405,9 @@ const saveWord = async () => {
 
 const resetWord = async (id: string) => {
   const result = await store.actions.SHOW_WARNING_DIALOG({
-    title: "単語の変更をリセットしますか？",
-    message: "単語の変更は破棄されてリセットされます。",
-    actionName: "リセットする",
-    cancel: "リセットしない",
+    title: "単語の変更を破棄しますか？",
+    message: "保存されていない変更内容は失われます。",
+    actionName: "破棄する",
     isWarningColorButton: true,
   });
   if (result === "OK") {

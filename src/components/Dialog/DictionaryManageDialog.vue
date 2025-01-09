@@ -387,7 +387,6 @@ const discardOrNotDialog = async (okCallback: () => void) => {
       title: "単語の追加・変更を破棄しますか？",
       message: "保存されていない変更内容は失われます。",
       actionName: "破棄する",
-      cancel: "破棄しない",
       isWarningColorButton: true,
     });
     if (result === "OK") {
