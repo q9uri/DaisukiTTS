@@ -59,8 +59,8 @@ createApp(App)
   .use(Quasar, {
     config: {
       brand: {
-        primary: "#a5d4ad",
-        secondary: "#212121",
+        primary: "#41A2EC",
+        secondary: "#41A2EC",
         negative: "var(--color-warning)",
       },
     },
