@@ -9,6 +9,7 @@
         :max="1"
         rounded
         font-size="12px"
+        trackColor="background"
         color="primary"
         size="xl"
         :thickness="0.25"
@@ -69,6 +70,12 @@ const formattedProgress = computed(() =>
   (store.getters.PROGRESS * 100).toFixed(),
 );
 </script>
+
+<style lang="scss">
+.progress .q-circular-progress__track {
+  color: #404449 !important;
+}
+</style>
 
 <style lang="scss" scoped>
 @use "@/styles/colors" as colors;
