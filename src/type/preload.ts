@@ -80,14 +80,6 @@ export interface Sandbox {
   getAppInfos(): Promise<AppInfos>;
   getTextAsset<K extends keyof TextAsset>(textType: K): Promise<TextAsset[K]>;
   getAltPortInfos(): Promise<AltPortInfos>;
-  showAudioSaveDialog(obj: {
-    title: string;
-    defaultPath?: string;
-  }): Promise<string | undefined>;
-  showTextSaveDialog(obj: {
-    title: string;
-    defaultPath?: string;
-  }): Promise<string | undefined>;
   showSaveDirectoryDialog(obj: { title: string }): Promise<string | undefined>;
   showVvppOpenDialog(obj: {
     title: string;
@@ -103,6 +95,12 @@ export interface Sandbox {
     title: string;
     name?: string;
     extensions?: string[];
+  }): Promise<string | undefined>;
+  showExportFileDialog(obj: {
+    title: string;
+    defaultPath?: string;
+    extensionName: string;
+    extensions: string[];
   }): Promise<string | undefined>;
   writeFile(obj: {
     filePath: string;
@@ -151,6 +149,7 @@ export interface Sandbox {
   uninstallVvppEngine(engineId: EngineId): Promise<boolean>;
   validateEngineDir(engineDir: string): Promise<EngineDirValidationResult>;
   reloadApp(obj: { isMultiEngineOffMode?: boolean }): Promise<void>;
+  getPathForFile(file: File): string;
 }
 
 export type AppInfos = {
@@ -417,7 +416,7 @@ export const rootMiscSettingSchema = z.object({
 });
 export type RootMiscSettingType = z.infer<typeof rootMiscSettingSchema>;
 
-export function getConfigSchema(isMac: boolean) {
+export function getConfigSchema({ isMac }: { isMac: boolean }) {
   return z
     .object({
       inheritAudioInfo: z.boolean().default(true),
@@ -440,7 +439,7 @@ export function getConfigSchema(isMac: boolean) {
         .default({}),
       hotkeySettings: hotkeySettingSchema
         .array()
-        .default(getDefaultHotkeySettings(isMac)),
+        .default(getDefaultHotkeySettings({ isMac })),
       toolbarSetting: toolbarSettingSchema
         .array()
         .default(defaultToolbarButtonSetting),

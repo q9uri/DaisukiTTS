@@ -205,7 +205,7 @@ const saveProject = async () => {
 };
 const importTextFile = () => {
   trackToolbarAction("import_text");
-  void store.actions.COMMAND_IMPORT_FROM_FILE({});
+  void store.actions.COMMAND_IMPORT_FROM_FILE({ type: "dialog" });
 };
 
 const usableButtons: Record<

@@ -349,12 +349,12 @@ const saveWord = async () => {
         wordType: wordType.value,
         priority: wordPriority.value,
       });
-    } catch {
+    } catch (e) {
       void store.actions.SHOW_ALERT_DIALOG({
         title: "単語の更新に失敗しました",
         message: "エンジンの再起動をお試しください。",
       });
-      return;
+      throw e;
     } finally {
       await store.actions.HIDE_ALL_LOADING_SCREEN();
     }
@@ -381,12 +381,12 @@ const saveWord = async () => {
           priority: wordPriority.value,
         }),
       );
-    } catch {
+    } catch (e) {
       void store.actions.SHOW_ALERT_DIALOG({
         title: "単語の登録に失敗しました",
         message: "エンジンの再起動をお試しください。",
       });
-      return;
+      throw e;
     } finally {
       await store.actions.HIDE_ALL_LOADING_SCREEN();
     }

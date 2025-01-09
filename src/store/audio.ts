@@ -1467,9 +1467,11 @@ export const audioStore = createPartialStore<AudioStoreTypes>({
             defaultAudioFileName,
           );
         } else {
-          filePath ??= await window.backend.showAudioSaveDialog({
+          filePath ??= await window.backend.showExportFileDialog({
             title: "音声を保存",
             defaultPath: defaultAudioFileName,
+            extensionName: "WAV ファイル",
+            extensions: ["wav"],
           });
         }
 
@@ -1614,9 +1616,11 @@ export const audioStore = createPartialStore<AudioStoreTypes>({
             defaultFileName,
           );
         } else {
-          filePath ??= await window.backend.showAudioSaveDialog({
+          filePath ??= await window.backend.showExportFileDialog({
             title: "音声を全てつなげて保存",
             defaultPath: defaultFileName,
+            extensionName: "WAV ファイル",
+            extensions: ["wav"],
           });
         }
 
@@ -1757,9 +1761,11 @@ export const audioStore = createPartialStore<AudioStoreTypes>({
             defaultFileName,
           );
         } else {
-          filePath ??= await window.backend.showTextSaveDialog({
+          filePath ??= await window.backend.showExportFileDialog({
             title: "文章を全てつなげてテキストファイルに保存",
             defaultPath: defaultFileName,
+            extensionName: "テキストファイル",
+            extensions: ["txt"],
           });
         }
 
@@ -2999,24 +3005,36 @@ export const audioCommandStore = transformCommandStore(
           prevAudioKey: undefined,
         });
       },
+      /**
+       * セリフテキストファイルを読み込む。
+       * ファイル選択ダイアログを表示するか、ファイルパス指定するか、Fileインスタンスを渡すか選べる。
+       */
       action: createUILockAction(
-        async (
-          { state, mutations, actions, getters },
-          { filePath }: { filePath?: string },
-        ) => {
-          if (!filePath) {
+        async ({ state, mutations, actions, getters }, payload) => {
+          let filePath: undefined | string;
+          if (payload.type == "dialog") {
             filePath = await window.backend.showImportFileDialog({
               title: "セリフ読み込み",
             });
             if (!filePath) return;
+          } else if (payload.type == "path") {
+            filePath = payload.filePath;
           }
-          let body = new TextDecoder("utf-8").decode(
-            await window.backend.readFile({ filePath }).then(getValueOrThrow),
-          );
+
+          let buf: ArrayBuffer;
+          if (filePath != undefined) {
+            buf = await window.backend
+              .readFile({ filePath })
+              .then(getValueOrThrow);
+          } else {
+            if (payload.type != "file")
+              throw new UnreachableError("payload.type != 'file'");
+            buf = await payload.file.arrayBuffer();
+          }
+
+          let body = new TextDecoder("utf-8").decode(buf);
           if (body.includes("\ufffd")) {
-            body = new TextDecoder("shift-jis").decode(
-              await window.backend.readFile({ filePath }).then(getValueOrThrow),
-            );
+            body = new TextDecoder("shift-jis").decode(buf);
           }
           const audioItems: AudioItem[] = [];
           let baseAudioItem: AudioItem | undefined = undefined;

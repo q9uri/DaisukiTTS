@@ -46,7 +46,7 @@ export const useMenuBarData = () => {
       type: "button",
       label: "テキストを読み込む",
       onClick: () => {
-        void store.actions.COMMAND_IMPORT_FROM_FILE({});
+        void store.actions.COMMAND_IMPORT_FROM_FILE({ type: "dialog" });
       },
       disableWhenUiLocked: true,
     },

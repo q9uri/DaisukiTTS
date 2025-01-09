@@ -52,7 +52,7 @@ const props = defineProps<{
 }>();
 const store = useStore();
 
-// ライセンス表示
+// ヘルプ表示
 const isHelpDialogOpenComputed = computed({
   get: () => store.state.isHelpDialogOpen,
   set: (val) => store.actions.SET_DIALOG_OPEN({ isHelpDialogOpen: val }),

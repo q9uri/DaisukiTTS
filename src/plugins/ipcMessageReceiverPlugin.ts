@@ -10,8 +10,11 @@ export const ipcMessageReceiver: Plugin = {
     options: { store: Store<State, AllGetters, AllActions, AllMutations> },
   ) => {
     window.backend.onReceivedIPCMsg({
-      LOAD_PROJECT_FILE: (_, { filePath } = {}) =>
-        void options.store.actions.LOAD_PROJECT_FILE({ filePath }),
+      LOAD_PROJECT_FILE: (_, { filePath }) =>
+        void options.store.actions.LOAD_PROJECT_FILE({
+          type: "path",
+          filePath,
+        }),
 
       DETECT_MAXIMIZED: () => options.store.actions.DETECT_MAXIMIZED(),
 

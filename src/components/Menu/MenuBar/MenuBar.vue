@@ -168,7 +168,7 @@ const saveProjectAs = async () => {
 
 const importProject = () => {
   if (!uiLocked.value) {
-    void store.actions.LOAD_PROJECT_FILE({});
+    void store.actions.LOAD_PROJECT_FILE({ type: "dialog" });
   }
 };
 
@@ -198,7 +198,12 @@ const updateRecentProjects = async () => {
           type: "button",
           label: "最近使ったプロジェクトはありません",
           onClick: () => {
-            // 何もしない
+            if (projectFilePath.value) {
+              void store.actions.LOAD_PROJECT_FILE({
+                type: "path",
+                filePath: projectFilePath.value,
+              });
+            }
           },
           disabled: true,
           disableWhenUiLocked: false,
@@ -208,9 +213,12 @@ const updateRecentProjects = async () => {
         type: "button",
         label: projectFilePath,
         onClick: () => {
-          void store.actions.LOAD_PROJECT_FILE({
-            filePath: projectFilePath,
-          });
+          if (projectFilePath) {
+            void store.actions.LOAD_PROJECT_FILE({
+              type: "path",
+              filePath: projectFilePath,
+            });
+          }
         },
         disableWhenUiLocked: false,
       }));

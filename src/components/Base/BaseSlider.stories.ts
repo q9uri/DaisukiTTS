@@ -17,7 +17,7 @@ const meta: Meta<typeof BaseSlider> = {
       const model = ref(Number(args.modelValue));
       return { args, model };
     },
-    template: `<BaseSlider v-bind="args" v-model="model"></BaseSlider>`,
+    template: "<BaseSlider v-bind=\"args\" v-model=\"model\"></BaseSlider>",
   }),
 };
 
