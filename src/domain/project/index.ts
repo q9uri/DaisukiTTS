@@ -335,6 +335,15 @@ export const migrateProjectFileObject = async (
         projectData.talk.audioItems[audioItemsKey].query.pauseLengthScale = 1;
       }
     }
+
+    // プリセット内の文内無音倍率の追加
+    if (projectData.presets?.items) {
+      for (const presetKey in projectData.presets.items) {
+        if (!("pauseLengthScale" in projectData.presets.items[presetKey])) {
+          projectData.presets.items[presetKey].pauseLengthScale = 1;
+        }
+      }
+    }
   }
 
   // Validation check
