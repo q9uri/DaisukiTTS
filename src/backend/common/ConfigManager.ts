@@ -3,15 +3,16 @@ import AsyncLock from "async-lock";
 import log from "electron-log/main";
 import {
   ConfigType,
-  configSchema,
+  getConfigSchema,
   ExperimentalSettingType,
 } from "@/type/preload";
 import { ensureNotNullish } from "@/helpers/errorHelper";
 import {
   HotkeyCombination,
-  defaultHotkeySettings,
+  getDefaultHotkeySettings,
   HotkeySettingType,
 } from "@/domain/hotkeyAction";
+import { isMac } from "@/helpers/platform";
 
 const lockKey = "save";
 
@@ -350,6 +351,8 @@ export abstract class BaseConfigManager {
 
   protected abstract getAppVersion(): string;
 
+  constructor(protected isMac: boolean) {}
+
   public reset() {
     this.config = this.getDefaultConfig();
     this._save();
@@ -366,7 +369,9 @@ export abstract class BaseConfigManager {
           log.info(`Migrated ${version} to ${versionRange} successfully.`);
         }
       }
-      this.config = this.migrateHotkeySettings(configSchema.parse(data));
+      this.config = this.migrateHotkeySettings(
+        getConfigSchema(this.isMac).parse(data),
+      );
       this._save();
     } else {
       this.reset();
@@ -396,7 +401,7 @@ export abstract class BaseConfigManager {
   private _save() {
     void this.lock.acquire(lockKey, async () => {
       await this.save({
-        ...configSchema.parse({
+        ...getConfigSchema(this.isMac).parse({
           ...this.config,
         }),
         __internal__: {
@@ -431,7 +436,7 @@ export abstract class BaseConfigManager {
   private migrateHotkeySettings(data: ConfigType): ConfigType {
     const COMBINATION_IS_NONE = HotkeyCombination("####");
     const loadedHotkeys = structuredClone(data.hotkeySettings);
-    const hotkeysWithoutNewCombination = defaultHotkeySettings.map(
+    const hotkeysWithoutNewCombination = getDefaultHotkeySettings(isMac).map(
       (defaultHotkey) => {
         const loadedHotkey = loadedHotkeys.find(
           (loadedHotkey) => loadedHotkey.action === defaultHotkey.action,
@@ -446,7 +451,7 @@ export abstract class BaseConfigManager {
     const migratedHotkeys = hotkeysWithoutNewCombination.map((hotkey) => {
       if (hotkey.combination === COMBINATION_IS_NONE) {
         const newHotkey = ensureNotNullish(
-          defaultHotkeySettings.find(
+          getDefaultHotkeySettings(isMac).find(
             (defaultHotkey) => defaultHotkey.action === hotkey.action,
           ),
         );
@@ -473,6 +478,6 @@ export abstract class BaseConfigManager {
   }
 
   protected getDefaultConfig(): ConfigType {
-    return configSchema.parse({});
+    return getConfigSchema(this.isMac).parse({});
   }
 }
