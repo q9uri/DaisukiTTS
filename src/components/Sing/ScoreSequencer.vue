@@ -1759,54 +1759,54 @@ const contextMenuData = computed<ContextMenuItemData[]>(() => {
   const toolMenuItems: ContextMenuItemData[] =
     editTarget.value === "NOTE"
       ? [
-          {
-            type: "button",
-            label: "選択優先ツール",
-            onClick: () => {
+        {
+          type: "button",
+          label: "選択優先ツール",
+          onClick: () => {
               contextMenu.value?.hide();
               void store.actions.SET_SEQUENCER_NOTE_TOOL({
                 sequencerNoteTool: "SELECT_FIRST",
               });
-            },
-            disableWhenUiLocked: false,
           },
-          {
-            type: "button",
-            label: "編集優先ツール",
-            onClick: () => {
+          disableWhenUiLocked: false,
+        },
+        {
+          type: "button",
+          label: "編集優先ツール",
+          onClick: () => {
               contextMenu.value?.hide();
               void store.actions.SET_SEQUENCER_NOTE_TOOL({
                 sequencerNoteTool: "EDIT_FIRST",
               });
-            },
-            disableWhenUiLocked: false,
           },
-          { type: "separator" },
-        ]
+          disableWhenUiLocked: false,
+        },
+        { type: "separator" },
+      ]
       : [
-          {
-            type: "button",
-            label: "ピッチ描画ツール",
-            onClick: () => {
+        {
+          type: "button",
+          label: "ピッチ描画ツール",
+          onClick: () => {
               contextMenu.value?.hide();
               void store.actions.SET_SEQUENCER_PITCH_TOOL({
                 sequencerPitchTool: "DRAW",
               });
-            },
-            disableWhenUiLocked: false,
           },
-          {
-            type: "button",
-            label: "ピッチ削除ツール",
-            onClick: () => {
+          disableWhenUiLocked: false,
+        },
+        {
+          type: "button",
+          label: "ピッチ削除ツール",
+          onClick: () => {
               contextMenu.value?.hide();
               void store.actions.SET_SEQUENCER_PITCH_TOOL({
                 sequencerPitchTool: "ERASE",
               });
-            },
-            disableWhenUiLocked: false,
           },
-        ];
+          disableWhenUiLocked: false,
+        },
+      ];
 
   const baseMenuItems: ContextMenuItemData[] = [
     {

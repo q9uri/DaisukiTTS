@@ -216,7 +216,7 @@ export class EngineAndVvppController {
       await this.installVvppEngine(downloadedPaths[0]);
     } catch (e) {
       failed = true;
-      log.error(`Failed to download and install VVPP engine:`, e);
+      log.error("Failed to download and install VVPP engine:", e);
       throw e;
     } finally {
       // ダウンロードしたファイルを削除

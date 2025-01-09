@@ -421,7 +421,7 @@ const contextMenuData = computed<ContextMenuItemData[]>(() => {
   const menuData: ContextMenuItemData[] = [];
   menuData.push({
     type: "button",
-    label: tempoChangeExists.value ? `テンポ変化を編集` : "テンポ変化を挿入",
+    label: tempoChangeExists.value ? "テンポ変化を編集" : "テンポ変化を挿入",
     onClick: async () => {
       Dialog.create({
         component: TempoChangeDialog,
@@ -458,7 +458,7 @@ const contextMenuData = computed<ContextMenuItemData[]>(() => {
   menuData.push({
     type: "button",
     label: timeSignatureChangeExists.value
-      ? `拍子変化を編集`
+      ? "拍子変化を編集"
       : "拍子変化を挿入",
     onClick: async () => {
       Dialog.create({
