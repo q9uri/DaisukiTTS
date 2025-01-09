@@ -36,7 +36,7 @@ test("実験的機能：調整結果の保持", async ({ page }) => {
   await page.keyboard.press("Enter");
   await page.waitForTimeout(100);
 
-  await page.locator(".detail-selector").getByText("イントネーション").click();
+  await page.locator(".detail-selector").getByText("ｲﾝﾄﾈｰｼｮﾝ").click();
   await page.waitForTimeout(100);
 
   const sliders = await page

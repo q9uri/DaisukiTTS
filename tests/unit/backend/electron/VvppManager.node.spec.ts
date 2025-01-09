@@ -9,7 +9,7 @@ const dummyMinimumManifest: MinimumEngineManifestType = {
   name: "Test Engine",
   uuid: EngineId("295c656b-b800-449f-aee6-b03e493816d7"),
   command: "",
-  port: 10101,
+  port: 5021,
   supported_features: {},
 };
 
