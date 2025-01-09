@@ -180,10 +180,6 @@ const api: Sandbox = {
     return ipcRendererInvokeProxy.HOTKEY_SETTINGS({ newData });
   },
 
-  getDefaultHotkeySettings: async () => {
-    return await ipcRendererInvokeProxy.GET_DEFAULT_HOTKEY_SETTINGS();
-  },
-
   getDefaultToolbarSetting: async () => {
     return await ipcRendererInvokeProxy.GET_DEFAULT_TOOLBAR_SETTING();
   },
