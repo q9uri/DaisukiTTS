@@ -89,7 +89,7 @@
                     />
                   </template>
                   <template
-                    v-if="editingPreset && shouldShowMorphing && isSupportedMorphing"
+                    v-if="editingPreset && shouldShowMorphing"
                   >
                     <h3 class="parameter-headline">モーフィング</h3>
                     <div class="mophing-style">
@@ -123,21 +123,26 @@
                           }
                         "
                       />
-                      <span>
-                        {{
-                          morphingTargetCharacterInfo
-                            ? morphingTargetCharacterInfo.metas.speakerName
-                            : '未設定'
-                        }}
-                      </span>
-                      <span
-                        v-if="
-                          morphingTargetCharacterInfo &&
-                          morphingTargetCharacterInfo.metas.styles.length >= 2
-                        "
-                      >
-                        （{{ morphingTargetStyleInfo?.styleName }}）
-                      </span>
+                      <div class="morphing-info">
+                        <div>
+                          {{
+                            morphingTargetCharacterInfo
+                              ? morphingTargetCharacterInfo.metas.speakerName
+                              : '未設定'
+                          }}
+                        </div>
+                        <div
+                          v-if="
+                            morphingTargetCharacterInfo &&
+                            morphingTargetCharacterInfo.metas.styles.length >= 2
+                          "
+                        >
+                          （{{ morphingTargetStyleInfo?.styleName }}）
+                        </div>
+                        <div v-if="editingPreset.morphingInfo" class="text-caption">
+                          混ぜる比率: {{ (editingPreset.morphingInfo.rate * 100).toFixed(0) }}%
+                        </div>
+                      </div>
                     </div>
                     <ParameterSlider
                       v-if="editingPreset.morphingInfo"
@@ -227,7 +232,8 @@ const presetList = computed(() =>
     .map((key) => ({
       key,
       ...presetItems.value[key],
-    })),
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name, "ja")),
 );
 
 const isPreview = ref(false);
@@ -393,7 +399,13 @@ const morphingTargetCharacters = computed<CharacterInfo[]>(() => {
   if (allCharacterInfos == undefined)
     throw new Error("USER_ORDERED_CHARACTER_INFOS == undefined");
 
-  return allCharacterInfos;
+  // AivisSpeech Engine の話者は除外
+  const filteredCharacterInfos = allCharacterInfos.filter(character => {
+    const styles = character.metas.styles;
+    return styles.length > 0 && styles[0].engineId !== store.getters.DEFAULT_ENGINE_ID;
+  });
+
+  return filteredCharacterInfos;
 });
 
 const morphingTargetCharacterInfo = computed(() =>
@@ -424,16 +436,6 @@ const isAivisSpeechEngine = computed(() => {
   // 現在のエンジンIDを取得
   const currentEngineId = store.state.engineIds[0]; // デフォルトエンジンを使用
   return store.getters.DEFAULT_ENGINE_ID === currentEngineId;
-});
-
-// モーフィングのサポート判定
-const isSupportedMorphing = computed(() => {
-  if (!isAivisSpeechEngine.value) {
-    const currentEngineId = store.state.engineIds[0];
-    const supportedFeatures = store.state.engineManifests[currentEngineId]?.supportedFeatures;
-    return supportedFeatures?.synthesisMorphing ?? false;
-  }
-  return false;
 });
 
 // パラメータの表示判定
@@ -538,6 +540,12 @@ const getParameterLabel = (sliderKey: PresetSliderKey): string => {
 .mophing-style {
   display: flex;
   align-items: center;
+  gap: v2_vars.$gap-1;
+}
+
+.morphing-info {
+  display: flex;
+  flex-direction: column;
   gap: v2_vars.$gap-1;
 }
 </style>
