@@ -125,14 +125,14 @@ registerHotkeyWithCleanup({
 /*
 registerHotkeyWithCleanup({
   editor: "talk",
-  name: "アクセント欄を表示",
+  name: "ｱｸｾﾝﾄ欄を表示",
   callback: () => {
     selectedDetail.value = "accent";
   },
 });
 registerHotkeyWithCleanup({
   editor: "talk",
-  name: "イントネーション欄を表示",
+  name: "ｲﾝﾄﾈｰｼｮﾝ欄を表示",
   callback: () => {
     if (supportedFeatures.value?.adjustMoraPitch) {
       selectedDetail.value = "pitch";

@@ -356,6 +356,7 @@ const deleteWord = async () => {
     message: `単語「${userDict.value[selectedId.value].surface}」を削除します。`,
     actionName: "削除する",
     isWarningColorButton: true,
+    cancel: "削除しない",
   });
   if (result === "OK") {
     try {
@@ -380,13 +381,13 @@ const deleteWord = async () => {
     toInitialState();
   }
 };
-
 const discardOrNotDialog = async (okCallback: () => void) => {
   if (isWordChanged.value) {
     const result = await store.actions.SHOW_WARNING_DIALOG({
       title: "単語の追加・変更を破棄しますか？",
       message: "保存されていない変更内容は失われます。",
       actionName: "破棄する",
+      cancel: "破棄しない",
       isWarningColorButton: true,
     });
     if (result === "OK") {

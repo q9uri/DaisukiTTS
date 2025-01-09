@@ -27,7 +27,8 @@ onMounted(async () => {
 }
 
 .markdown :deep(img) {
-  border: 1px solid #888;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 7px;
   vertical-align: middle;
   margin-bottom: 1rem;
 }

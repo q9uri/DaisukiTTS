@@ -1,10 +1,10 @@
 <template>
   <div
     ref="container"
-    class="mora-table"
+    class="accent-phrase"
     :class="[
-      isActive && 'mora-table-focus',
-      uiLocked || 'mora-table-hover',
+      isActive && 'accent-phrase-focus',
+      uiLocked || 'accent-phrase-hover',
     ]"
     @click="$emit('click', index)"
   >
@@ -457,14 +457,14 @@ const handleChangeVoicing = (mora: Mora, moraIndex: number) => {
   grid-row: 2 / 4;
   cursor: not-allowed;
 }
-.mora-table-hover .splitter-cell-accent {
+.accent-phrase-hover .splitter-cell-accent {
   cursor: col-resize !important;
 }
 .splitter-cell:hover {
   background-color: colors.$text-splitter-hover;
   cursor: not-allowed;
 }
-.mora-table-hover .splitter-cell:hover {
+.accent-phrase-hover .splitter-cell:hover {
   cursor: pointer;
 }
 .splitter-cell-be-split {
@@ -473,7 +473,7 @@ const handleChangeVoicing = (mora: Mora, moraIndex: number) => {
   grid-row: 1 / span 3;
   cursor: not-allowed;
 }
-.mora-table-hover .splitter-cell-be-split {
+.accent-phrase-hover .splitter-cell-be-split {
   cursor: col-resize !important;
 }
 .splitter-cell-be-split-pause {
@@ -488,7 +488,7 @@ const handleChangeVoicing = (mora: Mora, moraIndex: number) => {
   position: relative;
 }
 
-.mora-table {
+.accent-phrase {
   display: inline-grid;
   align-self: stretch;
   grid-template-rows: 1fr 60px 30px;
@@ -498,12 +498,12 @@ const handleChangeVoicing = (mora: Mora, moraIndex: number) => {
   }
 }
 
-.mora-table-hover:hover {
+.accent-phrase-hover:hover {
   cursor: cell;
   background-color: colors.$active-point-hover;
 }
 
-.mora-table-focus {
+.accent-phrase-focus {
   // hover色に負けるので、importantが必要
   background-color: colors.$active-point-focus !important;
 }

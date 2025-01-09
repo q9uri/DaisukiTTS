@@ -162,6 +162,16 @@
     <div class="fixed-bottom-buttons">
       <QSpace />
       <QBtn
+        v-show="isNewWordEditing"
+        outline
+        icon="sym_r_close"
+        label="キャンセル"
+        textColor="display"
+        class="text-no-wrap text-bold q-mr-sm"
+        :disable="uiLocked"
+        @click="discardOrNotDialog(cancel)"
+      />
+      <QBtn
         v-show="!!selectedId"
         outline
         icon="sym_r_delete"
@@ -180,16 +190,6 @@
         class="text-no-wrap text-bold q-mr-sm"
         :disable="uiLocked || !isWordChanged"
         @click="resetWord(selectedId)"
-      />
-      <QBtn
-        v-show="isNewWordEditing"
-        outline
-        icon="sym_r_close"
-        label="キャンセル"
-        textColor="display"
-        class="text-no-wrap text-bold q-mr-sm"
-        :disable="uiLocked"
-        @click="discardOrNotDialog(cancel)"
       />
       <QBtn
         outline
@@ -408,6 +408,7 @@ const resetWord = async (id: string) => {
     title: "単語の変更をリセットしますか？",
     message: "単語の変更は破棄されてリセットされます。",
     actionName: "リセットする",
+    cancel: "リセットしない",
     isWarningColorButton: true,
   });
   if (result === "OK") {

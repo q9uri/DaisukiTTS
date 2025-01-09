@@ -4,12 +4,14 @@ import log from "electron-log/main";
 import {
   ConfigType,
   configSchema,
-  defaultHotkeySettings,
-  HotkeySettingType,
   ExperimentalSettingType,
-  HotkeyCombination,
 } from "@/type/preload";
 import { ensureNotNullish } from "@/helpers/errorHelper";
+import {
+  HotkeyCombination,
+  defaultHotkeySettings,
+  HotkeySettingType,
+} from "@/domain/hotkeyAction";
 
 const lockKey = "save";
 
@@ -383,6 +385,12 @@ export abstract class BaseConfigManager {
     if (!this.config) throw new Error("Config is not initialized");
     this.config[key] = value;
     this._save();
+  }
+
+  /** 全ての設定を取得する。テスト用。 */
+  public getAll(): ConfigType {
+    if (!this.config) throw new Error("Config is not initialized");
+    return this.config;
   }
 
   private _save() {

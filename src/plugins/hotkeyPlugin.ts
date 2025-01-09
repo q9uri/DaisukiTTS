@@ -14,7 +14,7 @@ import {
   HotkeyActionNameType,
   HotkeyCombination,
   HotkeySettingType,
-} from "@/type/preload";
+} from "@/domain/hotkeyAction";
 import { createLogger } from "@/domain/frontend/log";
 
 const hotkeyManagerKey = "hotkeyManager";
