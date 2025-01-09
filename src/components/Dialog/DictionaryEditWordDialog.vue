@@ -1,6 +1,9 @@
 <template>
   <div v-show="wordEditing" class="col-8 no-wrap text-no-wrap word-editor">
-    <div class="model-detail-content">
+    <div ref="modelDetailContent" class="model-detail-content">
+      <div v-if="isNewWordEditing" class="row q-px-md q-mt-lg">
+        <div class="text-h5 text-display">新しい単語を追加</div>
+      </div>
       <div class="row q-px-md q-pr-md q-mt-lg">
         <QInput
           ref="surfaceInput"
@@ -202,7 +205,7 @@
 </template>
 
 <script setup lang="ts">
-import { inject, ref } from "vue";
+import { inject, ref, watch } from "vue";
 import { QInput } from "quasar";
 import {
   DictionaryManageDialogContext,
@@ -236,16 +239,17 @@ const {
   wordTypeLabels,
   wordPriority,
   isWordChanged,
+  isNewWordEditing,
   setYomi,
   createUILockAction,
   loadingDictProcess,
   computeRegisteredAccent,
   discardOrNotDialog,
-  toInitialState,
   toWordEditingState,
+  toWordSelectedState,
   cancel,
   deleteWord,
-  isNewWordEditing,
+  getWordTypeFromPartOfSpeech,
 } = context;
 
 // 音声再生機構
@@ -355,13 +359,20 @@ const saveWord = async () => {
       await store.actions.HIDE_ALL_LOADING_SCREEN();
     }
     await loadingDictProcess();
-    toInitialState();
+    // 変更後の単語を選択
+    surface.value = userDict.value[selectedId.value].surface;
+    void setYomi(userDict.value[selectedId.value].yomi, true);
+    wordType.value = getWordTypeFromPartOfSpeech(userDict.value[selectedId.value]);
+    wordPriority.value = userDict.value[selectedId.value].priority;
+    toWordSelectedState();
+    toWordEditingState();
   } else {
+    let wordUuid: string;
     try {
       void store.actions.SHOW_LOADING_SCREEN({
         message: "単語を辞書に追加しています...",
       });
-      await createUILockAction(
+      wordUuid = await createUILockAction(
         store.actions.ADD_WORD({
           surface: surface.value,
           pronunciation: yomi.value,
@@ -380,7 +391,15 @@ const saveWord = async () => {
       await store.actions.HIDE_ALL_LOADING_SCREEN();
     }
     await loadingDictProcess();
-    toInitialState();
+    // 追加した単語を選択
+    isNewWordEditing.value = false;  // 追加ダイアログを閉じる
+    selectedId.value = wordUuid;
+    surface.value = userDict.value[wordUuid].surface;
+    void setYomi(userDict.value[wordUuid].yomi, true);
+    wordType.value = getWordTypeFromPartOfSpeech(userDict.value[wordUuid]);
+    wordPriority.value = userDict.value[wordUuid].priority;
+    toWordSelectedState();
+    toWordEditingState();
   }
 };
 
@@ -402,6 +421,14 @@ const resetWord = async (id: string) => {
 
 // アクセント系
 const accentPhraseTable = ref<HTMLElement>();
+const modelDetailContent = ref<HTMLElement>();
+
+// モーダル表示の切り替え時にスクロール位置をリセット
+watch(isNewWordEditing, () => {
+  if (modelDetailContent.value) {
+    modelDetailContent.value.scrollTop = 0;
+  }
+});
 
 const changeAccent = async (_: number, accent: number) => {
   const { engineId, styleId } = voiceComputed.value;

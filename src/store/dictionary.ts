@@ -96,22 +96,24 @@ export const dictionaryStore = createPartialStore<DictionaryStoreTypes>({
     ) {
       // 同じ単語 ID で登録するために、まずデフォルトエンジン (AivisSpeech Engine) に追加したあと、他の全エンジンに同期する
       const defaultEngineId = getters.DEFAULT_ENGINE_ID;
-      await actions
+      const wordUuid = await actions
         .INSTANTIATE_ENGINE_CONNECTOR({
           engineId: defaultEngineId,
         })
-        .then((instance) =>
-          instance.invoke("addUserDictWordUserDictWordPost")({
+        .then(async (instance) => {
+          return await instance.invoke("addUserDictWordUserDictWordPost")({
             surface,
             pronunciation,
             accentType,
             wordType,
             priority,
-          }),
-        );
+          });
+        });
 
       // 変更を他の全エンジンに同期する
       await actions.SYNC_ALL_USER_DICT();
+
+      return wordUuid;
     },
   },
 

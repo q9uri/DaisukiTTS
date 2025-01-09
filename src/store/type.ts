@@ -2288,7 +2288,7 @@ export type DictionaryStoreTypes = {
       accentType: number;
       wordType: WordTypes;
       priority: number;
-    }): Promise<void>;
+    }): Promise<string>;
   };
   REWRITE_WORD: {
     action(payload: {

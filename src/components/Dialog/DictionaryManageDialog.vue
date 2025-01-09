@@ -101,19 +101,20 @@ export interface DictionaryManageDialogContext {
   surface: Ref<string>;
   yomi: Ref<string>;
   wordType: Ref<WordTypes>;
+  wordTypeLabels: Ref<Record<WordTypes, string>>;
   wordPriority: Ref<number>;
   isWordChanged: ComputedRef<boolean>;
+  isNewWordEditing: Ref<boolean>;
   setYomi: (text: string, changeWord?: boolean) => Promise<void>;
   createUILockAction: <T>(action: Promise<T>) => Promise<T>;
   loadingDictProcess: () => Promise<void>;
   computeRegisteredAccent: () => number;
   discardOrNotDialog: (okCallback: () => void) => Promise<void>;
-  toInitialState: () => void;
   toWordEditingState: () => void;
+  toWordSelectedState: () => void;
   cancel: () => void;
-  wordTypeLabels: Ref<Record<WordTypes, string>>;
   deleteWord: () => Promise<void>;
-  isNewWordEditing: Ref<boolean>;
+  getWordTypeFromPartOfSpeech: (dictData: UserDictWord | undefined) => WordTypes;
 }
 </script>
 
@@ -487,16 +488,17 @@ provide<DictionaryManageDialogContext>(dictionaryManageDialogContextKey, {
   wordTypeLabels,
   wordPriority,
   isWordChanged,
+  isNewWordEditing,
   setYomi,
   createUILockAction,
   loadingDictProcess,
   computeRegisteredAccent,
   discardOrNotDialog,
-  toInitialState,
   toWordEditingState,
+  toWordSelectedState,
   cancel,
   deleteWord,
-  isNewWordEditing,
+  getWordTypeFromPartOfSpeech,
 });
 </script>
 
