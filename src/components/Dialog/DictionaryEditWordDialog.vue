@@ -52,12 +52,28 @@
           />
         </QInput>
       </div>
-      <div class="row no-wrap q-px-md q-mb-lg desc-row" style="align-items: center; margin-top: 24px; white-space: normal;">
+      <div class="row no-wrap q-px-md q-mb-md desc-row" style="align-items: center; margin-top: 24px; white-space: normal;">
         <QIcon name="sym_r_warning" color="warning-light" size="19px" class="q-mr-sm" />
         <div>
           英単語・数字・記号を含む単語は、辞書に反映されないことがあります。<br>
           英単語はカタカナ表記にすると反映される場合もありますが、必ずしも反映されるとは限りません。
         </div>
+      </div>
+      <div class="row q-px-md q-mt-md text-h6">品詞</div>
+      <div class="row q-px-md q-mt-sm q-mb-md desc-row" style="white-space: normal;">
+        登録する単語の品詞を選択してください。適切に設定すると、ユーザー辞書の適用精度が向上します。
+      </div>
+      <div class="row q-px-md q-pr-md">
+        <QSelect
+          v-model="wordType"
+          class="word-input"
+          outlined
+          :options="Object.entries(wordTypeLabels).map(([value, label]) => ({ value, label }))"
+          :disable="uiLocked"
+          dense
+          emitValue
+          mapOptions
+        />
       </div>
       <div class="row q-px-md q-mt-lg text-h6">アクセント調整</div>
       <div class="row q-px-md q-mt-sm q-mb-md desc-row">
@@ -116,22 +132,6 @@
             </template>
           </div>
         </div>
-      </div>
-      <div class="row q-px-md q-mt-lg text-h6">品詞</div>
-      <div class="row q-px-md q-mt-sm q-mb-md desc-row" style="white-space: normal;">
-        登録する単語の品詞を選択してください。適切に設定すると、ユーザー辞書の適用精度が向上します。
-      </div>
-      <div class="row q-px-md q-pr-md">
-        <QSelect
-          v-model="wordType"
-          class="word-input"
-          outlined
-          :options="Object.entries(wordTypeLabels).map(([value, label]) => ({ value, label }))"
-          :disable="uiLocked"
-          dense
-          emitValue
-          mapOptions
-        />
       </div>
       <div class="row q-px-md q-mt-lg text-h6">単語優先度</div>
       <div class="row q-px-md q-mt-sm q-mb-lg desc-row">

@@ -198,6 +198,7 @@ watch(dictionaryManageDialogOpenedComputed, async (newValue) => {
 const wordEditing = ref(false);
 const surfaceInput = ref<QInput>();
 const selectedId = ref("");
+const lastSelectedId = ref("");
 const surface = ref("");
 const yomi = ref("");
 
@@ -455,13 +456,18 @@ const toInitialState = () => {
 
   // 辞書の最初の項目を選択する
   if (Object.keys(userDict.value).length > 0) {
-    const firstKey = Object.keys(userDict.value)[0];
-    selectWord(firstKey);
+    // 前回選択していた項目があればそれを選択、なければ最初の項目を選択
+    const targetKey = lastSelectedId.value && userDict.value[lastSelectedId.value]
+      ? lastSelectedId.value
+      : Object.keys(userDict.value)[0];
+    selectWord(targetKey);
   }
 };
 // 単語が選択されているだけの状態
 const toWordSelectedState = () => {
   wordEditing.value = false;
+  // 選択された項目を記憶
+  lastSelectedId.value = selectedId.value;
 };
 // 単語が編集されている状態
 const toWordEditingState = () => {
