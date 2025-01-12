@@ -60,6 +60,7 @@
                 tag="label"
                 clickable
                 :active="selectedId === key"
+                class="word-list-item"
                 activeClass="active-word"
                 @click="selectWord(key)"
               >
@@ -67,7 +68,10 @@
                   <QItemLabel class="text-display">{{
                     value.surface
                   }}</QItemLabel>
-                  <QItemLabel caption>{{ value.yomi }} [{{ wordTypeLabels[getWordTypeFromPartOfSpeech(value)] }}]</QItemLabel>
+                  <QItemLabel caption class="row">
+                    <span>{{ value.yomi }} [{{ wordTypeLabels[getWordTypeFromPartOfSpeech(value)] }}]</span>
+                    <span class="q-ml-auto">優先度:{{ value.priority }}</span>
+                  </QItemLabel>
                 </QItemSection>
               </QItem>
             </QList>
@@ -543,11 +547,16 @@ provide<DictionaryManageDialogContext>(dictionaryManageDialogContextKey, {
   );
   width: 100%;
   overflow-y: auto;
-}
 
-.active-word {
-  background: hsl(206 66% 32% / 1);
-  border-right: 4px solid colors.$primary;
+  .word-list-item {
+    padding-right: 16px;
+
+    &.active-word {
+      background: hsl(206 66% 32% / 1);
+      padding-right: 12px;
+      border-right: 4px solid colors.$primary;
+    }
+  }
 }
 
 .loading-dict {
