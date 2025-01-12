@@ -4,7 +4,7 @@
       <div v-if="isNewWordEditing" class="row q-px-md q-mt-lg">
         <div class="text-h5 text-display">新しい単語を追加</div>
       </div>
-      <div class="row q-px-md q-pr-md q-mt-lg">
+      <div class="row q-px-md q-pr-md q-mt-md">
         <QInput
           ref="surfaceInput"
           v-model="surface"
@@ -26,7 +26,7 @@
           />
         </QInput>
       </div>
-      <div class="row q-px-md q-pr-md q-pt-md">
+      <div class="row q-px-md q-pr-md q-pt-sm">
         <QInput
           ref="yomiInput"
           v-model="yomi"
@@ -75,7 +75,7 @@
           mapOptions
         />
       </div>
-      <div class="row q-px-md q-mt-lg text-h6">アクセント調整</div>
+      <div class="row q-px-md q-mt-md text-h6">アクセント調整</div>
       <div class="row q-px-md q-mt-sm q-mb-md desc-row">
         語尾のアクセントを考慮して調整できるように、自動的に「が」が挿入されます。
       </div>
@@ -133,7 +133,7 @@
           </div>
         </div>
       </div>
-      <div class="row q-px-md q-mt-lg text-h6">単語優先度</div>
+      <div class="row q-px-md q-mt-md text-h6">単語優先度</div>
       <div class="row q-px-md q-mt-sm q-mb-lg desc-row">
         単語を登録しても反映されないときは、単語優先度を徐々に上げてみてください。
       </div>
