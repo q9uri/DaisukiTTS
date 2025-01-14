@@ -9,6 +9,7 @@ import { ipcMessageReceiver } from "./plugins/ipcMessageReceiverPlugin";
 import { hotkeyPlugin } from "./plugins/hotkeyPlugin";
 import App from "@/components/App.vue";
 import { markdownItPlugin } from "@/plugins/markdownItPlugin";
+import { isProduction } from "@/helpers/platform";
 
 import "@quasar/extras/material-symbols-rounded/material-symbols-rounded.css";
 import "quasar/dist/quasar.sass";
@@ -18,31 +19,33 @@ import "./styles/_index.scss";
 //       ため、それを防止するため自前でdataLayerをあらかじめ用意する
 // window.dataLayer = [];
 
-// Sentry によるエラートラッキングを開始
+// Sentry によるエラートラッキングを開始 (production 環境のみ有効)
 // ref: https://docs.sentry.io/platforms/javascript/guides/electron/
-Sentry.init(
-  {
-    integrations: [
-      Sentry.browserTracingIntegration(),
-      Sentry.replayIntegration(),
-    ],
+if (isProduction) {
+  Sentry.init(
+    {
+      integrations: [
+        Sentry.browserTracingIntegration(),
+        Sentry.replayIntegration(),
+      ],
 
-    // Set tracesSampleRate to 1.0 to capture 100%
-    // of transactions for performance monitoring.
-    // We recommend adjusting this value in production
-    // Learn more at
-    // https://docs.sentry.io/platforms/javascript/configuration/options/#traces-sample-rate
-    tracesSampleRate: 1.0,
+      // Set tracesSampleRate to 1.0 to capture 100%
+      // of transactions for performance monitoring.
+      // We recommend adjusting this value in production
+      // Learn more at
+      // https://docs.sentry.io/platforms/javascript/configuration/options/#traces-sample-rate
+      tracesSampleRate: 1.0,
 
-    // Capture Replay for 10% of all sessions,
-    // plus for 100% of sessions with an error
-    // Learn more at
-    // https://docs.sentry.io/platforms/javascript/session-replay/configuration/#general-integration-configuration
-    replaysSessionSampleRate: 0.1,
-    replaysOnErrorSampleRate: 1.0,
-  },
-  SentryVue.init,
-);
+      // Capture Replay for 10% of all sessions,
+      // plus for 100% of sessions with an error
+      // Learn more at
+      // https://docs.sentry.io/platforms/javascript/session-replay/configuration/#general-integration-configuration
+      replaysSessionSampleRate: 0.1,
+      replaysOnErrorSampleRate: 1.0,
+    },
+    SentryVue.init,
+  );
+}
 
 createApp(App)
   .use(store, storeKey)

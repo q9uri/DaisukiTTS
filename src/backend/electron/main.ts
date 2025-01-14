@@ -30,6 +30,7 @@ import { registerIpcMainHandle, ipcMainSendProxy, IpcMainHandle } from "./ipc";
 import { getConfigManager } from "./electronConfig";
 import { getEngineAndVvppController } from "./engineAndVvppController";
 import { writeFileSafely } from "./fileHelper";
+import { isProduction } from "@/helpers/platform";
 import { failure, success } from "@/type/result";
 import { AssetTextFileNames } from "@/type/staticResources";
 import {
@@ -89,14 +90,16 @@ if (!isDevelopment) {
   configMigration014({ fixedUserDataDir, beforeUserDataDir }); // 以前のファイルがあれば持ってくる
 }
 
-// Sentry によるエラートラッキングを開始
+// Sentry によるエラートラッキングを開始 (production 環境のみ有効)
 // app.setPath("userData") を設定した後に呼ぶ必要がある
 // ref: https://docs.sentry.io/platforms/javascript/guides/electron/
-Sentry.init({
-  dsn: "https://ab3b3a5b0e9d1c90dae483f740dbc78b@o4508551725383680.ingest.us.sentry.io/4508555292901376",
-  release: `AivisSpeech@${app.getVersion() === "999.999.999" ? "latest" : app.getVersion()}`,
-  environment: import.meta.env.MODE,
-});
+if (isProduction) {
+  Sentry.init({
+    dsn: "https://ab3b3a5b0e9d1c90dae483f740dbc78b@o4508551725383680.ingest.us.sentry.io/4508555292901376",
+    release: `AivisSpeech@${app.getVersion() === "999.999.999" ? "latest" : app.getVersion()}`,
+    environment: "production",
+  });
+}
 
 log.initialize({ preload: false });
 // silly 以上のログをコンソールに出力
