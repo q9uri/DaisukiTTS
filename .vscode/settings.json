@@ -1,11 +1,15 @@
 {
-    // 日々付け替えられるナイトリービルド (1.x.x-dev) のタグがローカルと競合するため、
-    // リモートで追加されたタグを自動ではローカルに反映しない
-    "git.pullTags": false,
     // 保存時に ESLint による自動フォーマットを行う
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": "explicit",
     },
+    // 日々付け替えられるナイトリービルド (1.x.x-dev) のタグがローカルと競合するため、
+    // リモートで追加されたタグを自動ではローカルに反映しない
+    "git.pullTags": false,
+    // TypeScript で自動インポートを有効化
+    "typescript.suggest.autoImports": true,
+    // TypeScript でファイルの名前を変更または移動するときにインポートパスを自動更新する
+	"typescript.updateImportsOnFileMove.enabled": "always",
     // TypeScript の SDK をプロジェクトの node_modules から読み込む
     "typescript.tsdk": "node_modules/typescript/lib",
 }
