@@ -55,8 +55,8 @@
       <div class="row no-wrap q-px-md q-mb-md desc-row" style="align-items: center; margin-top: 24px; white-space: normal;">
         <QIcon name="sym_r_warning" color="warning-light" size="19px" class="q-mr-sm" />
         <div>
-          英単語・数字・記号を含む単語は、辞書に反映されないことがあります。<br>
-          英単語はカタカナ表記にすると反映される場合もありますが、必ずしも反映されるとは限りません。
+          英単語や記号を含む単語は、辞書に反映されない可能性が高いです。<br>
+          英単語は「チャットジーピーティー」のようにカタカナ表記にすると反映されることが多いですが、必ずしも反映されるとは限りません。
         </div>
       </div>
       <div class="row q-px-md q-mt-md text-h6">品詞</div>
