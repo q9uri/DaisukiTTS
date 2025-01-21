@@ -55,7 +55,7 @@
       <div class="row no-wrap q-px-md q-mb-md desc-row" style="align-items: center; margin-top: 24px; white-space: normal;">
         <QIcon name="sym_r_warning" color="warning-light" size="19px" class="q-mr-sm" />
         <div>
-          英単語・日時・計量単位・記号を含む単語は、辞書に反映されない可能性が高いです。<br>
+          一般的な英単語・日時・計量単位・記号を含む単語は、辞書に反映されない可能性が高いです。<br>
           英単語は「チャットジーピーティー」のようにカタカナ表記で登録すると反映されやすいですが、必ずしも反映されるとは限りません。
         </div>
       </div>
