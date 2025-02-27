@@ -18,6 +18,7 @@ import type {
   AccentPhrase,
   AivmInfo,
   AudioQuery,
+  BodySingFrameF0SingFrameF0Post,
   BodySingFrameVolumeSingFrameVolumePost,
   CorsPolicyMode,
   EngineManifest,
@@ -40,6 +41,8 @@ import {
     AivmInfoToJSON,
     AudioQueryFromJSON,
     AudioQueryToJSON,
+    BodySingFrameF0SingFrameF0PostFromJSON,
+    BodySingFrameF0SingFrameF0PostToJSON,
     BodySingFrameVolumeSingFrameVolumePostFromJSON,
     BodySingFrameVolumeSingFrameVolumePostToJSON,
     CorsPolicyModeFromJSON,
@@ -200,6 +203,12 @@ export interface SettingPostSettingPostRequest {
 export interface SingFrameAudioQuerySingFrameAudioQueryPostRequest {
     speaker: number;
     score: Score;
+    coreVersion?: string;
+}
+
+export interface SingFrameF0SingFrameF0PostRequest {
+    speaker: number;
+    bodySingFrameF0SingFrameF0Post: BodySingFrameF0SingFrameF0Post;
     coreVersion?: string;
 }
 
@@ -793,6 +802,23 @@ export interface DefaultApiInterface {
      * AivisSpeech Engine ではサポートされていない API です (常に 501 Not Implemented を返します)
      */
     singFrameAudioQuerySingFrameAudioQueryPost(requestParameters: SingFrameAudioQuerySingFrameAudioQueryPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FrameAudioQuery>;
+
+    /**
+     * 
+     * @summary AivisSpeech Engine ではサポートされていない API です (常に 501 Not Implemented を返します)
+     * @param {number} speaker 
+     * @param {BodySingFrameF0SingFrameF0Post} bodySingFrameF0SingFrameF0Post 
+     * @param {string} [coreVersion] AivisSpeech Engine ではサポートされていないパラメータです (常に無視されます) 。
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    singFrameF0SingFrameF0PostRaw(requestParameters: SingFrameF0SingFrameF0PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<number>>>;
+
+    /**
+     * AivisSpeech Engine ではサポートされていない API です (常に 501 Not Implemented を返します)
+     */
+    singFrameF0SingFrameF0Post(requestParameters: SingFrameF0SingFrameF0PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<number>>;
 
     /**
      * 
@@ -2297,6 +2323,51 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
      */
     async singFrameAudioQuerySingFrameAudioQueryPost(requestParameters: SingFrameAudioQuerySingFrameAudioQueryPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FrameAudioQuery> {
         const response = await this.singFrameAudioQuerySingFrameAudioQueryPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * AivisSpeech Engine ではサポートされていない API です (常に 501 Not Implemented を返します)
+     */
+    async singFrameF0SingFrameF0PostRaw(requestParameters: SingFrameF0SingFrameF0PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<number>>> {
+        if (requestParameters.speaker === null || requestParameters.speaker === undefined) {
+            throw new runtime.RequiredError('speaker','Required parameter requestParameters.speaker was null or undefined when calling singFrameF0SingFrameF0Post.');
+        }
+
+        if (requestParameters.bodySingFrameF0SingFrameF0Post === null || requestParameters.bodySingFrameF0SingFrameF0Post === undefined) {
+            throw new runtime.RequiredError('bodySingFrameF0SingFrameF0Post','Required parameter requestParameters.bodySingFrameF0SingFrameF0Post was null or undefined when calling singFrameF0SingFrameF0Post.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.speaker !== undefined) {
+            queryParameters['speaker'] = requestParameters.speaker;
+        }
+
+        if (requestParameters.coreVersion !== undefined) {
+            queryParameters['core_version'] = requestParameters.coreVersion;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/sing_frame_f0`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: BodySingFrameF0SingFrameF0PostToJSON(requestParameters.bodySingFrameF0SingFrameF0Post),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse<any>(response);
+    }
+
+    /**
+     * AivisSpeech Engine ではサポートされていない API です (常に 501 Not Implemented を返します)
+     */
+    async singFrameF0SingFrameF0Post(requestParameters: SingFrameF0SingFrameF0PostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<number>> {
+        const response = await this.singFrameF0SingFrameF0PostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

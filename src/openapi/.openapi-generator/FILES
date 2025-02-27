@@ -9,6 +9,7 @@ models/AivmManifestSpeaker.ts
 models/AivmManifestSpeakerStyle.ts
 models/AivmManifestVoiceSample.ts
 models/AudioQuery.ts
+models/BodySingFrameF0SingFrameF0Post.ts
 models/BodySingFrameVolumeSingFrameVolumePost.ts
 models/CorsPolicyMode.ts
 models/EngineManifest.ts

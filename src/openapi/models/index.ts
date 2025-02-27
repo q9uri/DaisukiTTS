@@ -7,6 +7,7 @@ export * from './AivmManifestSpeaker';
 export * from './AivmManifestSpeakerStyle';
 export * from './AivmManifestVoiceSample';
 export * from './AudioQuery';
+export * from './BodySingFrameF0SingFrameF0Post';
 export * from './BodySingFrameVolumeSingFrameVolumePost';
 export * from './CorsPolicyMode';
 export * from './EngineManifest';
