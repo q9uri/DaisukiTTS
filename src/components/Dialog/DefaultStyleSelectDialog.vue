@@ -55,9 +55,12 @@
               >
                 <div class="style-item-inner">
                   <img :src="style.iconPath" class="style-icon" />
-                  <span class="text-subtitle1 q-ma-sm" style="font-weight: bold;">{{
-                    style.styleName || DEFAULT_STYLE_NAME
-                  }}</span>
+                  <span
+                    class="text-subtitle1 q-ma-sm"
+                    style="font-weight: bold; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;"
+                  >
+                    {{ style.styleName || DEFAULT_STYLE_NAME }}
+                  </span>
                   <div class="voice-samples">
                     <QBtn
                       v-for="voiceSampleIndex of [

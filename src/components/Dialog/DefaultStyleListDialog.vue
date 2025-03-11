@@ -51,12 +51,14 @@
                     class="style-icon"
                   />
                   <span
-                    class="text-subtitle1 q-mt-sm text-weight-bold"
-                    >{{
+                    class="text-subtitle1 q-mt-sm text-weight-bold q-px-sm"
+                    style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;"
+                  >
+                    {{
                       characterInfosMap[speaker.metas.speakerUuid].metas
                         .speakerName
-                    }}</span
-                  >
+                    }}
+                  </span>
                   <div
                     v-if="
                       characterInfosMap[speaker.metas.speakerUuid].metas.styles

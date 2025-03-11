@@ -18,9 +18,12 @@
         :alt="characterInfo.metas.speakerName"
         class="style-icon"
       />
-      <span class="text-subtitle1 q-ma-sm" style="font-weight: bold;">{{
-        characterInfo.metas.speakerName
-      }}</span>
+      <span
+        class="text-subtitle1 q-ma-sm"
+        style="font-weight: bold; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;"
+      >
+        {{ characterInfo.metas.speakerName }}
+      </span>
       <div
         v-if="characterInfo.metas.styles.length > 1"
         class="style-select-container"
