@@ -4,7 +4,9 @@ import { createPartialStore } from "./vuex";
 import { useAnalytics } from "@/composables/useAnalytics";
 import { themes } from "@/domain/theme";
 import {
+  hideAllLoadingScreen,
   showAlertDialog,
+  showLoadingScreen,
   showQuestionDialog,
 } from "@/components/Dialog/Dialog";
 import {
@@ -49,6 +51,7 @@ export const settingStoreState: SettingStoreState = {
     enableMorphing: true,
     enableMultiSelect: true,
     shouldKeepTuningOnTextChange: true,
+    showParameterPanel: false,
   },
   splitTextWhenPaste: "PERIOD_AND_NEW_LINE",
   splitterPosition: {
@@ -373,23 +376,33 @@ export const settingStore = createPartialStore<SettingStoreTypes>({
      */
     action: createUILockAction(
       async ({ state, actions }, { useGpu, engineId }) => {
-        const isAvailableGPUMode = await window.backend.isAvailableGPUMode();
-
         // 対応するGPUがない場合に変更を続行するか問う
-        if (useGpu && !isAvailableGPUMode) {
-          const result = await showQuestionDialog({
-            type: "warning-light",
-            title: "対応する GPU デバイスが見つかりません",
-            message:
-              "GPU モードの利用には対応する GPU デバイスが必要です。\n" +
-              "このまま GPU モードに変更すると、音声合成エンジンでエラーが発生する可能性があります。本当に変更しますか？",
-            buttons: ["変更しない", "変更する"],
-            cancel: 0,
-          });
-          if (result == 0) {
-            return;
+        if (useGpu) {
+          showLoadingScreen({ message: "GPU デバイスを確認中です" });
+
+          const isAvailableGPUMode = await window.backend.isAvailableGPUMode();
+
+          hideAllLoadingScreen();
+
+          if (!isAvailableGPUMode) {
+            const result = await showQuestionDialog({
+              type: "warning-light",
+              title: "対応する GPU デバイスが見つかりません",
+              message:
+                "GPU モードの利用には対応する GPU デバイスが必要です。\n" +
+                "このまま GPU モードに変更すると、音声合成エンジンでエラーが発生する可能性があります。本当に変更しますか？",
+              buttons: ["変更しない", "変更する"],
+              cancel: 0,
+            });
+            if (result == 0) {
+              return;
+            }
           }
         }
+
+        showLoadingScreen({
+          message: "起動モードを変更中です",
+        });
 
         void actions.SET_ENGINE_SETTING({
           engineSetting: { ...state.engineSettings[engineId], useGpu },
@@ -398,6 +411,8 @@ export const settingStore = createPartialStore<SettingStoreTypes>({
         const result = await actions.RESTART_ENGINES({
           engineIds: [engineId],
         });
+
+        hideAllLoadingScreen();
 
         // GPUモードに変更できなかった場合はCPUモードに戻す
         // FIXME: useGpu設定を保存してからエンジン起動を試すのではなく、逆にしたい

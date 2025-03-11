@@ -86,7 +86,7 @@
         />
       </div>
       <!-- プリセット管理ダイアログ -->
-      <PresetManageDialog v-model:open-dialog="showsPresetEditDialog" />
+      <PresetManageDialog v-model:openDialog="showsPresetEditDialog" />
 
       <!-- プリセット登録ダイアログ -->
       <QDialog v-model="showsPresetNameDialog" @beforeHide="closeAllDialog">
@@ -238,7 +238,7 @@
       <span class="text-body1 q-mb-xs"><b>モーフィング</b></span>
       <div class="row no-wrap items-center q-mt-sm">
         <CharacterButton
-          v-model:selected-voice="morphingTargetVoice"
+          v-model:selectedVoice="morphingTargetVoice"
           class="q-my-xs"
           :characterInfos="morphingTargetCharacters"
           :showEngineInfo="morphingTargetEngines.length >= 2"
@@ -344,7 +344,7 @@ import {
 import { EngineManifest } from "@/openapi";
 import { useDefaultPreset } from "@/composables/useDefaultPreset";
 import { SLIDER_PARAMETERS } from "@/store/utility";
-import { createLogger } from "@/domain/frontend/log";
+import { createLogger } from "@/helpers/log";
 
 const props = defineProps<{
   activeAudioKey: AudioKey;

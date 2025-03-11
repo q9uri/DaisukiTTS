@@ -85,11 +85,9 @@
 </template>
 
 <script lang="ts">
-import { Ref, ComputedRef } from "vue";
+import { Ref, ComputedRef, type InjectionKey } from "vue";
 
-export const dictionaryManageDialogContextKey = "dictionaryManageDialogContext";
-
-export interface DictionaryManageDialogContext {
+export const dictionaryManageDialogContextKey: InjectionKey<{
   wordEditing: Ref<boolean>;
   surfaceInput: Ref<QInput | undefined>;
   selectedId: Ref<string>;
@@ -119,13 +117,17 @@ export interface DictionaryManageDialogContext {
   cancel: () => void;
   deleteWord: () => Promise<void>;
   getWordTypeFromPartOfSpeech: (dictData: UserDictWord | undefined) => WordTypes;
-}
+}> = Symbol("dictionaryManageDialogContextKey");
 </script>
 
 <script setup lang="ts">
 import { computed, ref, watch, provide } from "vue";
 import { QInput } from "quasar";
 import DictionaryEditWordDialog from "./DictionaryEditWordDialog.vue";
+import {
+  hideAllLoadingScreen,
+  showLoadingScreen,
+} from "@/components/Dialog/Dialog";
 import { useStore } from "@/store";
 import { AccentPhrase, UserDictWord, WordTypes } from "@/openapi";
 import { EngineId, SpeakerId, StyleId } from "@/type/preload";
@@ -365,7 +367,7 @@ const deleteWord = async () => {
   });
   if (result === "OK") {
     try {
-      void store.actions.SHOW_LOADING_SCREEN({
+      showLoadingScreen({
         message: "単語を辞書から削除しています...",
       });
       await createUILockAction(
@@ -380,7 +382,7 @@ const deleteWord = async () => {
       });
       return;
     } finally {
-      await store.actions.HIDE_ALL_LOADING_SCREEN();
+      hideAllLoadingScreen();
     }
     await loadingDictProcess();
     toInitialState();
@@ -483,7 +485,7 @@ const toDialogClosedState = () => {
   dictionaryManageDialogOpenedComputed.value = false;
 };
 
-provide<DictionaryManageDialogContext>(dictionaryManageDialogContextKey, {
+provide(dictionaryManageDialogContextKey, {
   wordEditing,
   surfaceInput,
   selectedId,

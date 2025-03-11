@@ -209,6 +209,10 @@
 <script setup lang="ts">
 
 import { computed, ref, watch, onUnmounted } from "vue";
+import {
+  hideAllLoadingScreen,
+  showLoadingScreen,
+} from "@/components/Dialog/Dialog";
 import { formatBytes } from "@/helpers/fileHelper";
 import { AivmInfo, ResponseError } from "@/openapi";
 import { useStore } from "@/store";
@@ -249,11 +253,11 @@ const aivmCount = computed(() => Object.keys(aivmInfoDict.value).length);
 const getAivmInfos = async () => {
   // 初回のみ読み込み中のローディングを表示する
   if (Object.keys(aivmInfoDict.value).length === 0) {
-    void store.actions.SHOW_LOADING_SCREEN({
+    showLoadingScreen({
       message: "読み込み中...",
     });
   }
-  const res = await getApiInstance().then((instance) => instance.invoke("getInstalledAivmInfosAivmModelsGet")({}));
+  const res = await getApiInstance().then((instance) => instance.invoke("getInstalledAivmInfos")({}));
   aivmInfoDict.value = res;
   // 初回のみアクティブな AIVM 音声合成モデルの UUID を設定
   if (activeAivmUuid.value == null && Object.keys(aivmInfoDict.value).length > 0) {
@@ -264,7 +268,7 @@ const getAivmInfos = async () => {
     activeAivmUuid.value = Object.values(aivmInfoDict.value)[0].manifest.uuid;
   }
   if (Object.keys(aivmInfoDict.value).length > 0) {
-    void store.actions.HIDE_ALL_LOADING_SCREEN();
+    void hideAllLoadingScreen();
   }
 };
 
@@ -355,15 +359,15 @@ const cancelInstall = () => {
 
 // 音声合成モデルをインストールする
 const installModel = async () => {
-  void store.actions.SHOW_LOADING_SCREEN({
+  showLoadingScreen({
     message: "インストールしています...",
   });
   try {
     const apiInstance = await getApiInstance();
     if (installMethod.value === "file" && selectedFile.value) {
-      await apiInstance.invoke("installAivmAivmModelsInstallPost")({ file: selectedFile.value });
+      await apiInstance.invoke("installAivm")({ file: selectedFile.value });
     } else if (installMethod.value === "url") {
-      await apiInstance.invoke("installAivmAivmModelsInstallPost")({ url: installUrl.value });
+      await apiInstance.invoke("installAivm")({ url: installUrl.value });
     }
     // インストール成功時の処理
     // 話者・スタイル一覧を再読み込み
@@ -401,7 +405,7 @@ const installModel = async () => {
       }
     }
   } finally {
-    await store.actions.HIDE_ALL_LOADING_SCREEN();
+    hideAllLoadingScreen();
     void getAivmInfos();  // 再取得
   }
 };
@@ -419,12 +423,12 @@ const unInstallAivmModel = async () => {
     isWarningColorButton: true,
   });
   if (result === "OK") {
-    void store.actions.SHOW_LOADING_SCREEN({
+    showLoadingScreen({
       message: "アンインストールしています...",
     });
     try {
       await getApiInstance().then((instance) =>
-        instance.invoke("uninstallAivmAivmModelsAivmUuidUninstallDelete")({ aivmUuid: activeAivmUuid.value! }));
+        instance.invoke("uninstallAivm")({ aivmUuid: activeAivmUuid.value! }));
       // アンインストール成功時の処理
       // 話者・スタイル一覧を再読み込み
       await store.actions.LOAD_CHARACTER({ engineId: store.getters.DEFAULT_ENGINE_ID });
@@ -455,7 +459,7 @@ const unInstallAivmModel = async () => {
         }
       }
     } finally {
-      await store.actions.HIDE_ALL_LOADING_SCREEN();
+      hideAllLoadingScreen();
       void getAivmInfos();  // 再取得
     }
   }
@@ -467,16 +471,16 @@ const toggleModelLoad = async () => {
     throw new Error("aivm model is not selected");
   }
 
-  void store.actions.SHOW_LOADING_SCREEN({
+  showLoadingScreen({
     message: activeAivmInfo.value?.isLoaded ? "モデルをアンロードしています..." : "モデルをロードしています...",
   });
 
   try {
     const apiInstance = await getApiInstance();
     if (activeAivmInfo.value?.isLoaded) {
-      await apiInstance.invoke("unloadAivmAivmModelsAivmUuidUnloadPost")({ aivmUuid: activeAivmUuid.value });
+      await apiInstance.invoke("unloadAivm")({ aivmUuid: activeAivmUuid.value });
     } else {
-      await apiInstance.invoke("loadAivmAivmModelsAivmUuidLoadPost")({ aivmUuid: activeAivmUuid.value });
+      await apiInstance.invoke("loadAivm")({ aivmUuid: activeAivmUuid.value });
     }
   } catch (error) {
     console.error(error);
@@ -494,7 +498,7 @@ const toggleModelLoad = async () => {
       });
     }
   } finally {
-    await store.actions.HIDE_ALL_LOADING_SCREEN();
+    hideAllLoadingScreen();
     void getAivmInfos();  // 再取得
   }
 };
@@ -513,13 +517,13 @@ const updateAivmModel = async () => {
   });
 
   if (result === "OK") {
-    void store.actions.SHOW_LOADING_SCREEN({
+    showLoadingScreen({
       message: "アップデートしています...",
     });
 
     try {
       const apiInstance = await getApiInstance();
-      await apiInstance.invoke("updateAivmAivmModelsAivmUuidUpdatePost")({ aivmUuid: activeAivmUuid.value });
+      await apiInstance.invoke("updateAivm")({ aivmUuid: activeAivmUuid.value });
       // アップデート成功時の処理
       // 話者・スタイル一覧を再読み込み
       await store.actions.LOAD_CHARACTER({ engineId: store.getters.DEFAULT_ENGINE_ID });
@@ -555,7 +559,7 @@ const updateAivmModel = async () => {
         }
       }
     } finally {
-      await store.actions.HIDE_ALL_LOADING_SCREEN();
+      hideAllLoadingScreen();
       void getAivmInfos();  // 再取得
     }
   }

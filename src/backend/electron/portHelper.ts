@@ -1,6 +1,8 @@
 import { execFileSync } from "child_process";
 import { createServer } from "net";
-import log from "electron-log/main";
+import { createLogger } from "@/helpers/log";
+
+const log = createLogger("portHelper");
 
 const isWindows = process.platform === "win32";
 
@@ -124,7 +126,7 @@ export async function getPidFromPort(
     stdout = execFileSync(exec.cmd, exec.args, {
       shell: true,
     }).toString();
-  } catch (e) {
+  } catch {
     portLog(hostInfo.port, "Assignable; Nobody uses this port!", isNested);
     return undefined;
   }

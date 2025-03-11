@@ -20,6 +20,7 @@ export const markdownItPlugin: Plugin = {
       html: true,
       linkify: true,
     });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     md.use(MarkdownItGitHubAlerts);
 
     // 全てのリンクに_blankを付ける

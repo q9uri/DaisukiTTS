@@ -207,10 +207,11 @@
 <script setup lang="ts">
 import { inject, ref, watch } from "vue";
 import { QInput } from "quasar";
+import { dictionaryManageDialogContextKey } from "./DictionaryManageDialog.vue";
 import {
-  DictionaryManageDialogContext,
-  dictionaryManageDialogContextKey,
-} from "./DictionaryManageDialog.vue";
+  hideAllLoadingScreen,
+  showLoadingScreen,
+} from "@/components/Dialog/Dialog";
 import AudioAccent from "@/components/Talk/AudioAccent.vue";
 import ContextMenu from "@/components/Menu/ContextMenu/Container.vue";
 import { useRightClickContextMenu } from "@/composables/useRightClickContextMenu";
@@ -219,9 +220,7 @@ import type { FetchAudioResult } from "@/store/type";
 
 const store = useStore();
 
-const context = inject<DictionaryManageDialogContext>(
-  dictionaryManageDialogContextKey,
-);
+const context = inject(dictionaryManageDialogContextKey);
 if (context == undefined)
   throw new Error("dictionaryManageDialogContext == undefined");
 const {
@@ -338,7 +337,7 @@ const saveWord = async () => {
   const accent = computeRegisteredAccent();
   if (selectedId.value) {
     try {
-      void store.actions.SHOW_LOADING_SCREEN({
+      showLoadingScreen({
         message: "変更を保存しています...",
       });
       await store.actions.REWRITE_WORD({
@@ -356,7 +355,7 @@ const saveWord = async () => {
       });
       throw e;
     } finally {
-      await store.actions.HIDE_ALL_LOADING_SCREEN();
+      hideAllLoadingScreen();
     }
     await loadingDictProcess();
     // 変更後の単語を選択
@@ -369,7 +368,7 @@ const saveWord = async () => {
   } else {
     let wordUuid: string;
     try {
-      void store.actions.SHOW_LOADING_SCREEN({
+      showLoadingScreen({
         message: "単語を辞書に追加しています...",
       });
       wordUuid = await createUILockAction(
@@ -388,7 +387,7 @@ const saveWord = async () => {
       });
       throw e;
     } finally {
-      await store.actions.HIDE_ALL_LOADING_SCREEN();
+      hideAllLoadingScreen();
     }
     await loadingDictProcess();
     // 追加した単語を選択

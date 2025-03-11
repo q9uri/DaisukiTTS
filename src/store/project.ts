@@ -20,6 +20,8 @@ import {
   showMessageDialog,
   showQuestionDialog,
 } from "@/components/Dialog/Dialog";
+import { getAppInfos } from "@/domain/appInfo";
+import { errorToMessage } from "@/helpers/errorHelper";
 
 export const projectStoreState: ProjectStoreState = {
   savedLastCommandIds: { talk: null, song: null },
@@ -170,19 +172,22 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
       async ({ actions, mutations, getters }, payload) => {
         let filePath: undefined | string;
         if (payload.type == "dialog") {
-          const ret = await window.backend.showProjectLoadDialog({
+          const ret = await window.backend.showOpenFileDialog({
             title: "プロジェクトファイルの選択",
+            name: "AivisSpeech Project file",
+            mimeType: "application/json",
+            extensions: ["aisp"],
           });
-          if (ret == undefined || ret?.length == 0) {
+          if (ret == undefined) {
             return false;
           }
-          filePath = ret[0];
+          filePath = ret;
         } else if (payload.type == "path") {
           filePath = payload.filePath;
         }
 
         try {
-          let buf: ArrayBuffer;
+          let buf: Uint8Array;
           if (filePath != undefined) {
             buf = await window.backend
               .readFile({ filePath })
@@ -194,7 +199,7 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
           } else {
             if (payload.type != "file")
               throw new UnreachableError("payload.type != 'file'");
-            buf = await payload.file.arrayBuffer();
+            buf = new Uint8Array(await payload.file.arrayBuffer());
           }
 
           const text = new TextDecoder("utf-8").decode(buf).trim();
@@ -239,36 +244,52 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
     ),
   },
 
+  SAVE_PROJECT_FILE_AS_COPY: {
+    /**
+     * プロジェクトファイルを複製として保存する。保存の成否が返る。
+     * エラー発生時はダイアログが表示される。
+     */
+    action: createUILockAction(async (context, { filePath: filePathArg }) => {
+      let filePath = filePathArg;
+      try {
+        if (!filePath) {
+          filePath = await context.actions.PROMPT_PROJECT_SAVE_FILE_PATH({});
+          if (!filePath) {
+            return false;
+          }
+        }
+        await context.actions.WRITE_PROJECT_FILE({ filePath });
+
+        return true;
+      } catch (err) {
+        window.backend.logError(err);
+        await showAlertDialog({
+          title: "エラーが発生しました",
+          message: `プロジェクトファイルの保存に失敗しました。\n${errorToMessage(err)}`,
+        });
+        return false;
+      }
+    }),
+  },
+
   SAVE_PROJECT_FILE: {
     /**
-     * プロジェクトファイルを保存する。保存の成否が返る。
-     * エラー発生時はダイアログが表示される。
+     * プロジェクトファイルを保存し、現在のプロジェクトファイルのパスを更新する。保存の成否が返る。
      */
     action: createUILockAction(
       async (context, { overwrite }: { overwrite?: boolean }) => {
         let filePath = context.state.projectFilePath;
+
         try {
           if (!overwrite || !filePath) {
-            let defaultPath: string;
-
-            if (!filePath) {
-              // if new project: use generated name
-              defaultPath = `${context.getters.DEFAULT_PROJECT_FILE_BASE_NAME}.aisp`;
-            } else {
-              // if saveAs for existing project: use current project path
-              defaultPath = filePath;
-            }
-
-            // Write the current status to a project file.
-            const ret = await window.backend.showProjectSaveDialog({
-              title: "プロジェクトファイルの保存",
-              defaultPath,
+            filePath = await context.actions.PROMPT_PROJECT_SAVE_FILE_PATH({
+              defaultFilePath: filePath,
             });
-            if (ret == undefined) {
+            if (!filePath) {
               return false;
             }
-            filePath = ret;
           }
+
           if (
             context.state.projectFilePath &&
             context.state.projectFilePath != filePath
@@ -283,62 +304,83 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
           await context.actions.APPEND_RECENTLY_USED_PROJECT({
             filePath,
           });
-          const appInfos = await window.backend.getAppInfos();
-          const {
-            audioItems,
-            audioKeys,
-            tpqn,
-            tempos,
-            timeSignatures,
-            tracks,
-            trackOrder,
-          } = context.state;
-          const projectData: LatestProjectType = {
-            appVersion: appInfos.version,
-            talk: {
-              audioKeys,
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              audioItems,
-            },
-            song: {
-              tpqn,
-              tempos,
-              timeSignatures,
-              tracks: Object.fromEntries(tracks),
-              trackOrder,
-            },
-          };
+          await context.actions.WRITE_PROJECT_FILE({ filePath });
 
-          const buf = new TextEncoder().encode(
-            JSON.stringify(projectData),
-          ).buffer;
-          await window.backend
-            .writeFile({
-              filePath,
-              buffer: buf,
-            })
-            .then(getValueOrThrow);
           context.mutations.SET_PROJECT_FILEPATH({ filePath });
           context.mutations.SET_SAVED_LAST_COMMAND_IDS(
             context.getters.LAST_COMMAND_IDS,
           );
+
           return true;
         } catch (err) {
           window.backend.logError(err);
-          const message = (() => {
-            if (typeof err === "string") return err;
-            if (!(err instanceof Error)) return "エラーが発生しました。";
-            return err.message;
-          })();
           await showAlertDialog({
             title: "エラーが発生しました",
-            message: `プロジェクトファイルの保存に失敗しました。\n${message}`,
+            message: `プロジェクトファイルの保存に失敗しました。\n${errorToMessage(err)}`,
           });
           return false;
         }
       },
     ),
+  },
+
+  PROMPT_PROJECT_SAVE_FILE_PATH: {
+    async action(context, { defaultFilePath }) {
+      let defaultPath: string;
+
+      if (!defaultFilePath) {
+        // if new project: use generated name
+        defaultPath = `${context.getters.DEFAULT_PROJECT_FILE_BASE_NAME}.aisp`;
+      } else {
+        // if saveAs for existing project: use current project path
+        defaultPath = defaultFilePath;
+      }
+
+      // Write the current status to a project file.
+      return await window.backend.showSaveFileDialog({
+        title: "プロジェクトファイルの保存",
+        name: "AivisSpeech Project file",
+        extensions: ["aisp"],
+        defaultPath,
+      });
+    },
+  },
+
+  WRITE_PROJECT_FILE: {
+    action: async (context, { filePath }) => {
+      const appVersion = getAppInfos().version;
+      const {
+        audioItems,
+        audioKeys,
+        tpqn,
+        tempos,
+        timeSignatures,
+        tracks,
+        trackOrder,
+      } = context.state;
+      const projectData: LatestProjectType = {
+        appVersion,
+        talk: {
+          audioKeys,
+          audioItems,
+        },
+        song: {
+          tpqn,
+          tempos,
+          timeSignatures,
+          tracks: Object.fromEntries(tracks),
+          trackOrder,
+        },
+      };
+
+      const buf = new TextEncoder().encode(JSON.stringify(projectData)).buffer;
+      await window.backend
+        .writeFile({
+          filePath,
+          buffer: new Uint8Array(buf),
+        })
+        .then(getValueOrThrow);
+    },
   },
 
   /**
@@ -375,6 +417,12 @@ export const projectStore = createPartialStore<ProjectStoreTypes>({
         return "canceled";
       }
     }),
+  },
+
+  GET_INITIAL_PROJECT_FILE_PATH: {
+    action: async () => {
+      return await window.backend.getInitialProjectFilePath();
+    },
   },
 
   IS_EDITED: {

@@ -51,5 +51,8 @@ dist_preview/
 # Downloaded binaries
 vendored
 
+# Cache
+.eslintcache
+
 # Sentry Config File
 .env.sentry-build-plugin

@@ -123,11 +123,14 @@ jobs:
 
           $sed -i 's/"version": "999.999.999"/"version": "${{ env.AIVISSPEECH_EDITOR_VERSION }}"/' package.json
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version-file: ".node-version"
-          cache: "npm"
+          cache: "pnpm"
 
       - name: Cache Electron
         uses: actions/cache@v4
@@ -146,7 +149,7 @@ jobs:
             ${{ env.cache-version }}-${{ runner.os }}--electron-builder-cache-
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm i --frozen-lockfile
 
       - name: Overwrite .env.production for Linux
         if: startsWith(matrix.os, 'ubuntu-')
@@ -159,7 +162,7 @@ jobs:
           $sed -i 's|AivisSpeech-Engine/run.exe|../Resources/AivisSpeech-Engine/run|g' .env.production
 
       - name: Generate public/licenses.json
-        run: npm run license:generate
+        run: pnpm run license:generate
 
       - name: Define Code Signing Envs
         if: startsWith(matrix.os, 'windows-') && github.event.inputs.code_signing == 'true'
@@ -189,7 +192,7 @@ jobs:
 
           # https://github.com/electron-userland/electron-builder/issues/3179
           USE_HARD_LINKS: false
-        run: npm run electron:build -- --dir
+        run: pnpm run electron:build --dir
 
       - name: Reset Code Signing Envs
         if: startsWith(matrix.os, 'windows-') && github.event.inputs.code_signing == 'true'
@@ -338,7 +341,7 @@ jobs:
           LINUX_ARTIFACT_NAME: ${{ matrix.linux_artifact_name }}
           LINUX_EXECUTABLE_NAME: ${{ matrix.linux_executable_name }}
         run: |
-          npm run electron:build -- --prepackaged prepackage/
+          pnpm run electron:build --prepackaged prepackage/
 
       - name: Build Electron (for macOS)
         if: endsWith(matrix.installer_artifact_name, '-dmg') # macOS
@@ -346,7 +349,7 @@ jobs:
           MACOS_ARTIFACT_NAME: ${{ matrix.macos_artifact_name }}
         run: |
           for i in {1..5}; do
-            npm run electron:build -- --prepackaged prepackage/AivisSpeech.app && break || {
+            pnpm run electron:build -- --prepackaged prepackage/AivisSpeech.app && break || {
               if [ $i -lt 5 ]; then
                 echo "Attempt $i failed! Retrying in 10 seconds..."
                 sleep 10

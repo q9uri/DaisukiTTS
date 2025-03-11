@@ -45,7 +45,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup environment
         uses: ./.github/actions/setup-environment
-      - run: npm run electron:build
+      - run: pnpm run electron:build
 
   lint:
     runs-on: ubuntu-latest
@@ -55,9 +55,9 @@ jobs:
         uses: ./.github/actions/setup-environment
 
       - name: Disallowed licenses check
-        run: npm run license:generate
+        run: pnpm run license:generate
 
-      - run: npm run typecheck
-      - run: npm run lint
-      # - run: npm run markdownlint
-      - run: npm run typos
+      - run: pnpm run typecheck
+      - run: pnpm run lint
+      # - run: pnpm run markdownlint
+      - run: pnpm run typos
