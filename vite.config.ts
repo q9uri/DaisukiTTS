@@ -114,7 +114,7 @@ export default defineConfig((options) => {
                 tsconfigPaths({ root: import.meta.dirname }),
                 isProduction &&
                   checkSuspiciousImportsPlugin({
-                    allowedInTryCatchModules: [
+                    allowedModules: [
                       // systeminformationのoptionalな依存。try-catch内なので許可。
                       "osx-temperature-sensor",
                     ],
