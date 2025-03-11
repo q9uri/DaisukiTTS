@@ -1,6 +1,5 @@
 import semver from "semver";
 import AsyncLock from "async-lock";
-import log from "electron-log/main";
 import {
   ConfigType,
   getConfigSchema,
@@ -12,6 +11,9 @@ import {
   getDefaultHotkeySettings,
   HotkeySettingType,
 } from "@/domain/hotkeyAction";
+import { createLogger } from "@/helpers/log";
+
+const log = createLogger("ConfigManager");
 
 const lockKey = "save";
 
