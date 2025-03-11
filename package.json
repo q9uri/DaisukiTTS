@@ -46,7 +46,7 @@
     "storybook:build": "storybook build",
     "// --- lifecycle ---": "",
     "preinstall": "npx -y only-allow pnpm",
-    "postinstall": "pnpm run postinstall:packages && pnpm run postinstall:download-scripts",
+    "postinstall": "pnpm run postinstall:packages && pnpm run postinstall:download-scripts && pnpm run license:generate",
     "postinstall:packages": "electron-builder install-app-deps",
     "postinstall:download-scripts": "tsx tools/download7z.ts && tsx tools/downloadTypos.ts",
     "postuninstall": "electron-builder install-app-deps"
