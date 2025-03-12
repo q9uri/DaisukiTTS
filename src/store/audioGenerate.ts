@@ -215,7 +215,7 @@ export async function fetchAudioFromAudioItem(
       id = (await generateUniqueIdAndQuery(state, audioItem))[0];
 
       log.info("Heuristic duration assignment (for AivisSpeech Engine) completed.");
-      log.info(audioQuery.accentPhrases);
+      console.info("AudioQuery.accentPhrases:", audioQuery.accentPhrases);  // メインプロセスに送るには量が多いのでブラウザコンソールのみに出力
     } catch (error) {
       log.error("Heuristic duration assignment (for AivisSpeech Engine) failed.", error);
     }
