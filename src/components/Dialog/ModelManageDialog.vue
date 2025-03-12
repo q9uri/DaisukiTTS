@@ -214,8 +214,11 @@ import {
   showLoadingScreen,
 } from "@/components/Dialog/Dialog";
 import { formatBytes } from "@/helpers/fileHelper";
+import { createLogger } from "@/helpers/log";
 import { AivmInfo, ResponseError } from "@/openapi";
 import { useStore } from "@/store";
+
+const log = createLogger("ModelManageDialog");
 
 const store = useStore();
 
@@ -382,7 +385,7 @@ const installModel = async () => {
     });
     cancelInstall();
   } catch (error) {
-    console.error(error);
+    log.error(error);
     if (error instanceof ResponseError) {
       void store.actions.SHOW_ALERT_DIALOG({
         title: "インストールに失敗しました",
@@ -436,7 +439,7 @@ const unInstallAivmModel = async () => {
       // プリセットを再作成
       await store.actions.CREATE_ALL_DEFAULT_PRESET();
     } catch (error) {
-      console.error(error);
+      log.error(error);
       if (error instanceof ResponseError) {
         void store.actions.SHOW_ALERT_DIALOG({
           title: "アンインストールに失敗しました",
@@ -483,7 +486,7 @@ const toggleModelLoad = async () => {
       await apiInstance.invoke("loadAivm")({ aivmUuid: activeAivmUuid.value });
     }
   } catch (error) {
-    console.error(error);
+    log.error(error);
     if (error instanceof ResponseError) {
       void store.actions.SHOW_ALERT_DIALOG({
         title: activeAivmInfo.value?.isLoaded ? "アンロードに失敗しました" : "ロードに失敗しました",
@@ -536,7 +539,7 @@ const updateAivmModel = async () => {
         message: "音声合成モデルが正常にアップデートされました。",
       });
     } catch (error) {
-      console.error(error);
+      log.error(error);
       if (error instanceof ResponseError) {
         void store.actions.SHOW_ALERT_DIALOG({
           title: "アップデートに失敗しました",

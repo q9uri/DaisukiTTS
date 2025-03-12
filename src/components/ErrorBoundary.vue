@@ -5,8 +5,12 @@
 <script setup lang="ts">
 import { onErrorCaptured, onMounted } from "vue";
 
+import { createLogger } from "@/helpers/log";
+
+const log = createLogger("ErrorBoundary");
+
 const logError = (error: Error): void => {
-  console.error(error);
+  log.error(error);
   window.backend.logError(error);
 };
 
