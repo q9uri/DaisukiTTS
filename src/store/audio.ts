@@ -1289,7 +1289,7 @@ export const audioStore = createPartialStore<AudioStoreTypes>({
   },
 
   GET_AUDIO_PLAY_OFFSETS: {
-    action({ state, getters }, { audioKey }: { audioKey: AudioKey }) {
+    action({ state }, { audioKey }: { audioKey: AudioKey }) {
       const query = state.audioItems[audioKey].query;
       const accentPhrases = query?.accentPhrases;
       if (query == undefined || accentPhrases == undefined)
@@ -1313,13 +1313,7 @@ export const audioStore = createPartialStore<AudioStoreTypes>({
         if (i === accentPhrases.length - 1) {
           length += query.postPhonemeLength;
         }
-        // AivisSpeech Engine で生成した音声から算出した AudioQuery は既に再生速度調整後の値なので、speedScale で割る必要はない
-        // VOICEVOX ENGINE では pre/postPhonemeLength の長さに speedScale が影響する（？）が、AivisSpeech Engine では現状影響しない仕様なのもある
-        if (state.audioItems[audioKey].voice.engineId === getters.DEFAULT_ENGINE_ID) {
-          offsets.push(length);
-        } else {
-          offsets.push(length / query.speedScale);
-        }
+        offsets.push(length / query.speedScale);
         i++;
       }
       return offsets;

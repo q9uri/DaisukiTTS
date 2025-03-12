@@ -118,17 +118,23 @@ export async function fetchAudioFromAudioItem(
       const arrayBuffer = await blob.arrayBuffer();
       const audioContext = new AudioContext();
       const decoded = await audioContext.decodeAudioData(arrayBuffer);
-      const totalDuration = decoded.duration;
+      const duration = decoded.duration;
 
       // 画面上早めにハイライトされるように、少しだけ尺を削るための定数 (magic!)
       // AivisSpeech Engine の実装上正確な音素単位の長さは取得できないためある程度のズレは避けられないが、
       // 視覚的には少し早めに次の音素の再生部分にハイライトされて行った方がストレスがない
       const audioDurationMagicDiff = 0.06;
 
+      // duration は speedScale で速度調整された後の音声長を表す値だが、AudioQuery.accentPhrases 内のモーラの音素発声長は
+      // speedScale の影響を受けず、常に等速換算で算出されている
+      // この後の処理の互換性を高めるため、speedScale 倍することで等速換算の再生時間に変換してから処理を行う
+      // pre/postPhonemeLength の値は speedScale の影響を受けるため、全体を speedScale 倍してしまって問題ない
+      const totalDuration = duration * audioQuery.speedScale;
+
       // effectiveDuration は prePhonemeLength と postPhonemeLength と音声微調整分を除いた再生時間
       // エンジン側で後付けされている前後無音区間は1モーラ分の尺を算出するのに邪魔なので予め取り払っておく
       const effectiveDuration = Math.max(0, totalDuration - audioQuery.prePhonemeLength - audioQuery.postPhonemeLength - audioDurationMagicDiff);
-      log.info(`totalDuration: ${totalDuration}, effectiveDuration: ${effectiveDuration}`);
+      log.info(`Total duration: ${totalDuration}, Effective duration: ${effectiveDuration}`);
 
       // 特殊モーラ (pauseMora や句読点) の重み付け定数と、連続句読点の最大数
       const specialMoraWeight = 1.5;  // 特殊モーラ (pauseMora や句読点) の尺を 1.5 倍にする
