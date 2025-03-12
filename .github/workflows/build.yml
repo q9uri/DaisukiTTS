@@ -349,7 +349,7 @@ jobs:
           MACOS_ARTIFACT_NAME: ${{ matrix.macos_artifact_name }}
         run: |
           for i in {1..5}; do
-            pnpm run electron:build -- --prepackaged prepackage/AivisSpeech.app && break || {
+            pnpm run electron:build --prepackaged prepackage/AivisSpeech.app && break || {
               if [ $i -lt 5 ]; then
                 echo "Attempt $i failed! Retrying in 10 seconds..."
                 sleep 10
