@@ -324,16 +324,13 @@ const scrollToActivePoint = () => {
 let requestId: number | undefined;
 watch(nowPlaying, async (newState) => {
   if (newState) {
-    // 現在再生されているaudio elementのロードが完了しないと
-    // GET_AUDIO_PLAY_OFFSETS 側で近似する音素長を算出するために必要な音声長が取得できないので待機
-    await store.getters.WAIT_FOR_AUDIO_LOAD;
     const accentPhraseOffsets = await store.actions.GET_AUDIO_PLAY_OFFSETS({
       audioKey: props.activeAudioKey,
     });
     // 現在再生されているaudio elementの再生時刻を描画毎に取得(監視)し、
     // それに合わせてフォーカスするアクセント句を変えていく
     const focusAccentPhrase = () => {
-      const currentTime = store.getters.ACTIVE_AUDIO_ELEM_CURRENT_TIME;
+      const currentTime = store.getters.ACTIVE_AUDIO_ELEM_CURRENT_TIME();
       if (currentTime == undefined) {
         throw new Error("currentTime === undefined)");
       }

@@ -1300,102 +1300,27 @@ export const audioStore = createPartialStore<AudioStoreTypes>({
       offsets.push(length);
       // pre phoneme lengthは最初のアクセント句の一部として扱う
       length += query.prePhonemeLength;
-
-      // AivisSpeech Engine で生成した音声のみの特別対応
-      if (state.audioItems[audioKey].voice.engineId === getters.DEFAULT_ENGINE_ID) {
-
-        // AivisSpeech Engine の実装上正確な音素単位の長さは取得できないためある程度のズレは避けられないが、
-        // 視覚的には少し早めに次の音素の再生部分にハイライトされて行った方がストレスがない
-        const audioDurationMagicDiff = 0.06 / query.speedScale;  // 尺を少しだけ削って若干速く表示されるようにする
-
-        // 現在再生中の音声の長さを取得
-        let audioDuration = getters.ACTIVE_AUDIO_ELEM_DURATION;
-        if (audioDuration == undefined) {
-          throw new Error("audioDuration == undefined");
-        }
-        if (Number.isNaN(audioDuration)) {
-          audioDuration = 0;
-        }
-        audioDuration = Math.max(0, audioDuration - query.prePhonemeLength - query.postPhonemeLength - audioDurationMagicDiff);
-
-        // 特殊なモーラ (pauseMora や句読点) の重み付け
-        const specialMoraWeight = 1.5;  // 1.5 倍の重み付け
-        // 連続する句読点の最大数
-        const maxConsecutivePunctuations = 2;
-
-        // 通常のモーラと特殊なモーラの総数を計算
-        let totalNormalMoras = 0;
-        let totalSpecialMoras = 0;
-
-        accentPhrases.forEach(phrase => {
-          let consecutivePunctuations = 0;
-          phrase.moras.forEach(mora => {
-            if (mora.text === "." || mora.text === ",") {
-              consecutivePunctuations++;
-              if (consecutivePunctuations <= maxConsecutivePunctuations) {
-                totalSpecialMoras++;
-              }
-            } else {
-              consecutivePunctuations = 0;
-              totalNormalMoras++;
-            }
-          });
-          if (phrase.pauseMora) {
-            totalSpecialMoras++;
-          }
+      let i = 0;
+      for (const phrase of accentPhrases) {
+        phrase.moras.forEach((m) => {
+          length += m.consonantLength != undefined ? m.consonantLength : 0;
+          length += m.vowelLength;
         });
-
-        // 重み付けを考慮した総モーラ数を計算
-        const weightedTotalMoras = totalNormalMoras + (totalSpecialMoras * specialMoraWeight);
-
-        // 1モーラあたりの平均長さを計算（重み付けを考慮）
-        const averageMoraLength = audioDuration / weightedTotalMoras;
-
-        let i = 0;
-        for (const phrase of accentPhrases) {
-          let consecutivePunctuations = 0;
-          phrase.moras.forEach(mora => {
-            if (mora.text === "." || mora.text === ",") {
-              consecutivePunctuations++;
-              if (consecutivePunctuations <= maxConsecutivePunctuations) {
-                length += averageMoraLength * specialMoraWeight;
-              }
-            } else {
-              consecutivePunctuations = 0;
-              length += averageMoraLength;
-            }
-          });
-
-          // pauseMora も特殊なモーラとして扱う
-          if (phrase.pauseMora) {
-            length += averageMoraLength * specialMoraWeight;
-          }
-
-          // post phoneme lengthは最後のアクセント句の一部として扱う
-          if (i === accentPhrases.length - 1) {
-            length += query.postPhonemeLength;
-            length += audioDurationMagicDiff;
-          }
+        length += phrase.pauseMora
+          ? phrase.pauseMora.vowelLength * query.pauseLengthScale
+          : 0;
+        // post phoneme lengthは最後のアクセント句の一部として扱う
+        if (i === accentPhrases.length - 1) {
+          length += query.postPhonemeLength;
+        }
+        // AivisSpeech Engine で生成した音声から算出した AudioQuery は既に再生速度調整後の値なので、speedScale で割る必要はない
+        // VOICEVOX ENGINE では pre/postPhonemeLength の長さに speedScale が影響する（？）が、AivisSpeech Engine では現状影響しない仕様なのもある
+        if (state.audioItems[audioKey].voice.engineId === getters.DEFAULT_ENGINE_ID) {
           offsets.push(length);
-          i++;
-        }
-      } else {
-        let i = 0;
-        for (const phrase of accentPhrases) {
-          phrase.moras.forEach((m) => {
-            length += m.consonantLength != undefined ? m.consonantLength : 0;
-            length += m.vowelLength;
-          });
-          length += phrase.pauseMora
-            ? phrase.pauseMora.vowelLength * query.pauseLengthScale
-            : 0;
-          // post phoneme lengthは最後のアクセント句の一部として扱う
-          if (i === accentPhrases.length - 1) {
-            length += query.postPhonemeLength;
-          }
+        } else {
           offsets.push(length / query.speedScale);
-          i++;
         }
+        i++;
       }
       return offsets;
     },
@@ -1411,6 +1336,7 @@ export const audioStore = createPartialStore<AudioStoreTypes>({
       );
       return actions.FETCH_AUDIO_FROM_AUDIO_ITEM({
         audioItem,
+        audioKey,
         ...options,
       });
     },
@@ -1419,13 +1345,21 @@ export const audioStore = createPartialStore<AudioStoreTypes>({
   FETCH_AUDIO_FROM_AUDIO_ITEM: {
     action: createUILockAction(
       async (
-        { actions, state },
-        options: { audioItem: AudioItem; cacheOnly?: boolean },
+        { mutations, actions, state },
+        options: { audioItem: AudioItem; audioKey?: AudioKey; cacheOnly?: boolean },
       ) => {
         const instance = await actions.INSTANTIATE_ENGINE_CONNECTOR({
           engineId: options.audioItem.voice.engineId,
         });
-        return fetchAudioFromAudioItem(state, instance, options);
+        const result = await fetchAudioFromAudioItem(state, instance, options);
+        if (options.audioKey != undefined) {
+          // fetchAudioFromAudioItem() でヒューリスティックに発音長を算出した AudioQuery を state に反映する
+          mutations.SET_AUDIO_QUERY({
+            audioKey: options.audioKey,
+            audioQuery: result.audioQuery,
+          });
+        }
+        return result;
       },
     ),
   },
@@ -1873,7 +1807,6 @@ export const audioStore = createPartialStore<AudioStoreTypes>({
         let offset: number | undefined;
         // 途中再生用の処理
         if (audioKey) {
-          await getters.WAIT_FOR_AUDIO_LOAD;  // 音声が読み込まれるまで待つのが重要
           const accentPhraseOffsets = await actions.GET_AUDIO_PLAY_OFFSETS({
             audioKey,
           });

@@ -430,7 +430,7 @@ export type AudioStoreTypes = {
   };
 
   FETCH_AUDIO_FROM_AUDIO_ITEM: {
-    action(payload: { audioItem: AudioItem }): Promise<FetchAudioResult>;
+    action(payload: { audioItem: AudioItem, audioKey?: AudioKey, cacheOnly?: boolean }): Promise<FetchAudioResult>;
   };
 
   CONNECT_AUDIO: {
@@ -734,15 +734,7 @@ export type AudioPlayerStoreState = {
 
 export type AudioPlayerStoreTypes = {
   ACTIVE_AUDIO_ELEM_CURRENT_TIME: {
-    getter: number | undefined;
-  };
-
-  ACTIVE_AUDIO_ELEM_DURATION: {
-    getter: number | undefined;
-  };
-
-  WAIT_FOR_AUDIO_LOAD: {
-    getter: Promise<boolean>;
+    getter: () => number | undefined;
   };
 
   NOW_PLAYING: {
