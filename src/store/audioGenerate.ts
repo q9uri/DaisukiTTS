@@ -128,6 +128,7 @@ export async function fetchAudioFromAudioItem(
       // effectiveDuration は prePhonemeLength と postPhonemeLength と音声微調整分を除いた再生時間
       // エンジン側で後付けされている前後無音区間は1モーラ分の尺を算出するのに邪魔なので予め取り払っておく
       const effectiveDuration = Math.max(0, totalDuration - audioQuery.prePhonemeLength - audioQuery.postPhonemeLength - audioDurationMagicDiff);
+      log.info(`totalDuration: ${totalDuration}, effectiveDuration: ${effectiveDuration}`);
 
       // 特殊モーラ (pauseMora や句読点) の重み付け定数と、連続句読点の最大数
       const specialMoraWeight = 1.5;  // 特殊モーラ (pauseMora や句読点) の尺を 1.5 倍にする
