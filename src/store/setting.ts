@@ -66,7 +66,7 @@ export const settingStoreState: SettingStoreState = {
   },
   engineSettings: {},
   enablePreset: true,
-  shouldApplyDefaultPresetOnVoiceChanged: true,
+  shouldApplyDefaultPresetOnVoiceChanged: false,
   enableMultiEngine: true,
   enableMemoNotation: false,
   enableRubyNotation: false,

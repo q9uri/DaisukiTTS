@@ -392,7 +392,7 @@ export const rootMiscSettingSchema = z.object({
     .default("PERIOD_AND_NEW_LINE"),
   splitterPosition: splitterPositionSchema.default({}),
   enablePreset: z.boolean().default(true), // プリセット機能
-  shouldApplyDefaultPresetOnVoiceChanged: z.boolean().default(true), // スタイル変更時にデフォルトプリセットを適用するか
+  shouldApplyDefaultPresetOnVoiceChanged: z.boolean().default(false), // スタイル変更時にデフォルトプリセットを適用するか
   enableMultiEngine: z.boolean().default(true),
   enableMemoNotation: z.boolean().default(false), // メモ記法を有効にするか
   enableRubyNotation: z.boolean().default(false), // ルビ記法を有効にするか
