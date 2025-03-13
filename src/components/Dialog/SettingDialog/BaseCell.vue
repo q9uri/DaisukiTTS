@@ -1,5 +1,5 @@
 <template>
-  <QCardActions class="q-px-md bg-surface-darken" :class="props.class">
+  <QCardActions class="no-wrap q-px-md bg-surface-darken" :class="props.class">
     <div>
       <div>{{ title }}</div>
       <div :aria-label="description">

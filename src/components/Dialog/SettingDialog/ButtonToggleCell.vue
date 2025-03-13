@@ -3,6 +3,7 @@
 <template>
   <BaseCell :title :description>
     <QBtnToggle
+      style="margin-left: 8px; flex-shrink: 0"
       padding="xs md"
       unelevated
       color="background"

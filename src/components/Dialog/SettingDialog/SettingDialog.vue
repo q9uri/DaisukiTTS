@@ -61,7 +61,7 @@
                   対応する GPU が搭載されていないため、GPU モードは利用できません。
                 </QTooltip>
               </ButtonToggleCell>
-              <QCardActions class="q-px-md bg-surface-darken">
+              <QCardActions class="no-wrap q-px-md bg-surface-darken">
                 <div>
                   <div>音声のサンプリングレート</div>
                   <div class="text-caption">
@@ -71,6 +71,7 @@
                 <QSpace />
                 <QSelect
                   v-model="outputSamplingRate"
+                  style="flex-shrink: 0"
                   borderless
                   dense
                   name="samplingRate"
@@ -173,7 +174,7 @@
                 :modelValue="enableRubyNotation"
                 @update:modelValue="changeEnableRubyNotation"
               />
-              <QCardActions class="q-px-md bg-surface-darken">
+              <QCardActions class="no-wrap q-px-md bg-surface-darken">
                 <div>
                   <div>非表示にしたヒントを全て再表示</div>
                   <div class="text-caption">
@@ -212,7 +213,7 @@
               <QCardActions>
                 <h5 class="text-h5">保存</h5>
               </QCardActions>
-              <QCardActions class="q-px-md bg-surface-darken">
+              <QCardActions class="no-wrap q-px-md bg-surface-darken">
                 <div>
                   <div>書き出し先を固定</div>
                   <div class="text-caption">
@@ -283,7 +284,7 @@
                   "
                 />
 
-              <QCardActions class="q-px-md bg-surface-darken">
+              <QCardActions class="no-wrap q-px-md bg-surface-darken">
                 <div>
                   <div>書き出しファイル名パターン</div>
                   <div class="text-caption">
@@ -396,7 +397,7 @@
                 "
               />
               <QCardActions
-                class="q-px-md bg-surface-darken"
+                class="no-wrap q-px-md bg-surface-darken"
                 :class="{ disabled: !canSetAudioOutputDevice }"
               >
                 <div>
