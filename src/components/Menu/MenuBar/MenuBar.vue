@@ -95,7 +95,7 @@ const titleText = computed(
   () =>
     (isEdited.value ? "*" : "") +
     (projectName.value != undefined ? projectName.value + " - " : "") +
-    "AivisSpeech" +
+    "AivisSpeech " +
     (getAppInfos().version) +
     (extraVersionInfo ? ` (${extraVersionInfo})` : "") +
     (isMultiEngineOffMode.value ? " - マルチエンジンオフ" : "") +
