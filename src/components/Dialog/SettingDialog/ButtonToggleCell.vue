@@ -17,7 +17,7 @@
       <slot />
 
       <!-- FIXME: ツールチップの内容をaria-labelに付ける -->
-      <template
+      <!-- <template
         v-for="option in options.filter(
           (option) => option.description != undefined,
         )"
@@ -27,7 +27,7 @@
         <QTooltip :delay="150">
           {{ option.description }}
         </QTooltip>
-      </template>
+      </template> -->
     </QBtnToggle>
   </BaseCell>
 </template>

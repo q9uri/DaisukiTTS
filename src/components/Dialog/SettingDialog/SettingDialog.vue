@@ -62,21 +62,11 @@
                 </QTooltip>
               </ButtonToggleCell>
               <QCardActions class="q-px-md bg-surface-darken">
-                <div>音声のサンプリングレート</div>
-                <div
-                  aria-label="再生と保存時の音声のサンプリングレートを変更できます（サンプリングレートを上げても音声の品質は上がりません）。"
-                >
-                  <QIcon name="sym_r_help_outline" size="sm" class="help-hover-icon">
-                    <QTooltip
-                      :delay="150"
-                      anchor="center right"
-                      self="center left"
-                      transitionShow="jump-right"
-                      transitionHide="jump-left"
-                    >
-                      再生・保存時の音声のサンプリングレートを変更できます。サンプリングレートを上げても音声の品質は上がりません。
-                    </QTooltip>
-                  </QIcon>
+                <div>
+                  <div>音声のサンプリングレート</div>
+                  <div class="text-caption">
+                    再生・保存時の音声のサンプリングレートを変更できます。サンプリングレートを上げても音声の品質は上がりません。
+                  </div>
                 </div>
                 <QSpace />
                 <QSelect
@@ -184,21 +174,11 @@
                 @update:modelValue="changeEnableRubyNotation"
               />
               <QCardActions class="q-px-md bg-surface-darken">
-                <div>非表示にしたヒントを全て再表示</div>
-                <div
-                  aria-label="過去に非表示にしたヒントを全て再表示できます。"
-                >
-                  <QIcon name="sym_r_help_outline" size="sm" class="help-hover-icon">
-                    <QTooltip
-                      :delay="150"
-                      anchor="center right"
-                      self="center left"
-                      transitionShow="jump-right"
-                      transitionHide="jump-left"
-                    >
-                      過去に非表示にしたヒントを全て再表示できます。
-                    </QTooltip>
-                  </QIcon>
+                <div>
+                  <div>非表示にしたヒントを全て再表示</div>
+                  <div class="text-caption">
+                    過去に非表示にしたヒントを全て再表示できます。
+                  </div>
                 </div>
                 <QSpace />
                 <!-- ボタンクリックのフィードバックのためのチェックマーク -->
@@ -233,21 +213,11 @@
                 <h5 class="text-h5">保存</h5>
               </QCardActions>
               <QCardActions class="q-px-md bg-surface-darken">
-                <div>書き出し先を固定</div>
-                <div
-                  aria-label="ON にすると、書き出し先フォルダをあらかじめ指定できます。"
-                >
-                  <QIcon name="sym_r_help_outline" size="sm" class="help-hover-icon">
-                    <QTooltip
-                      :delay="150"
-                      anchor="center right"
-                      self="center left"
-                      transitionShow="jump-right"
-                      transitionHide="jump-left"
-                    >
-                      ON にすると、書き出し先フォルダをあらかじめ指定できます。
-                    </QTooltip>
-                  </QIcon>
+                <div>
+                  <div>書き出し先を固定</div>
+                  <div class="text-caption">
+                    ON にすると、書き出し先フォルダをあらかじめ指定できます。
+                  </div>
                 </div>
                 <QSpace />
                 <QInput
@@ -314,21 +284,11 @@
                 />
 
               <QCardActions class="q-px-md bg-surface-darken">
-                <div>書き出しファイル名パターン</div>
-                <div
-                  aria-label="書き出し時のファイル名パターンをカスタマイズできます。"
-                >
-                  <QIcon name="sym_r_help_outline" size="sm" class="help-hover-icon">
-                    <QTooltip
-                      :delay="150"
-                      anchor="center right"
-                      self="center left"
-                      transitionShow="jump-right"
-                      transitionHide="jump-left"
-                    >
-                      書き出し時のファイル名パターンをカスタマイズできます。
-                    </QTooltip>
-                  </QIcon>
+                <div>
+                  <div>書き出しファイル名パターン</div>
+                  <div class="text-caption">
+                    書き出し時のファイル名パターンをカスタマイズできます。
+                  </div>
                 </div>
                 <QSpace />
                 <div class="q-px-sm text-ellipsis">
@@ -439,22 +399,14 @@
                 class="q-px-md bg-surface-darken"
                 :class="{ disabled: !canSetAudioOutputDevice }"
               >
-                <div>再生デバイス</div>
-                <div aria-label="音声の再生デバイスを変更できます。">
-                  <QIcon name="sym_r_help_outline" size="sm" class="help-hover-icon">
-                    <QTooltip
-                      :delay="150"
-                      anchor="center right"
-                      self="center left"
-                      transitionShow="jump-right"
-                      transitionHide="jump-left"
-                    >
-                      音声の再生デバイスを変更できます。
-                      <template v-if="!canSetAudioOutputDevice">
-                        この機能はお使いの環境でサポートされていないため、使用できません。
-                      </template>
-                    </QTooltip>
-                  </QIcon>
+                <div>
+                  <div>再生デバイス</div>
+                  <div class="text-caption">
+                    音声の再生デバイスを変更できます。
+                    <template v-if="!canSetAudioOutputDevice">
+                      この機能はお使いの環境でサポートされていないため、使用できません。
+                    </template>
+                  </div>
                 </div>
                 <QSpace />
                 <QSelect
@@ -926,6 +878,14 @@ const renderEngineNameLabel = (engineId: EngineId) => {
   margin-left: 6px;
   color: colors.$display;
   opacity: 0.5;
+}
+
+.text-caption {
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  letter-spacing: 0.03333em;
+  margin-top: 2px;
+  color: #c6c6c6;
 }
 
 .hotkey-table {
