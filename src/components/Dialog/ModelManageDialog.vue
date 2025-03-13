@@ -239,7 +239,6 @@ const toDialogClosedState = () => {
   engineManageDialogOpenedComputed.value = false;
 };
 
-
 // API インスタンスを取得する関数
 // VOICEVOX のお作法ではこうやらないと API を呼べないっぽい…
 const getApiInstance = async () => {
@@ -360,6 +359,22 @@ const cancelInstall = () => {
   installUrl.value = "";
 };
 
+// 音声合成モデルの追加・更新・削除が起きた起きた際に話者・スタイル一覧をリロードする
+const reloadCharacterAndStyle = async () => {
+  // 話者・スタイル一覧を再読み込み
+  await store.actions.LOAD_CHARACTER({ engineId: store.getters.DEFAULT_ENGINE_ID });
+  await store.actions.LOAD_DEFAULT_STYLE_IDS();
+  // プリセットを再作成
+  await store.actions.CREATE_ALL_DEFAULT_PRESET();
+  // 新しくインストールされた音声合成モデル内話者の UUID が userCharacterOrder にまだ登録されていない場合、
+  // CharacterButton 内メニューで新しい話者が一番上に表示されて煩わしいため、ここで新しい話者の UUID を userCharacterOrder の末尾に登録する
+  const newCharacters = await store.actions.GET_NEW_CHARACTERS();
+  if (newCharacters.length > 0) {
+    const newUserCharacterOrder = [...store.state.userCharacterOrder, ...newCharacters];
+    await store.actions.SET_USER_CHARACTER_ORDER(newUserCharacterOrder);
+  }
+};
+
 // 音声合成モデルをインストールする
 const installModel = async () => {
   showLoadingScreen({
@@ -372,12 +387,8 @@ const installModel = async () => {
     } else if (installMethod.value === "url") {
       await apiInstance.invoke("installAivm")({ url: installUrl.value });
     }
-    // インストール成功時の処理
     // 話者・スタイル一覧を再読み込み
-    await store.actions.LOAD_CHARACTER({ engineId: store.getters.DEFAULT_ENGINE_ID });
-    await store.actions.LOAD_DEFAULT_STYLE_IDS();
-    // プリセットを再作成
-    await store.actions.CREATE_ALL_DEFAULT_PRESET();
+    await reloadCharacterAndStyle();
     void store.actions.SHOW_MESSAGE_DIALOG({
       type: "info",
       title: "インストールが完了しました",
@@ -395,10 +406,8 @@ const installModel = async () => {
     } else {
       // assert characterInfo !== undefined エラーを無視
       if (error instanceof Error && error.message === "assert characterInfo !== undefined") {
-        // インストール成功時の処理を実行
-        await store.actions.LOAD_CHARACTER({ engineId: store.getters.DEFAULT_ENGINE_ID });
-        await store.actions.LOAD_DEFAULT_STYLE_IDS();
-        await store.actions.CREATE_ALL_DEFAULT_PRESET();
+        // 話者・スタイル一覧を再読み込み
+        await reloadCharacterAndStyle();
       } else {
         void store.actions.SHOW_ALERT_DIALOG({
           title: "インストールに失敗しました",
@@ -432,12 +441,8 @@ const unInstallAivmModel = async () => {
     try {
       await getApiInstance().then((instance) =>
         instance.invoke("uninstallAivm")({ aivmUuid: activeAivmUuid.value! }));
-      // アンインストール成功時の処理
       // 話者・スタイル一覧を再読み込み
-      await store.actions.LOAD_CHARACTER({ engineId: store.getters.DEFAULT_ENGINE_ID });
-      await store.actions.LOAD_DEFAULT_STYLE_IDS();
-      // プリセットを再作成
-      await store.actions.CREATE_ALL_DEFAULT_PRESET();
+      await reloadCharacterAndStyle();
     } catch (error) {
       log.error(error);
       if (error instanceof ResponseError) {
@@ -449,10 +454,8 @@ const unInstallAivmModel = async () => {
       } else {
         // assert characterInfo !== undefined エラーを無視
         if (error instanceof Error && error.message === "assert characterInfo !== undefined") {
-          // アンインストール成功時の処理を実行
-          await store.actions.LOAD_CHARACTER({ engineId: store.getters.DEFAULT_ENGINE_ID });
-          await store.actions.LOAD_DEFAULT_STYLE_IDS();
-          await store.actions.CREATE_ALL_DEFAULT_PRESET();
+          // 話者・スタイル一覧を再読み込み
+          await reloadCharacterAndStyle();
         } else {
           void store.actions.SHOW_ALERT_DIALOG({
             title: "アンインストールに失敗しました",
@@ -527,12 +530,8 @@ const updateAivmModel = async () => {
     try {
       const apiInstance = await getApiInstance();
       await apiInstance.invoke("updateAivm")({ aivmUuid: activeAivmUuid.value });
-      // アップデート成功時の処理
       // 話者・スタイル一覧を再読み込み
-      await store.actions.LOAD_CHARACTER({ engineId: store.getters.DEFAULT_ENGINE_ID });
-      await store.actions.LOAD_DEFAULT_STYLE_IDS();
-      // プリセットを再作成
-      await store.actions.CREATE_ALL_DEFAULT_PRESET();
+      await reloadCharacterAndStyle();
       void store.actions.SHOW_MESSAGE_DIALOG({
         type: "info",
         title: "アップデートが完了しました",
@@ -549,10 +548,8 @@ const updateAivmModel = async () => {
       } else {
         // assert characterInfo !== undefined エラーを無視
         if (error instanceof Error && error.message === "assert characterInfo !== undefined") {
-          // アップデート成功時の処理を実行
-          await store.actions.LOAD_CHARACTER({ engineId: store.getters.DEFAULT_ENGINE_ID });
-          await store.actions.LOAD_DEFAULT_STYLE_IDS();
-          await store.actions.CREATE_ALL_DEFAULT_PRESET();
+          // 話者・スタイル一覧を再読み込み
+          await reloadCharacterAndStyle();
         } else {
           void store.actions.SHOW_ALERT_DIALOG({
             title: "アップデートに失敗しました",
