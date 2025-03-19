@@ -14,108 +14,109 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- * ユーザー辞書のビルドに必要な単語情報
- * 単語登録・変更リクエストで受け取った単語情報のバリデーションと JSON への保存に用いる
+ * UserDictWord とほとんど同じだが、ユーザー辞書関連 API の後方互換性を保つための互換レイヤー
+ * stem, yomi, pronunciation, accent_type, mora_count はリストではなく文字列/数値で表す
+ * 既に UserDictWord にバリデーションが実装されていることから、重複するバリデーション定義は削られている
  * @export
- * @interface UserDictWord
+ * @interface UserDictWordForCompat
  */
-export interface UserDictWord {
+export interface UserDictWordForCompat {
     /**
      * 表層形
      * @type {string}
-     * @memberof UserDictWord
+     * @memberof UserDictWordForCompat
      */
     surface: string;
     /**
      * 優先度
      * @type {number}
-     * @memberof UserDictWord
+     * @memberof UserDictWordForCompat
      */
     priority: number;
     /**
      * 文脈 ID
      * @type {number}
-     * @memberof UserDictWord
+     * @memberof UserDictWordForCompat
      */
     contextId?: number;
     /**
      * 品詞
      * @type {string}
-     * @memberof UserDictWord
+     * @memberof UserDictWordForCompat
      */
     partOfSpeech: string;
     /**
      * 品詞細分類1
      * @type {string}
-     * @memberof UserDictWord
+     * @memberof UserDictWordForCompat
      */
     partOfSpeechDetail1: string;
     /**
      * 品詞細分類2
      * @type {string}
-     * @memberof UserDictWord
+     * @memberof UserDictWordForCompat
      */
     partOfSpeechDetail2: string;
     /**
      * 品詞細分類3
      * @type {string}
-     * @memberof UserDictWord
+     * @memberof UserDictWordForCompat
      */
     partOfSpeechDetail3: string;
     /**
      * 活用型
      * @type {string}
-     * @memberof UserDictWord
+     * @memberof UserDictWordForCompat
      */
     inflectionalType: string;
     /**
      * 活用形
      * @type {string}
-     * @memberof UserDictWord
+     * @memberof UserDictWordForCompat
      */
     inflectionalForm: string;
     /**
      * 原形
-     * @type {Array<string>}
-     * @memberof UserDictWord
+     * @type {string}
+     * @memberof UserDictWordForCompat
      */
-    stem: Array<string>;
+    stem: string;
     /**
      * 読み
-     * @type {Array<string>}
-     * @memberof UserDictWord
+     * @type {string}
+     * @memberof UserDictWordForCompat
      */
-    yomi: Array<string>;
+    yomi: string;
     /**
      * 発音
-     * @type {Array<string>}
-     * @memberof UserDictWord
+     * @type {string}
+     * @memberof UserDictWordForCompat
      */
-    pronunciation: Array<string>;
+    pronunciation: string;
     /**
      * アクセント型
-     * @type {Array<number>}
-     * @memberof UserDictWord
+     * @type {number}
+     * @memberof UserDictWordForCompat
      */
-    accentType: Array<number>;
+    accentType: number;
     /**
      * モーラ数
-     * @type {Array<number>}
-     * @memberof UserDictWord
+     * @type {number}
+     * @memberof UserDictWordForCompat
      */
-    moraCount?: Array<number>;
+    moraCount?: number;
     /**
      * アクセント結合規則
      * @type {string}
-     * @memberof UserDictWord
+     * @memberof UserDictWordForCompat
      */
     accentAssociativeRule: string;
 }
 
 /**
- * Check if a given object implements the UserDictWord interface.
+ * Check if a given object implements the UserDictWordForCompat interface.
  */
-export function instanceOfUserDictWord(value: object): boolean {
+export function instanceOfUserDictWordForCompat(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "surface" in value;
     isInstance = isInstance && "priority" in value;
@@ -134,11 +135,11 @@ export function instanceOfUserDictWord(value: object): boolean {
     return isInstance;
 }
 
-export function UserDictWordFromJSON(json: any): UserDictWord {
-    return UserDictWordFromJSONTyped(json, false);
+export function UserDictWordForCompatFromJSON(json: any): UserDictWordForCompat {
+    return UserDictWordForCompatFromJSONTyped(json, false);
 }
 
-export function UserDictWordFromJSONTyped(json: any, ignoreDiscriminator: boolean): UserDictWord {
+export function UserDictWordForCompatFromJSONTyped(json: any, ignoreDiscriminator: boolean): UserDictWordForCompat {
     if ((json === undefined) || (json === null)) {
         return json;
     }
@@ -162,7 +163,7 @@ export function UserDictWordFromJSONTyped(json: any, ignoreDiscriminator: boolea
     };
 }
 
-export function UserDictWordToJSON(value?: UserDictWord | null): any {
+export function UserDictWordForCompatToJSON(value?: UserDictWordForCompat | null): any {
     if (value === undefined) {
         return undefined;
     }

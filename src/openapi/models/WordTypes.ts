@@ -14,7 +14,7 @@
 
 
 /**
- * 品詞
+ * 品詞を表す列挙型
  * @export
  */
 export const WordTypes = {

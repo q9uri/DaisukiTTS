@@ -13,109 +13,121 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { UserDictWord } from './UserDictWord';
+import {
+    UserDictWordFromJSON,
+    UserDictWordFromJSONTyped,
+    UserDictWordToJSON,
+} from './UserDictWord';
+import type { UserDictWordForCompat } from './UserDictWordForCompat';
+import {
+    UserDictWordForCompatFromJSON,
+    UserDictWordForCompatFromJSONTyped,
+    UserDictWordForCompatToJSON,
+} from './UserDictWordForCompat';
+
 /**
- * ユーザー辞書のビルドに必要な単語情報
- * 単語登録・変更リクエストで受け取った単語情報のバリデーションと JSON への保存に用いる
+ * 
  * @export
- * @interface UserDictWord
+ * @interface ResponseGetUserDictWordsUserDictGet
  */
-export interface UserDictWord {
+export interface ResponseGetUserDictWordsUserDictGet {
     /**
      * 表層形
-     * @type {string}
-     * @memberof UserDictWord
+     * @type {any}
+     * @memberof ResponseGetUserDictWordsUserDictGet
      */
-    surface: string;
+    surface: any | null;
     /**
      * 優先度
-     * @type {number}
-     * @memberof UserDictWord
+     * @type {any}
+     * @memberof ResponseGetUserDictWordsUserDictGet
      */
-    priority: number;
+    priority: any | null;
     /**
      * 文脈 ID
-     * @type {number}
-     * @memberof UserDictWord
+     * @type {any}
+     * @memberof ResponseGetUserDictWordsUserDictGet
      */
-    contextId?: number;
+    contextId?: any | null;
     /**
      * 品詞
-     * @type {string}
-     * @memberof UserDictWord
+     * @type {any}
+     * @memberof ResponseGetUserDictWordsUserDictGet
      */
-    partOfSpeech: string;
+    partOfSpeech: any | null;
     /**
      * 品詞細分類1
-     * @type {string}
-     * @memberof UserDictWord
+     * @type {any}
+     * @memberof ResponseGetUserDictWordsUserDictGet
      */
-    partOfSpeechDetail1: string;
+    partOfSpeechDetail1: any | null;
     /**
      * 品詞細分類2
-     * @type {string}
-     * @memberof UserDictWord
+     * @type {any}
+     * @memberof ResponseGetUserDictWordsUserDictGet
      */
-    partOfSpeechDetail2: string;
+    partOfSpeechDetail2: any | null;
     /**
      * 品詞細分類3
-     * @type {string}
-     * @memberof UserDictWord
+     * @type {any}
+     * @memberof ResponseGetUserDictWordsUserDictGet
      */
-    partOfSpeechDetail3: string;
+    partOfSpeechDetail3: any | null;
     /**
      * 活用型
-     * @type {string}
-     * @memberof UserDictWord
+     * @type {any}
+     * @memberof ResponseGetUserDictWordsUserDictGet
      */
-    inflectionalType: string;
+    inflectionalType: any | null;
     /**
      * 活用形
-     * @type {string}
-     * @memberof UserDictWord
+     * @type {any}
+     * @memberof ResponseGetUserDictWordsUserDictGet
      */
-    inflectionalForm: string;
+    inflectionalForm: any | null;
     /**
      * 原形
-     * @type {Array<string>}
-     * @memberof UserDictWord
+     * @type {any}
+     * @memberof ResponseGetUserDictWordsUserDictGet
      */
-    stem: Array<string>;
+    stem: any | null;
     /**
      * 読み
-     * @type {Array<string>}
-     * @memberof UserDictWord
+     * @type {any}
+     * @memberof ResponseGetUserDictWordsUserDictGet
      */
-    yomi: Array<string>;
+    yomi: any | null;
     /**
      * 発音
-     * @type {Array<string>}
-     * @memberof UserDictWord
+     * @type {any}
+     * @memberof ResponseGetUserDictWordsUserDictGet
      */
-    pronunciation: Array<string>;
+    pronunciation: any | null;
     /**
      * アクセント型
-     * @type {Array<number>}
-     * @memberof UserDictWord
+     * @type {any}
+     * @memberof ResponseGetUserDictWordsUserDictGet
      */
-    accentType: Array<number>;
+    accentType: any | null;
     /**
      * モーラ数
-     * @type {Array<number>}
-     * @memberof UserDictWord
+     * @type {any}
+     * @memberof ResponseGetUserDictWordsUserDictGet
      */
-    moraCount?: Array<number>;
+    moraCount?: any | null;
     /**
      * アクセント結合規則
-     * @type {string}
-     * @memberof UserDictWord
+     * @type {any}
+     * @memberof ResponseGetUserDictWordsUserDictGet
      */
-    accentAssociativeRule: string;
+    accentAssociativeRule: any | null;
 }
 
 /**
- * Check if a given object implements the UserDictWord interface.
+ * Check if a given object implements the ResponseGetUserDictWordsUserDictGet interface.
  */
-export function instanceOfUserDictWord(value: object): boolean {
+export function instanceOfResponseGetUserDictWordsUserDictGet(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "surface" in value;
     isInstance = isInstance && "priority" in value;
@@ -134,11 +146,11 @@ export function instanceOfUserDictWord(value: object): boolean {
     return isInstance;
 }
 
-export function UserDictWordFromJSON(json: any): UserDictWord {
-    return UserDictWordFromJSONTyped(json, false);
+export function ResponseGetUserDictWordsUserDictGetFromJSON(json: any): ResponseGetUserDictWordsUserDictGet {
+    return ResponseGetUserDictWordsUserDictGetFromJSONTyped(json, false);
 }
 
-export function UserDictWordFromJSONTyped(json: any, ignoreDiscriminator: boolean): UserDictWord {
+export function ResponseGetUserDictWordsUserDictGetFromJSONTyped(json: any, ignoreDiscriminator: boolean): ResponseGetUserDictWordsUserDictGet {
     if ((json === undefined) || (json === null)) {
         return json;
     }
@@ -162,7 +174,7 @@ export function UserDictWordFromJSONTyped(json: any, ignoreDiscriminator: boolea
     };
 }
 
-export function UserDictWordToJSON(value?: UserDictWord | null): any {
+export function ResponseGetUserDictWordsUserDictGetToJSON(value?: ResponseGetUserDictWordsUserDictGet | null): any {
     if (value === undefined) {
         return undefined;
     }

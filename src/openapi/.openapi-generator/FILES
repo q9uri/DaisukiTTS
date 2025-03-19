@@ -25,6 +25,7 @@ models/MorphableTargetInfo.ts
 models/Note.ts
 models/ParseKanaBadRequest.ts
 models/Preset.ts
+models/ResponseGetUserDictWordsUserDictGet.ts
 models/Score.ts
 models/Speaker.ts
 models/SpeakerInfo.ts
@@ -35,6 +36,7 @@ models/SupportedDevicesInfo.ts
 models/SupportedFeatures.ts
 models/UpdateInfo.ts
 models/UserDictWord.ts
+models/UserDictWordForCompat.ts
 models/ValidationError.ts
 models/ValidationErrorLocInner.ts
 models/WordTypes.ts

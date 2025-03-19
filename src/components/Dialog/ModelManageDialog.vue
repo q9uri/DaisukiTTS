@@ -383,9 +383,9 @@ const installModel = async () => {
   try {
     const apiInstance = await getApiInstance();
     if (installMethod.value === "file" && selectedFile.value) {
-      await apiInstance.invoke("installAivm")({ file: selectedFile.value });
+      await apiInstance.invoke("installModel")({ file: selectedFile.value });
     } else if (installMethod.value === "url") {
-      await apiInstance.invoke("installAivm")({ url: installUrl.value });
+      await apiInstance.invoke("installModel")({ url: installUrl.value });
     }
     // 話者・スタイル一覧を再読み込み
     await reloadCharacterAndStyle();
@@ -440,7 +440,7 @@ const unInstallAivmModel = async () => {
     });
     try {
       await getApiInstance().then((instance) =>
-        instance.invoke("uninstallAivm")({ aivmUuid: activeAivmUuid.value! }));
+        instance.invoke("uninstallModel")({ aivmUuid: activeAivmUuid.value! }));
       // 話者・スタイル一覧を再読み込み
       await reloadCharacterAndStyle();
     } catch (error) {
@@ -484,9 +484,9 @@ const toggleModelLoad = async () => {
   try {
     const apiInstance = await getApiInstance();
     if (activeAivmInfo.value?.isLoaded) {
-      await apiInstance.invoke("unloadAivm")({ aivmUuid: activeAivmUuid.value });
+      await apiInstance.invoke("unloadModel")({ aivmUuid: activeAivmUuid.value });
     } else {
-      await apiInstance.invoke("loadAivm")({ aivmUuid: activeAivmUuid.value });
+      await apiInstance.invoke("loadModel")({ aivmUuid: activeAivmUuid.value });
     }
   } catch (error) {
     log.error(error);
@@ -529,7 +529,7 @@ const updateAivmModel = async () => {
 
     try {
       const apiInstance = await getApiInstance();
-      await apiInstance.invoke("updateAivm")({ aivmUuid: activeAivmUuid.value });
+      await apiInstance.invoke("updateModel")({ aivmUuid: activeAivmUuid.value });
       // 話者・スタイル一覧を再読み込み
       await reloadCharacterAndStyle();
       void store.actions.SHOW_MESSAGE_DIALOG({
