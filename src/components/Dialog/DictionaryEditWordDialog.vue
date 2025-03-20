@@ -9,30 +9,30 @@
           <!-- アイテム配列をループして表示 -->
           <div class="pronunciation-items-wrapper">
             <div
-              v-for="(item, index) in wordAccentPhraseItems"
-              :key="index"
+              v-for="(item, accentPhraseIndex) in wordAccentPhraseItems"
+              :key="accentPhraseIndex"
               class="pronunciation-item"
             >
               <!-- 単語入力 -->
               <div class="row">
                 <QInput
-                  :ref="(el: any) => { if (el) surfaceContexts[index].inputRef = el; }"
+                  :ref="(el: any) => { if (el) surfaceContexts[accentPhraseIndex].inputRef = el; }"
                   v-model="item.surface"
                   class="word-input"
                   outlined
                   label="単語"
                   placeholder="単語を入力"
                   :disable="uiLocked"
-                  @focus="surfaceContexts[index]?.helper?.clearInputSelection()"
-                  @blur="handleSurfaceBlur(index)"
-                  @keydown.enter="yomiFocus(index, $event)"
+                  @focus="surfaceContexts[accentPhraseIndex]?.helper?.clearInputSelection()"
+                  @blur="handleSurfaceBlur(accentPhraseIndex)"
+                  @keydown.enter="yomiFocus(accentPhraseIndex, $event)"
                 >
                   <ContextMenu
-                    :ref="(el: any) => { if (el) surfaceContexts[index].contextMenuRef = el; }"
-                    :header="surfaceContexts[index]?.helper?.contextMenuHeader"
-                    :menudata="surfaceContexts[index]?.helper?.contextMenudata"
-                    @beforeShow="surfaceContexts[index]?.helper?.startContextMenuOperation()"
-                    @beforeHide="surfaceContexts[index]?.helper?.endContextMenuOperation()"
+                    :ref="(el: any) => { if (el) surfaceContexts[accentPhraseIndex].contextMenuRef = el; }"
+                    :header="surfaceContexts[accentPhraseIndex]?.helper?.contextMenuHeader"
+                    :menudata="surfaceContexts[accentPhraseIndex]?.helper?.contextMenudata"
+                    @beforeShow="surfaceContexts[accentPhraseIndex]?.helper?.startContextMenuOperation()"
+                    @beforeHide="surfaceContexts[accentPhraseIndex]?.helper?.endContextMenuOperation()"
                   />
                 </QInput>
               </div>
@@ -40,7 +40,7 @@
               <!-- 読み入力 -->
               <div class="row q-pt-sm">
                 <QInput
-                  :ref="(el: any) => { if (el) yomiContexts[index].inputRef = el; }"
+                  :ref="(el: any) => { if (el) yomiContexts[accentPhraseIndex].inputRef = el; }"
                   v-model="item.pronunciation"
                   class="word-input q-pb-none"
                   outlined
@@ -48,19 +48,19 @@
                   placeholder="読みを入力"
                   :error="!item.isValid"
                   :disable="uiLocked"
-                  @focus="yomiContexts[index]?.helper?.clearInputSelection()"
-                  @blur="handleYomiBlur(index)"
-                  @keydown.enter="setYomiWhenEnter(index, $event)"
+                  @focus="yomiContexts[accentPhraseIndex]?.helper?.clearInputSelection()"
+                  @blur="handleYomiBlur(accentPhraseIndex)"
+                  @keydown.enter="setYomiWhenEnter(accentPhraseIndex, $event)"
                 >
                   <template #error>
                     読みに使える文字はひらがなとカタカナのみです。
                   </template>
                   <ContextMenu
-                    :ref="(el: any) => { if (el) yomiContexts[index].contextMenuRef = el; }"
-                    :header="yomiContexts[index]?.helper?.contextMenuHeader"
-                    :menudata="yomiContexts[index]?.helper?.contextMenudata"
-                    @beforeShow="yomiContexts[index]?.helper?.startContextMenuOperation()"
-                    @beforeHide="yomiContexts[index]?.helper?.endContextMenuOperation()"
+                    :ref="(el: any) => { if (el) yomiContexts[accentPhraseIndex].contextMenuRef = el; }"
+                    :header="yomiContexts[accentPhraseIndex]?.helper?.contextMenuHeader"
+                    :menudata="yomiContexts[accentPhraseIndex]?.helper?.contextMenudata"
+                    @beforeShow="yomiContexts[accentPhraseIndex]?.helper?.startContextMenuOperation()"
+                    @beforeHide="yomiContexts[accentPhraseIndex]?.helper?.endContextMenuOperation()"
                   />
                 </QInput>
               </div>
@@ -143,14 +143,14 @@
           class="accent-phrase-table overflow-hidden-y"
         >
           <!-- 各アクセント句ごとのアクセント表示 -->
-          <div v-for="(item, index) in wordAccentPhraseItems" v-show="item.accentPhrase" :key="index" class="accent-block">
+          <div v-for="(item, accentPhraseIndex) in wordAccentPhraseItems" v-show="item.accentPhrase" :key="accentPhraseIndex" class="accent-block">
             <div class="mora-table">
               <AudioAccent
                 v-if="item.accentPhrase"
                 :accentPhrase="item.accentPhrase"
                 :accentPhraseIndex="0"
                 :uiLocked
-                :onChangeAccentPosition="(_, accent) => handleChangeAccentPosition(index, accent)"
+                :onChangeAccentPosition="(_, accent) => handleChangeAccentPosition(accentPhraseIndex, accent)"
               />
               <template
                 v-for="(mora, moraIndex) in item.accentPhrase?.moras || []"
@@ -254,7 +254,7 @@ import AudioAccent from "@/components/Talk/AudioAccent.vue";
 import ContextMenu from "@/components/Menu/ContextMenu/Container.vue";
 import type { WordAccentPhraseItem } from "@/composables/useDictionaryEditor";
 import { useRightClickContextMenu } from "@/composables/useRightClickContextMenu";
-import { convertHankakuToZenkaku, wordTypeLabels } from "@/domain/japanese";
+import { createKanaRegex, convertHankakuToZenkaku, wordTypeLabels } from "@/domain/japanese";
 import { WordTypes } from "@/openapi";
 import { useStore } from "@/store";
 import type { FetchAudioResult } from "@/store/type";
@@ -388,26 +388,32 @@ const stop = () => {
   void store.actions.STOP_AUDIO();
 };
 
-const handleSurfaceBlur = (index = 0) => {
-  const value = props.wordAccentPhraseItems[index]?.surface || "";
-  emit("update:surface", convertHankakuToZenkaku(value), index);
+const handleSurfaceBlur = (accentPhraseIndex = 0) => {
+  const value = props.wordAccentPhraseItems[accentPhraseIndex]?.surface || "";
+  emit("update:surface", convertHankakuToZenkaku(value), accentPhraseIndex);
 };
 
-const handleYomiBlur = (index = 0) => {
-  const value = props.wordAccentPhraseItems[index]?.pronunciation || "";
-  void emit("update:pronunciation", value, index);
+const handleYomiBlur = (accentPhraseIndex = 0) => {
+  const value = props.wordAccentPhraseItems[accentPhraseIndex]?.pronunciation || "";
+  void emit("update:pronunciation", value, accentPhraseIndex);
 };
 
-const yomiFocus = (index = 0, event?: KeyboardEvent) => {
+const yomiFocus = (accentPhraseIndex = 0, event?: KeyboardEvent) => {
   if (event && event.isComposing) return;
   // @ts-expect-error なぜか inputRef.value ではなく inputRef を参照しないと QInput を適切に参照できない
   // useRightClickContextMenu() にリアクティブ渡すためにトリッキーなことやっているからではありそう
-  yomiContexts.value[index].inputRef?.focus();
+  yomiContexts.value[accentPhraseIndex].inputRef?.focus();
+  // もしこの時点で accentPhraseIndex に対応する surface がひらがな・カタカナのみで構成されている場合は、
+  // その値をそのまま読み仮名に設定する
+  const surface = props.wordAccentPhraseItems[accentPhraseIndex]?.surface || "";
+  if (createKanaRegex().test(surface)) {
+    void emit("update:pronunciation", surface, accentPhraseIndex);
+  }
 };
 
-const setYomiWhenEnter = (index = 0, event?: KeyboardEvent) => {
+const setYomiWhenEnter = (accentPhraseIndex = 0, event?: KeyboardEvent) => {
   if (event && event.isComposing) return;
-  void emit("update:pronunciation", props.wordAccentPhraseItems[index]?.pronunciation || "", index);
+  void emit("update:pronunciation", props.wordAccentPhraseItems[accentPhraseIndex]?.pronunciation || "", accentPhraseIndex);
 };
 
 // アクセント句を追加
@@ -443,24 +449,24 @@ interface InputContext {
 const surfaceContexts = ref<InputContext[]>([]);
 const yomiContexts = ref<InputContext[]>([]);
 
-function createSurfaceModel(index: number) {
+function createSurfaceModel(accentPhraseIndex: number) {
   return computed({
-    get: () => props.wordAccentPhraseItems[index]?.surface || "",
-    set: (val: string) => emit("update:surface", val, index),
+    get: () => props.wordAccentPhraseItems[accentPhraseIndex]?.surface || "",
+    set: (val: string) => emit("update:surface", val, accentPhraseIndex),
   });
 }
 
-function createYomiModel(index: number) {
+function createYomiModel(accentPhraseIndex: number) {
   return computed({
-    get: () => props.wordAccentPhraseItems[index]?.pronunciation || "",
-    set: (val: string) => emit("update:pronunciation", val, index),
+    get: () => props.wordAccentPhraseItems[accentPhraseIndex]?.pronunciation || "",
+    set: (val: string) => emit("update:pronunciation", val, accentPhraseIndex),
   });
 }
 
 // 入力コンテキストを追加する共通関数
-const addInputContext = (index: number) => {
-  const surfaceModel = createSurfaceModel(index);
-  const yomiModel = createYomiModel(index);
+const addInputContext = (accentPhraseIndex: number) => {
+  const surfaceModel = createSurfaceModel(accentPhraseIndex);
+  const yomiModel = createYomiModel(accentPhraseIndex);
 
   const surfaceContextMenuRef = ref<InstanceType<typeof ContextMenu>>();
   const surfaceInputRef = ref<InstanceType<typeof QInput>>();
