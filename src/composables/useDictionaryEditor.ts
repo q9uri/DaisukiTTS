@@ -202,11 +202,11 @@ export function useDictionaryEditor(initialSurface = "", initialPronunciation = 
   }
 
   // 指定されたアクセント句の表層形を更新する
-  function updateSurface(text: string, accentPhraseIndex = 0): void {
+  function updateSurface(surface: string, accentPhraseIndex = 0): void {
     // surfaceを全角化する
     // 入力は半角でも問題ないが、登録時に全角に変換され、isWordChangedの判断がおかしくなることがあるので、
     // 入力後に自動で変換するようにする
-    const convertedText = convertHankakuToZenkaku(text);
+    const convertedText = convertHankakuToZenkaku(surface);
 
     // 指定されたインデックスが存在しない場合は作成
     while (wordAccentPhraseItems.value.length <= accentPhraseIndex) {
@@ -221,7 +221,7 @@ export function useDictionaryEditor(initialSurface = "", initialPronunciation = 
   }
 
   // 指定されたアクセント句の発音を更新する
-  async function updatePronunciation(text: string, accentPhraseIndex = 0, changeWord?: boolean): Promise<void> {
+  async function updatePronunciation(pronunciation: string, accentPhraseIndex = 0, changeWord?: boolean): Promise<void> {
     // ユーザーによるソート順で一番先頭にあたるキャラクターの EngineId, StyleId を取得する
     const userOrderedCharacterInfos = store.getters.USER_ORDERED_CHARACTER_INFOS("talk");
     if (userOrderedCharacterInfos == undefined)
@@ -233,7 +233,7 @@ export function useDictionaryEditor(initialSurface = "", initialPronunciation = 
 
     // テキスト長が0の時にエラー表示にならないように、テキスト長を考慮する
     const kanaRegex = createKanaRegex();
-    const isValid = !text.length || kanaRegex.test(text);
+    const isValid = !pronunciation.length || kanaRegex.test(pronunciation);
 
     // 指定されたインデックスが存在しない場合は作成
     while (wordAccentPhraseItems.value.length <= accentPhraseIndex) {
@@ -252,7 +252,7 @@ export function useDictionaryEditor(initialSurface = "", initialPronunciation = 
     // ただし、読みが同じで違う単語が存在する場合が考えられるので、changeWord フラグを考慮する
     // 「ガ」が自動挿入されるので、それを考慮して slice している
     if (
-      text ===
+      pronunciation ===
         currentItem.accentPhrase?.moras
           .map((v) => v.text)
           .join("")
@@ -262,12 +262,12 @@ export function useDictionaryEditor(initialSurface = "", initialPronunciation = 
       return;
     }
 
-    if (isValid && text.length) {
-      text = convertHiraToKana(text);
-      text = convertLongVowel(text);
+    if (isValid && pronunciation.length) {
+      pronunciation = convertHiraToKana(pronunciation);
+      pronunciation = convertLongVowel(pronunciation);
       const fetchedAccentPhrase = (
         await store.actions.FETCH_ACCENT_PHRASES({
-          text: text + "ガ'",
+          text: pronunciation + "ガ'",
           engineId,
           styleId,
           isKana: true,
@@ -276,14 +276,14 @@ export function useDictionaryEditor(initialSurface = "", initialPronunciation = 
 
       currentItem.accentPhrase = fetchedAccentPhrase;
 
-      if (selectedId.value && userDict.value[selectedId.value].pronunciation[accentPhraseIndex] === text) {
+      if (selectedId.value && userDict.value[selectedId.value].pronunciation[accentPhraseIndex] === pronunciation) {
         currentItem.accentPhrase.accent = computeDisplayAccent(accentPhraseIndex);
       }
     } else {
       currentItem.accentPhrase = undefined;
     }
 
-    currentItem.pronunciation = text;
+    currentItem.pronunciation = pronunciation;
   }
 
   // 指定されたアクセント句のアクセント位置を変更する
@@ -417,7 +417,7 @@ export function useDictionaryEditor(initialSurface = "", initialPronunciation = 
     wordType.value = getWordTypeFromPartOfSpeech(userDict.value[id]);
     wordPriority.value = userDict.value[id].priority;
 
-    // 選択した項目の発音を更新
+    // 発音を更新（この処理でエンジン側から AccentPhrase が取得される）
     for (let i = 0; i < wordAccentPhraseItems.value.length; i++) {
       void updatePronunciation(wordAccentPhraseItems.value[i].pronunciation, i, true);
     }
