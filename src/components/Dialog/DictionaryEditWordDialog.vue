@@ -7,14 +7,14 @@
       <div class="row q-px-md q-pr-md q-mt-md">
         <QInput
           ref="surfaceInput"
-          v-model="surface"
+          v-model="surfaceModel"
           class="word-input"
           outlined
           label="単語"
           placeholder="単語を入力"
           :disable="uiLocked"
           @focus="clearSurfaceInputSelection()"
-          @blur="setSurface(surface)"
+          @blur="handleSurfaceBlur"
           @keydown.enter="yomiFocus"
         >
           <ContextMenu
@@ -29,7 +29,7 @@
       <div class="row q-px-md q-pr-md q-pt-sm">
         <QInput
           ref="yomiInput"
-          v-model="yomi"
+          v-model="yomiModel"
           class="word-input q-pb-none"
           outlined
           label="読み"
@@ -37,7 +37,7 @@
           :error="!isOnlyHiraOrKana"
           :disable="uiLocked"
           @focus="clearYomiInputSelection()"
-          @blur="setYomi(yomi)"
+          @blur="handleYomiBlur"
           @keydown.enter="setYomiWhenEnter"
         >
           <template #error>
@@ -65,7 +65,7 @@
       </div>
       <div class="row q-px-md q-pr-md">
         <QSelect
-          v-model="wordType"
+          v-model="wordTypeModel"
           class="word-input"
           outlined
           :options="Object.entries(wordTypeLabels).map(([value, label]) => ({ value, label }))"
@@ -108,7 +108,7 @@
               :accentPhrase
               :accentPhraseIndex="0"
               :uiLocked
-              :onChangeAccent="changeAccent"
+              :onChangeAccent="handleChangeAccent"
             />
             <template
               v-for="(mora, moraIndex) in accentPhrase.moras"
@@ -144,7 +144,7 @@
         }"
       >
         <QSlider
-          v-model="wordPriority"
+          v-model="wordPriorityModel"
           snap
           dense
           color="primary"
@@ -169,7 +169,7 @@
         textColor="display"
         class="text-no-wrap text-bold q-mr-sm"
         :disable="uiLocked"
-        @click="discardOrNotDialog(cancel)"
+        @click="handleCancel"
       />
       <QBtn
         v-show="!!selectedId"
@@ -179,7 +179,7 @@
         textColor="warning"
         class="text-no-wrap text-bold q-mr-sm"
         :disable="uiLocked"
-        @click="deleteWord"
+        @click="$emit('deleteWord')"
       />
       <QBtn
         v-show="!!selectedId"
@@ -189,7 +189,7 @@
         textColor="warning"
         class="text-no-wrap text-bold q-mr-sm"
         :disable="uiLocked || !isWordChanged"
-        @click="resetWord(selectedId)"
+        @click="$emit('resetWord', selectedId)"
       />
       <QBtn
         outline
@@ -198,76 +198,98 @@
         textColor="primary"
         class="text-no-wrap text-bold"
         :disable="uiLocked || !isWordChanged"
-        @click="saveWord"
+        @click="$emit('saveWord')"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { inject, ref, watch } from "vue";
+import { ref, watch, computed, onMounted } from "vue";
 import { QInput } from "quasar";
-import { dictionaryManageDialogContextKey } from "./DictionaryManageDialog.vue";
-import {
-  hideAllLoadingScreen,
-  showLoadingScreen,
-} from "@/components/Dialog/Dialog";
 import AudioAccent from "@/components/Talk/AudioAccent.vue";
 import ContextMenu from "@/components/Menu/ContextMenu/Container.vue";
 import { useRightClickContextMenu } from "@/composables/useRightClickContextMenu";
 import { useStore } from "@/store";
+import { AccentPhrase, WordTypes } from "@/openapi";
 import type { FetchAudioResult } from "@/store/type";
+
+const props = defineProps<{
+  surface: string;
+  yomi: string;
+  wordEditing: boolean;
+  wordType: WordTypes;
+  wordTypeLabels: Record<WordTypes, string>;
+  wordPriority: number;
+  isOnlyHiraOrKana: boolean;
+  accentPhrase?: AccentPhrase;
+  selectedId: string;
+  isNewWordEditing: boolean;
+  uiLocked: boolean;
+  isWordChanged: boolean;
+}>();
+
+const emit = defineEmits<{
+  (e: "update:surface", value: string): void;
+  (e: "update:yomi", value: string, changeWord?: boolean): void;
+  (e: "update:wordType", value: WordTypes): void;
+  (e: "update:wordPriority", value: number): void;
+  (e: "changeAccent", accentPhraseIndex: number, accent: number): void;
+  (e: "deleteWord"): void;
+  (e: "resetWord", id: string): void;
+  (e: "saveWord"): void;
+  (e: "cancel"): void;
+  (e: "setSurfaceInput", input: QInput): void;
+}>();
 
 const store = useStore();
 
-const context = inject(dictionaryManageDialogContextKey);
-if (context == undefined)
-  throw new Error("dictionaryManageDialogContext == undefined");
-const {
-  wordEditing,
-  surfaceInput,
-  selectedId,
-  uiLocked,
-  userDict,
-  isOnlyHiraOrKana,
-  accentPhrase,
-  voiceComputed,
-  surface,
-  yomi,
-  wordType,
-  wordTypeLabels,
-  wordPriority,
-  isWordChanged,
-  isNewWordEditing,
-  setYomi,
-  createUILockAction,
-  loadingDictProcess,
-  computeRegisteredAccent,
-  discardOrNotDialog,
-  toWordEditingState,
-  toWordSelectedState,
-  cancel,
-  deleteWord,
-  getWordTypeFromPartOfSpeech,
-} = context;
+// 双方向バインディング用モデル
+const surfaceModel = computed({
+  get: () => props.surface,
+  set: (val) => emit("update:surface", val)
+});
+
+const yomiModel = computed({
+  get: () => props.yomi,
+  set: (val) => emit("update:yomi", val)
+});
+
+const wordTypeModel = computed({
+  get: () => props.wordType,
+  set: (val) => emit("update:wordType", val)
+});
+
+const wordPriorityModel = computed({
+  get: () => props.wordPriority,
+  set: (val) => emit("update:wordPriority", val)
+});
 
 // 音声再生機構
 const nowGenerating = ref(false);
 const nowPlaying = ref(false);
 
 const play = async () => {
-  if (!accentPhrase.value) return;
+  if (!props.accentPhrase) return;
 
   nowGenerating.value = true;
+
+  const userOrderedCharacterInfos = store.getters.USER_ORDERED_CHARACTER_INFOS("talk");
+  if (!userOrderedCharacterInfos) throw new Error("assert USER_ORDERED_CHARACTER_INFOS");
+  if (store.state.engineIds.length === 0) throw new Error("assert engineId.length > 0");
+  const characterInfo = userOrderedCharacterInfos[0].metas;
+  const speakerId = characterInfo.speakerUuid;
+  const { engineId, styleId } = characterInfo.styles[0];
+
   const audioItem = await store.actions.GENERATE_AUDIO_ITEM({
-    text: yomi.value,
-    voice: voiceComputed.value,
+    text: props.yomi,
+    voice: { engineId, speakerId, styleId },
   });
 
   if (audioItem.query == undefined)
     throw new Error("assert audioItem.query !== undefined");
 
-  audioItem.query.accentPhrases = [accentPhrase.value];
+  audioItem.query.accentPhrases = [props.accentPhrase];
 
   let fetchAudioResult: FetchAudioResult;
   try {
@@ -296,6 +318,7 @@ const stop = () => {
 };
 
 // メニュー系
+const surfaceInput = ref<QInput>();
 const yomiInput = ref<QInput>();
 const wordPriorityLabels = {
   0: "最低",
@@ -305,16 +328,14 @@ const wordPriorityLabels = {
   10: "最高",
 };
 
-const yomiFocus = (event?: KeyboardEvent) => {
-  if (event && event.isComposing) return;
-  yomiInput.value?.focus();
-};
+// surfaceInput参照を親に通知
+onMounted(() => {
+  if (surfaceInput.value) {
+    emit("setSurfaceInput", surfaceInput.value);
+  }
+});
 
-const setYomiWhenEnter = (event?: KeyboardEvent) => {
-  if (event && event.isComposing) return;
-  void setYomi(yomi.value);
-};
-
+// 半角->全角変換
 const convertHankakuToZenkaku = (text: string) => {
   // " "などの目に見えない文字をまとめて全角スペース(0x3000)に置き換える
   text = text.replace(/\p{Z}/gu, () => String.fromCharCode(0x3000));
@@ -325,97 +346,24 @@ const convertHankakuToZenkaku = (text: string) => {
   });
 };
 
-const setSurface = (text: string) => {
-  // surfaceを全角化する
-  // 入力は半角でも問題ないが、登録時に全角に変換され、isWordChangedの判断がおかしくなることがあるので、
-  // 入力後に自動で変換するようにする
-  surface.value = convertHankakuToZenkaku(text);
+const handleSurfaceBlur = () => {
+  // surfaceModel経由でcomputed setterが呼ばれ、親に通知される
+  surfaceModel.value = convertHankakuToZenkaku(surfaceModel.value);
 };
 
-const saveWord = async () => {
-  if (!accentPhrase.value) throw new Error("accentPhrase === undefined");
-  const accent = computeRegisteredAccent();
-  if (selectedId.value) {
-    try {
-      showLoadingScreen({
-        message: "変更を保存しています...",
-      });
-      await store.actions.REWRITE_WORD({
-        wordUuid: selectedId.value,
-        surface: surface.value,
-        pronunciation: yomi.value,
-        accentType: accent,
-        wordType: wordType.value,
-        priority: wordPriority.value,
-      });
-    } catch (e) {
-      void store.actions.SHOW_ALERT_DIALOG({
-        title: "単語の更新に失敗しました",
-        message: "エンジンの再起動をお試しください。",
-      });
-      throw e;
-    } finally {
-      hideAllLoadingScreen();
-    }
-    await loadingDictProcess();
-    // 変更後の単語を選択
-    surface.value = userDict.value[selectedId.value].surface;
-    void setYomi(userDict.value[selectedId.value].yomi, true);
-    wordType.value = getWordTypeFromPartOfSpeech(userDict.value[selectedId.value]);
-    wordPriority.value = userDict.value[selectedId.value].priority;
-    toWordSelectedState();
-    toWordEditingState();
-  } else {
-    let wordUuid: string;
-    try {
-      showLoadingScreen({
-        message: "単語を辞書に追加しています...",
-      });
-      wordUuid = await createUILockAction(
-        store.actions.ADD_WORD({
-          surface: surface.value,
-          pronunciation: yomi.value,
-          accentType: accent,
-          wordType: wordType.value,
-          priority: wordPriority.value,
-        }),
-      );
-    } catch (e) {
-      void store.actions.SHOW_ALERT_DIALOG({
-        title: "単語の登録に失敗しました",
-        message: "エンジンの再起動をお試しください。",
-      });
-      throw e;
-    } finally {
-      hideAllLoadingScreen();
-    }
-    await loadingDictProcess();
-    // 追加した単語を選択
-    isNewWordEditing.value = false;  // 追加ダイアログを閉じる
-    selectedId.value = wordUuid;
-    surface.value = userDict.value[wordUuid].surface;
-    void setYomi(userDict.value[wordUuid].yomi, true);
-    wordType.value = getWordTypeFromPartOfSpeech(userDict.value[wordUuid]);
-    wordPriority.value = userDict.value[wordUuid].priority;
-    toWordSelectedState();
-    toWordEditingState();
-  }
+const handleYomiBlur = () => {
+  // 親のsetYomiを呼ぶ
+  void emit("update:yomi", yomiModel.value);
 };
 
-const resetWord = async (id: string) => {
-  const result = await store.actions.SHOW_WARNING_DIALOG({
-    title: "単語の変更を破棄しますか？",
-    message: "保存されていない変更内容は失われます。",
-    actionName: "破棄する",
-    isWarningColorButton: true,
-  });
-  if (result === "OK") {
-    selectedId.value = id;
-    surface.value = userDict.value[id].surface;
-    void setYomi(userDict.value[id].yomi, true);
-    wordPriority.value = userDict.value[id].priority;
-    toWordEditingState();
-  }
+const yomiFocus = (event?: KeyboardEvent) => {
+  if (event && event.isComposing) return;
+  yomiInput.value?.focus();
+};
+
+const setYomiWhenEnter = (event?: KeyboardEvent) => {
+  if (event && event.isComposing) return;
+  void emit("update:yomi", yomiModel.value);
 };
 
 // アクセント系
@@ -423,27 +371,18 @@ const accentPhraseTable = ref<HTMLElement>();
 const modelDetailContent = ref<HTMLElement>();
 
 // モーダル表示の切り替え時にスクロール位置をリセット
-watch(isNewWordEditing, () => {
+watch(() => props.isNewWordEditing, () => {
   if (modelDetailContent.value) {
     modelDetailContent.value.scrollTop = 0;
   }
 });
 
-const changeAccent = async (_: number, accent: number) => {
-  const { engineId, styleId } = voiceComputed.value;
+const handleChangeAccent = async (accentPhraseIndex: number, accent: number) => {
+  emit("changeAccent", accentPhraseIndex, accent);
+};
 
-  if (accentPhrase.value) {
-    accentPhrase.value.accent = accent;
-    accentPhrase.value = (
-      await createUILockAction(
-        store.actions.FETCH_MORA_DATA({
-          accentPhrases: [accentPhrase.value],
-          engineId,
-          styleId,
-        }),
-      )
-    )[0];
-  }
+const handleCancel = () => {
+  emit("cancel");
 };
 
 // コンテキストメニュー
@@ -456,7 +395,7 @@ const {
   startContextMenuOperation: startSurfaceContextMenuOperation,
   clearInputSelection: clearSurfaceInputSelection,
   endContextMenuOperation: endSurfaceContextMenuOperation,
-} = useRightClickContextMenu(surfaceContextMenu, surfaceInput, surface);
+} = useRightClickContextMenu(surfaceContextMenu, surfaceInput, surfaceModel);
 
 const {
   contextMenuHeader: yomiContextMenuHeader,
@@ -464,7 +403,7 @@ const {
   startContextMenuOperation: startYomiContextMenuOperation,
   clearInputSelection: clearYomiInputSelection,
   endContextMenuOperation: endYomiContextMenuOperation,
-} = useRightClickContextMenu(yomiContextMenu, yomiInput, yomi);
+} = useRightClickContextMenu(yomiContextMenu, yomiInput, yomiModel);
 </script>
 
 <style lang="scss" scoped>
