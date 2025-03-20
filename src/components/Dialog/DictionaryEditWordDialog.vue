@@ -348,7 +348,8 @@ const play = async () => {
   // 音声合成用の AudioItem を生成
   const audioItem = await store.actions.GENERATE_AUDIO_ITEM({
     // wordAccentPhraseItems 内の surface を結合したものを入力テキストとする
-    text: props.wordAccentPhraseItems.map(item => item.surface + "が").join(""),
+    // AccentPhrase と挙動を合わせるため、末尾に「が」を追加する
+    text: props.wordAccentPhraseItems.map(item => item.surface).join("") + "が",
     voice: { engineId, speakerId, styleId },
   });
   if (audioItem.query == undefined)

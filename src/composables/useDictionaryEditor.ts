@@ -265,9 +265,14 @@ export function useDictionaryEditor(initialSurface = "", initialPronunciation = 
     if (isValid && pronunciation.length) {
       pronunciation = convertHiraToKana(pronunciation);
       pronunciation = convertLongVowel(pronunciation);
+
+      // 現在の項目が最後の要素の場合のみ「ガ」を追加する
+      const isLastItem = accentPhraseIndex === wordAccentPhraseItems.value.length - 1;
+      const textToFetch = isLastItem ? pronunciation + "ガ'" : pronunciation + "'";
+
       const fetchedAccentPhrase = (
         await store.actions.FETCH_ACCENT_PHRASES({
-          text: pronunciation + "ガ'",
+          text: textToFetch,
           engineId,
           styleId,
           isKana: true,
@@ -322,12 +327,22 @@ export function useDictionaryEditor(initialSurface = "", initialPronunciation = 
       pronunciation: "",
       isValid: true,
     });
+    // 追加したアクセント句を含め、すべてのアクセント句の発音を更新する
+    // そうしないと、常に wordAccentPhraseItems の最後の要素にのみ「ガ」を付与する挙動が維持できない
+    for (let i = 0; i < wordAccentPhraseItems.value.length; i++) {
+      void updatePronunciation(wordAccentPhraseItems.value[i].pronunciation, i, true);
+    }
   }
 
   // 指定されたアクセント句を削除する
   function removeWordAccentPhraseItem(accentPhraseIndex: number): void {
     if (wordAccentPhraseItems.value.length > 1) {
       wordAccentPhraseItems.value.splice(accentPhraseIndex, 1);
+      // 追加したアクセント句を含め、すべてのアクセント句の発音を更新する
+      // そうしないと、常に wordAccentPhraseItems の最後の要素にのみ「ガ」を付与する挙動が維持できない
+      for (let i = 0; i < wordAccentPhraseItems.value.length; i++) {
+        void updatePronunciation(wordAccentPhraseItems.value[i].pronunciation, i, true);
+      }
     }
   }
 
