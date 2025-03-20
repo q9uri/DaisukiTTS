@@ -18,7 +18,7 @@ type UserDictWordId = Brand<string, "UserDictWordId">;
 /** 単語追加リクエストで送られる断片的な単語情報からUserDictWordを作成する */
 function createWord(wordProperty: AddUserDictWordRequest): UserDictWord {
   return {
-    surface: wordProperty.surface,
+    surface: wordProperty.surface.join(""),
     pronunciation: wordProperty.pronunciation,
     accentType: wordProperty.accentType,
     partOfSpeech: "名詞",
@@ -27,7 +27,7 @@ function createWord(wordProperty: AddUserDictWordRequest): UserDictWord {
     partOfSpeechDetail3: "*",
     inflectionalType: "*",
     inflectionalForm: "*",
-    stem: "*",
+    stem: wordProperty.surface,
     yomi: wordProperty.pronunciation,
     priority: wordProperty.priority ?? 5,
     accentAssociativeRule: "*",
@@ -50,7 +50,7 @@ export class DictMock {
    */
   applyDict(text: string): string {
     for (const word of this.userDictWords.values()) {
-      text = text.replace(new RegExp(word.surface, "g"), word.pronunciation);
+      text = text.replace(new RegExp(word.surface, "g"), word.pronunciation.join(""));
     }
     return text;
   }
