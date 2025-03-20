@@ -348,7 +348,7 @@ const play = async () => {
   // 音声合成用の AudioItem を生成
   const audioItem = await store.actions.GENERATE_AUDIO_ITEM({
     // wordAccentPhraseItems 内の surface を結合したものを入力テキストとする
-    text: props.wordAccentPhraseItems.map(item => item.surface).join(""),
+    text: props.wordAccentPhraseItems.map(item => item.surface + "が").join(""),
     voice: { engineId, speakerId, styleId },
   });
   if (audioItem.query == undefined)
@@ -358,9 +358,6 @@ const play = async () => {
   audioItem.query.accentPhrases = props.wordAccentPhraseItems
     .filter(item => item.accentPhrase)
     .map(item => item.accentPhrase!);
-  // wordAccentPhraseItems 内の surface を結合したもので AudioQuery.kana を差し替える
-  // AivisSpeech では kana が入力テキストの書記素と原則対応している必要がある
-  audioItem.query.kana = props.wordAccentPhraseItems.map(item => item.surface).join("");
 
   // 音声合成結果を取得
   let fetchAudioResult: FetchAudioResult;

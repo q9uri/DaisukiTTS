@@ -69,7 +69,7 @@
                     value.surface
                   }}</QItemLabel>
                   <QItemLabel caption class="row">
-                    <span>{{ value.pronunciation }} [{{ wordTypeLabels[getWordTypeFromPartOfSpeech(value)] }}]</span>
+                    <span>{{ value.pronunciation.join("") }} [{{ wordTypeLabels[getWordTypeFromPartOfSpeech(value)] }}]</span>
                     <span class="q-ml-auto">優先度:{{ value.priority }}</span>
                   </QItemLabel>
                 </QItemSection>

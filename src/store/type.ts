@@ -2322,9 +2322,9 @@ export type DictionaryStoreTypes = {
   };
   ADD_WORD: {
     action(payload: {
-      surface: string;
-      pronunciation: string;
-      accentType: number;
+      surface: string[];
+      pronunciation: string[];
+      accentType: number[];
       wordType: WordTypes;
       priority: number;
     }): Promise<string>;
@@ -2332,9 +2332,9 @@ export type DictionaryStoreTypes = {
   REWRITE_WORD: {
     action(payload: {
       wordUuid: string;
-      surface: string;
-      pronunciation: string;
-      accentType: number;
+      surface: string[];
+      pronunciation: string[];
+      accentType: number[];
       wordType: WordTypes;
       priority: number;
     }): Promise<void>;

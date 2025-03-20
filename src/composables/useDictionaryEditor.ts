@@ -60,20 +60,12 @@ export function useDictionaryEditor(initialSurface = "", initialPronunciation = 
       return false;
     }
 
-    const currentWordType = getWordTypeFromPartOfSpeech(dictData);
-
-    // 基本情報の変更チェック
-    const basicInfoChanged =
-      dictData.surface !== wordAccentPhraseItems.value[0].surface ||
-      dictData.pronunciation !== wordAccentPhraseItems.value[0].pronunciation ||
-      dictData.accentType !== computeRegisteredAccent(0) ||
-      currentWordType !== wordType.value ||
+    // 現在保存されているデータとの差分があれば true を返す
+    return dictData.surface !== wordAccentPhraseItems.value.map(item => item.surface).join("") ||
+      dictData.pronunciation.join("") !== wordAccentPhraseItems.value.map(item => item.pronunciation).join("") ||
+      !dictData.accentType.every((accent, index) => accent === computeRegisteredAccent(index)) ||
+      getWordTypeFromPartOfSpeech(dictData) !== wordType.value ||
       dictData.priority !== wordPriority.value;
-
-    // 複数のアクセント句項目の変更チェック
-    const accentPhraseItemsChanged = wordAccentPhraseItems.value.length > 1;
-
-    return basicInfoChanged || accentPhraseItemsChanged;
   });
 
   // UI をロックした状態で行う処理をラップする関数
@@ -101,7 +93,7 @@ export function useDictionaryEditor(initialSurface = "", initialPronunciation = 
   // 辞書から得た accent が0の場合に、自動で追加される「ガ」の位置にアクセントを表示させるように処理する
   const computeDisplayAccent = (accentPhraseIndex = 0) => {
     if (!wordAccentPhraseItems.value[accentPhraseIndex]?.accentPhrase || !selectedId.value) return 0;  // エラーにさせないために0を返す
-    let accent = userDict.value[selectedId.value].accentType;
+    let accent = userDict.value[selectedId.value].accentType[accentPhraseIndex];
     accent = accent === 0 ? wordAccentPhraseItems.value[accentPhraseIndex].accentPhrase.moras.length : accent;
     return accent;
   };
@@ -140,14 +132,17 @@ export function useDictionaryEditor(initialSurface = "", initialPronunciation = 
   async function addWordToEngine(): Promise<string> {
     if (!wordAccentPhraseItems.value[0]?.accentPhrase)
       throw new Error("accentPhrase === undefined");
-    const accent = computeRegisteredAccent(0);
+    const accentPositions: number[] = [];
+    for (let i = 0; i < wordAccentPhraseItems.value.length; i++) {
+      accentPositions.push(computeRegisteredAccent(i));
+    }
 
     try {
       const wordUuid = await createUILockAction(
         store.actions.ADD_WORD({
-          surface: wordAccentPhraseItems.value.map(item => item.surface).join(""),
-          pronunciation: wordAccentPhraseItems.value.map(item => item.pronunciation).join(""),
-          accentType: accent,
+          surface: wordAccentPhraseItems.value.map(item => item.surface),
+          pronunciation: wordAccentPhraseItems.value.map(item => item.pronunciation),
+          accentType: accentPositions,
           wordType: wordType.value,
           priority: wordPriority.value,
         }),
@@ -166,14 +161,17 @@ export function useDictionaryEditor(initialSurface = "", initialPronunciation = 
   async function updateWordToEngine(wordId: string): Promise<void> {
     if (!wordAccentPhraseItems.value[0]?.accentPhrase)
       throw new Error("accentPhrase === undefined");
-    const accent = computeRegisteredAccent(0);
+    const accentPositions: number[] = [];
+    for (let i = 0; i < wordAccentPhraseItems.value.length; i++) {
+      accentPositions.push(computeRegisteredAccent(i));
+    }
 
     try {
       await store.actions.REWRITE_WORD({
         wordUuid: wordId,
-        surface: wordAccentPhraseItems.value.map(item => item.surface).join(""),
-        pronunciation: wordAccentPhraseItems.value.map(item => item.pronunciation).join(""),
-        accentType: accent,
+        surface: wordAccentPhraseItems.value.map(item => item.surface),
+        pronunciation: wordAccentPhraseItems.value.map(item => item.pronunciation),
+        accentType: accentPositions,
         wordType: wordType.value,
         priority: wordPriority.value,
       });
@@ -278,7 +276,7 @@ export function useDictionaryEditor(initialSurface = "", initialPronunciation = 
 
       currentItem.accentPhrase = fetchedAccentPhrase;
 
-      if (selectedId.value && userDict.value[selectedId.value].pronunciation === text && accentPhraseIndex === 0) {
+      if (selectedId.value && userDict.value[selectedId.value].pronunciation[accentPhraseIndex] === text) {
         currentItem.accentPhrase.accent = computeDisplayAccent(accentPhraseIndex);
       }
     } else {
@@ -399,16 +397,30 @@ export function useDictionaryEditor(initialSurface = "", initialPronunciation = 
   function selectWord(id: string): void {
     // 選択に合わせて状態を更新
     selectedId.value = id;
-    wordAccentPhraseItems.value = [{
-      surface: userDict.value[id].surface,
-      pronunciation: userDict.value[id].pronunciation,
-      isValid: true,
-    }];
+    wordAccentPhraseItems.value = [];
+    // UserDictWord の stem と pronunciation はアクセント句ごとに分割されているので、WordAccentPhraseItem に変換する
+    for (let i = 0; i < userDict.value[id].stem.length; i++) {
+      wordAccentPhraseItems.value.push({
+        surface: userDict.value[id].stem[i],
+        pronunciation: userDict.value[id].pronunciation[i],
+        isValid: true,
+      });
+    }
+    // アクセント句がない場合は空のアイテムを追加（通常発生しないはず）
+    if (wordAccentPhraseItems.value.length === 0) {
+      wordAccentPhraseItems.value.push({
+        surface: userDict.value[id].surface,
+        pronunciation: "",
+        isValid: true,
+      });
+    }
     wordType.value = getWordTypeFromPartOfSpeech(userDict.value[id]);
     wordPriority.value = userDict.value[id].priority;
 
-    // 選択した項目の発音を設定
-    void updatePronunciation(userDict.value[id].pronunciation, 0, true);
+    // 選択した項目の発音を更新
+    for (let i = 0; i < wordAccentPhraseItems.value.length; i++) {
+      void updatePronunciation(wordAccentPhraseItems.value[i].pronunciation, i, true);
+    }
 
     // 選択状態に設定
     toWordSelectedState();

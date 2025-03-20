@@ -7,18 +7,23 @@ export const dictionaryStoreState: DictionaryStoreState = {};
 export const dictionaryStore = createPartialStore<DictionaryStoreTypes>({
   LOAD_USER_DICT: {
     async action({ actions }, { engineId }) {
-      const engineDict = await actions
+      const engineDict = (await actions
         .INSTANTIATE_ENGINE_CONNECTOR({
           engineId,
         })
-        .then((instance) => instance.invoke("getUserDictWords")({}));
+        .then((instance) => instance.invoke("getUserDictWords")({
+          // enableCompoundAccent: true を指定すると、UserDictWord の
+          // stem, yomi, pronunciation, accentType, moraCount が配列で返ってくる
+          enableCompoundAccent: true,
+        }))
+      ) as { [key: string]: UserDictWord };
 
       // 50音順にソートするために、一旦arrayにする
       const dictArray = Object.keys(engineDict).map((k) => {
         return { key: k, ...engineDict[k] };
       });
       dictArray.sort((a, b) => {
-        if (a.yomi > b.yomi) {
+        if (a.pronunciation.join("") > b.pronunciation.join("")) {
           return 1;
         } else {
           return -1;
@@ -54,7 +59,7 @@ export const dictionaryStore = createPartialStore<DictionaryStoreTypes>({
 
       // まずデフォルトエンジンの辞書をすべて登録
       for (const [id, dictItem] of Object.entries(defaultDict)) {
-        const pairKey = `${dictItem.yomi}-${dictItem.surface}`;
+        const pairKey = `${dictItem.pronunciation.join("")}-${dictItem.surface}`;
         mergedDictMap.set(id, [id, dictItem]);
         usedPairs.add(pairKey);
       }
@@ -66,7 +71,7 @@ export const dictionaryStore = createPartialStore<DictionaryStoreTypes>({
         if (i === defaultEngineIndex) continue;  // デフォルトエンジンはスキップ
         const dict = allDict[i];
         for (const [id, dictItem] of Object.entries(dict)) {
-          const pairKey = `${dictItem.yomi}-${dictItem.surface}`;
+          const pairKey = `${dictItem.pronunciation.join("")}-${dictItem.surface}`;
           // 既存のエントリがない場合のみ追加（新規項目）
           // ただし、その読み-表層形ペアが既に使用されている場合は追加しない
           if (!mergedDictMap.has(id) && !usedPairs.has(pairKey)) {
@@ -79,7 +84,7 @@ export const dictionaryStore = createPartialStore<DictionaryStoreTypes>({
       // 50音順でソート
       const mergedDict = [...mergedDictMap.values()];
       mergedDict.sort((a, b) => {
-        if (a[1].yomi > b[1].yomi) {
+        if (a[1].pronunciation.join("") > b[1].pronunciation.join("")) {
           return 1;
         } else {
           return -1;
