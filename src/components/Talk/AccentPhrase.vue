@@ -17,7 +17,7 @@
         :accentPhrase
         :uiLocked
         :shiftKeyFlag
-        :onChangeAccent="changeAccent"
+        :onChangeAccentPosition="changeAccentPosition"
       />
     </template>
     <!-- イントネーション項目のスライダー -->
@@ -350,7 +350,7 @@ const getHoveredText = (mora: Mora, moraIndex: number) => {
   }
 };
 
-const changeAccent = (accentPhraseIndex: number, accent: number) =>
+const changeAccentPosition = (accentPhraseIndex: number, accent: number) =>
   store.actions.COMMAND_CHANGE_ACCENT({
     audioKey: props.audioKey,
     accentPhraseIndex,

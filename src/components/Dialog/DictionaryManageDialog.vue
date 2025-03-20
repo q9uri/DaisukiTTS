@@ -28,7 +28,7 @@
               textColor="display"
               class="text-bold"
               :disable="uiLocked"
-              @click="handleNewWord"
+              @click="handleAddNewWord"
             />
           </QToolbar>
         </QHeader>
@@ -48,9 +48,9 @@
           </div>
           <div class="col-4 word-list-col">
             <div
-              v-if="wordEditing && isNewWordEditing"
+              v-if="isWordEditing && isNewWordEditing"
               class="word-list-disable-overlay"
-              @click="discardOrNotDialog(handleCancel)"
+              @click="discardOrNotDialog(toInitialState)"
             ></div>
             <QList class="word-list">
               <QItem
@@ -69,7 +69,7 @@
                     value.surface
                   }}</QItemLabel>
                   <QItemLabel caption class="row">
-                    <span>{{ value.yomi }} [{{ wordTypeLabels[getWordTypeFromPartOfSpeech(value)] }}]</span>
+                    <span>{{ value.pronunciation }} [{{ wordTypeLabels[getWordTypeFromPartOfSpeech(value)] }}]</span>
                     <span class="q-ml-auto">優先度:{{ value.priority }}</span>
                   </QItemLabel>
                 </QItemSection>
@@ -78,29 +78,25 @@
           </div>
 
           <DictionaryEditWordDialog
-            ref="editWordDialog"
-            :surface
-            :yomi
-            :wordEditing
-            :wordType
-            :wordTypeLabels
-            :wordPriority
-            :isOnlyHiraOrKana
-            :accentPhrase
-            :selectedId
-            :isNewWordEditing
             :uiLocked
+            :isWordEditing
             :isWordChanged
-            @update:surface="setSurface"
-            @update:yomi="setYomi"
+            :isNewWordEditing
+            :selectedId
+            :wordAccentPhraseItems
+            :wordType
+            :wordPriority
+            @update:surface="updateSurface"
+            @update:pronunciation="updatePronunciation"
             @update:wordType="wordType = $event"
             @update:wordPriority="wordPriority = $event"
-            @changeAccent="changeAccent"
-            @deleteWord="handleDeleteWord"
+            @changeAccentPosition="changeAccentPosition"
+            @addWordAccentPhraseItem="addWordAccentPhraseItem"
+            @removeWordAccentPhraseItem="removeWordAccentPhraseItem"
             @resetWord="handleResetWord"
+            @deleteWord="handleDeleteWord"
             @saveWord="handleSaveWord"
-            @cancel="discardOrNotDialog(handleCancel)"
-            @setSurfaceInput="surfaceInput = $event"
+            @cancel="discardOrNotDialog(toInitialState)"
           />
         </QPage>
       </QPageContainer>
@@ -109,16 +105,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
-import { QInput } from "quasar";
+import { computed, watch } from "vue";
 import DictionaryEditWordDialog from "./DictionaryEditWordDialog.vue";
-import {
-  hideAllLoadingScreen,
-  showLoadingScreen,
-} from "@/components/Dialog/Dialog";
-import { useStore } from "@/store";
-import { WordTypes } from "@/openapi";
+import { hideAllLoadingScreen, showLoadingScreen } from "@/components/Dialog/Dialog";
 import { useDictionaryEditor } from "@/composables/useDictionaryEditor";
+import { getWordTypeFromPartOfSpeech, wordTypeLabels } from "@/domain/japanese";
+import { useStore } from "@/store";
 
 const props = defineProps<{
   modelValue: boolean;
@@ -134,51 +126,34 @@ const dictionaryManageDialogOpenedComputed = computed({
   set: (val) => emit("update:modelValue", val),
 });
 
-// useDictionaryEditorから編集ロジックとステートを取得
+// useDictionaryEditorから編集ロジックと状態を取得
 const {
-  wordEditing,
+  // 状態
+  uiLocked,
+  loadingDictState,
+  userDict,
+  isWordEditing,
+  isWordChanged,
   isNewWordEditing,
   selectedId,
-  uiLocked,
-  userDict,
-  isOnlyHiraOrKana,
-  accentPhrase,
-  surface,
-  yomi,
+  wordAccentPhraseItems,
   wordType,
   wordPriority,
-  loadingDictState,
-  isWordChanged,
 
+  // 関数
   loadUserDict,
-  setSurface,
-  setYomi,
-  getWordTypeFromPartOfSpeech,
-  updateWord,
-  addWord,
-  deleteWord,
-  changeAccent,
+  addWordToEngine,
+  updateWordToEngine,
+  deleteWordFromEngine,
+  updateSurface,
+  updatePronunciation,
+  changeAccentPosition,
+  addWordAccentPhraseItem,
+  removeWordAccentPhraseItem,
   toInitialState,
-  toWordEditingState,
-  toWordSelectedState,
-  newWord,
+  addNewWord,
   selectWord,
-  cancel,
 } = useDictionaryEditor();
-
-// 品詞ラベルの定義
-const wordTypeLabels = ref({
-  [WordTypes.ProperNoun]: "固有名詞",
-  [WordTypes.LocationName]: "地名",
-  [WordTypes.OrganizationName]: "組織・施設名",
-  [WordTypes.PersonName]: "人名",
-  [WordTypes.PersonFamilyName]: "人名 - 姓",
-  [WordTypes.PersonGivenName]: "人名 - 名",
-  [WordTypes.CommonNoun]: "一般名詞",
-  [WordTypes.Verb]: "動詞",
-  [WordTypes.Adjective]: "形容詞",
-  [WordTypes.Suffix]: "接尾辞",
-});
 
 // 辞書読み込みの処理
 async function loadingDictProcess() {
@@ -203,7 +178,12 @@ watch(dictionaryManageDialogOpenedComputed, async (newValue) => {
   }
 });
 
-// 保存前の変更破棄確認
+// ダイアログを閉じる
+const closeDialog = () => {
+  dictionaryManageDialogOpenedComputed.value = false;
+};
+
+// 保存前の変更の破棄を確認
 async function discardOrNotDialog(okCallback: () => void) {
   if (isWordChanged.value) {
     const result = await store.actions.SHOW_WARNING_DIALOG({
@@ -220,34 +200,33 @@ async function discardOrNotDialog(okCallback: () => void) {
   }
 }
 
-// ダイアログを閉じる処理
-const closeDialog = () => {
-  dictionaryManageDialogOpenedComputed.value = false;
-};
-
-// surfaceInputの参照を保持（DictionaryEditWordDialogから設定される）
-const surfaceInput = ref<QInput>();
-const editWordDialog = ref();
-
-// 各種操作のハンドラ
-const handleNewWord = () => {
-  if (wordEditing.value && isWordChanged.value) {
-    void discardOrNotDialog(newWord);
+const handleAddNewWord = () => {
+  if (isWordEditing.value && isWordChanged.value) {
+    void discardOrNotDialog(addNewWord);
   } else {
-    newWord();
+    addNewWord();
   }
 };
 
 const handleSelectWord = (id: string) => {
-  if (wordEditing.value && isWordChanged.value) {
+  if (isWordEditing.value && isWordChanged.value) {
     void discardOrNotDialog(() => selectWord(id));
   } else {
     selectWord(id);
   }
 };
 
-const handleCancel = () => {
-  cancel();
+const handleResetWord = async (id: string) => {
+  const result = await store.actions.SHOW_WARNING_DIALOG({
+    title: "単語の変更を破棄しますか？",
+    message: "保存されていない変更内容は失われます。",
+    actionName: "破棄する",
+    isWarningColorButton: true,
+  });
+  if (result === "OK") {
+    // 指定された ID の単語を選択し直す
+    selectWord(id);
+  }
 };
 
 const handleDeleteWord = async () => {
@@ -263,7 +242,7 @@ const handleDeleteWord = async () => {
       showLoadingScreen({
         message: "単語を辞書から削除しています...",
       });
-      await deleteWord(selectedId.value);
+      await deleteWordFromEngine(selectedId.value);
     } catch {
       return;
     } finally {
@@ -274,24 +253,9 @@ const handleDeleteWord = async () => {
   }
 };
 
-const handleResetWord = async (id: string) => {
-  const result = await store.actions.SHOW_WARNING_DIALOG({
-    title: "単語の変更を破棄しますか？",
-    message: "保存されていない変更内容は失われます。",
-    actionName: "破棄する",
-    isWarningColorButton: true,
-  });
-  if (result === "OK") {
-    selectedId.value = id;
-    surface.value = userDict.value[id].surface;
-    void setYomi(userDict.value[id].yomi, true);
-    wordPriority.value = userDict.value[id].priority;
-    toWordEditingState();
-  }
-};
-
 const handleSaveWord = async () => {
-  if (!accentPhrase.value) throw new Error("accentPhrase === undefined");
+  if (!wordAccentPhraseItems.value[0]?.accentPhrase)
+    throw new Error("accentPhrase === undefined");
 
   try {
     showLoadingScreen({
@@ -300,25 +264,18 @@ const handleSaveWord = async () => {
 
     let wordId: string;
     if (selectedId.value) {
-      // 既存単語の更新
-      await updateWord(selectedId.value);
+      // 既存単語の更新をエンジンに反映
+      await updateWordToEngine(selectedId.value);
       wordId = selectedId.value;
     } else {
-      // 新規単語の追加
-      wordId = await addWord();
+      // 新規単語の追加をエンジンに反映
+      wordId = await addWordToEngine();
     }
 
     await loadingDictProcess();
 
     // 変更後の単語を選択
-    isNewWordEditing.value = false;
-    selectedId.value = wordId;
-    surface.value = userDict.value[wordId].surface;
-    void setYomi(userDict.value[wordId].yomi, true);
-    wordType.value = getWordTypeFromPartOfSpeech(userDict.value[wordId]);
-    wordPriority.value = userDict.value[wordId].priority;
-    toWordSelectedState();
-    toWordEditingState();
+    selectWord(wordId);
   } catch (e) {
     console.error(e);
   } finally {

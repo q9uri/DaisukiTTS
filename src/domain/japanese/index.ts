@@ -2,6 +2,9 @@
  * 日本語のひらがなやカタカナなどを扱う
  */
 
+import { UserDictWord, WordTypes } from "@/openapi";
+
+
 /** 読み仮名を検出するための正規表現を生成する */
 export const createKanaRegex = (includeSeparation?: boolean): RegExp => {
   // 以下の文字のみで構成される場合、「読み仮名」としてこれを処理する
@@ -13,6 +16,17 @@ export const createKanaRegex = (includeSeparation?: boolean): RegExp => {
     return /^[\u3041-\u3094\u30A1-\u30F4\u30FC\u3001\uFF1F]+$/;
   }
   return /^[\u3041-\u3094\u30A1-\u30F4\u30FC]+$/;
+};
+
+/** 半角文字を全角文字に変換する */
+export const convertHankakuToZenkaku = (text: string): string => {
+  // " "などの目に見えない文字をまとめて全角スペース(0x3000)に置き換える
+  text = text.replace(/\p{Z}/gu, () => String.fromCharCode(0x3000));
+
+  // "!"から"~"までの範囲の文字(数字やアルファベット)を全角に置き換える
+  return text.replace(/[\u0021-\u007e]/g, (s) => {
+    return String.fromCharCode(s.charCodeAt(0) + 0xfee0);
+  });
 };
 
 /** ひらがなをカタカナにする */
@@ -55,3 +69,54 @@ export const moraPattern = new RegExp(
     ")",
   "g",
 );
+
+/** 品詞フィールドから WordTypes を推定する */
+export const getWordTypeFromPartOfSpeech = (dictData: UserDictWord | undefined): WordTypes => {
+  // 基本ないが、もし dictData が undefined の場合は固有名詞として扱う
+  if (!dictData) return WordTypes.ProperNoun;
+
+  const { partOfSpeech, partOfSpeechDetail1, partOfSpeechDetail2, partOfSpeechDetail3 } = dictData;
+  if (partOfSpeech === "名詞") {
+    if (partOfSpeechDetail1 === "固有名詞") {
+      if (partOfSpeechDetail2 === "地域" && partOfSpeechDetail3 === "一般") {
+        return WordTypes.LocationName;
+      }
+      if (partOfSpeechDetail2 === "組織") {
+        return WordTypes.OrganizationName;
+      }
+      if (partOfSpeechDetail2 === "人名") {
+        if (partOfSpeechDetail3 === "一般") {
+          return WordTypes.PersonName;
+        }
+        if (partOfSpeechDetail3 === "姓") {
+          return WordTypes.PersonFamilyName;
+        }
+        if (partOfSpeechDetail3 === "名") {
+          return WordTypes.PersonGivenName;
+        }
+      }
+      return WordTypes.ProperNoun;
+    }
+    if (partOfSpeechDetail1 === "接尾") return WordTypes.Suffix;
+    return WordTypes.CommonNoun;
+  }
+  if (partOfSpeech === "動詞") return WordTypes.Verb;
+  if (partOfSpeech === "形容詞") return WordTypes.Adjective;
+
+  // デフォルトは固有名詞
+  return WordTypes.ProperNoun;
+};
+
+// 品詞ラベルの定義
+export const wordTypeLabels = {
+  [WordTypes.ProperNoun]: "固有名詞",
+  [WordTypes.LocationName]: "地名",
+  [WordTypes.OrganizationName]: "組織・施設名",
+  [WordTypes.PersonName]: "人名",
+  [WordTypes.PersonFamilyName]: "人名 - 姓",
+  [WordTypes.PersonGivenName]: "人名 - 名",
+  [WordTypes.CommonNoun]: "一般名詞",
+  [WordTypes.Verb]: "動詞",
+  [WordTypes.Adjective]: "形容詞",
+  [WordTypes.Suffix]: "接尾辞",
+};

@@ -1,208 +1,112 @@
 import { ref, computed } from "vue";
 import {
+  createKanaRegex,
+  convertHankakuToZenkaku,
   convertHiraToKana,
   convertLongVowel,
-  createKanaRegex
+  getWordTypeFromPartOfSpeech,
 } from "@/domain/japanese";
-import {
-  AccentPhrase,
-  UserDictWord,
-  WordTypes
-} from "@/openapi";
+import { AccentPhrase, UserDictWord, WordTypes } from "@/openapi";
 import { useStore } from "@/store";
 
-export interface PronunciationItem {
+
+export interface WordAccentPhraseItem {
   surface: string;
-  yomi: string;
+  pronunciation: string;
   accentPhrase?: AccentPhrase;
+  isValid: boolean;  // pronunciation がひらがな/カタカナのみから構成されているかどうか
 }
 
 const defaultWordType = WordTypes.ProperNoun;
 const defaultDictPriority = 5;
 
-export function useDictionaryEditor(initialSurface = "", initialYomi = "") {
+export function useDictionaryEditor(initialSurface = "", initialPronunciation = "") {
   const store = useStore();
 
   // 編集状態の管理
-  const wordEditing = ref(false);
+  const uiLocked = ref(false);  // ダイアログ内で store.getters.UI_LOCKED は常に true なので独自に管理
+  const loadingDictState = ref<null | "loading" | "synchronizing">(null);
+  const userDict = ref<Record<string, UserDictWord>>({});
+  const isWordEditing = ref(false);
   const isNewWordEditing = ref(false);
   const selectedId = ref("");
   const lastSelectedId = ref("");
-  const uiLocked = ref(false);  // ダイアログ内で store.getters.UI_LOCKED は常に true なので独自に管理
-  const surface = ref(initialSurface);
-  const yomi = ref(initialYomi);
+  const wordAccentPhraseItems = ref<WordAccentPhraseItem[]>([
+    { surface: initialSurface, pronunciation: initialPronunciation, isValid: true }
+  ]);
   const wordType = ref<WordTypes>(defaultWordType);
   const wordPriority = ref(defaultDictPriority);
-  const loadingDictState = ref<null | "loading" | "synchronizing">(null);
-  const userDict = ref<Record<string, UserDictWord>>({});
-  const isOnlyHiraOrKana = ref(true);
-  const accentPhrase = ref<AccentPhrase | undefined>();
 
-  // 複数アクセント対応を準備
-  const pronunciationItems = ref<PronunciationItem[]>([
-    { surface: initialSurface, yomi: initialYomi }
-  ]);
+  // 状態が変更されているかどうかを判定する
+  const isWordChanged = computed((): boolean => {
+    if (selectedId.value === "") {
+      // 新規単語の場合
+      if (wordAccentPhraseItems.value.length === 0) {
+        return false;
+      }
 
-  // 複合単語（表層形）の連結結果
-  const combinedSurface = ref(initialSurface);
+      // 少なくとも1つの有効な項目があるかチェック
+      return wordAccentPhraseItems.value.some(item =>
+        item.surface !== "" &&
+        item.pronunciation !== "" &&
+        item.accentPhrase != undefined
+      );
+    }
 
-  // 入力検証用 (ひらがな／カタカナのみチェック等)
-  const kanaRegex = createKanaRegex();
+    // 一旦代入することで、userDictそのものが更新された時もcomputedするようにする
+    const dict = userDict.value;
+    const dictData = dict[selectedId.value];
+    if (!dictData) {
+      return false;
+    }
 
-  function isYomiValid(text: string): boolean {
-    return text.length === 0 || kanaRegex.test(text);
-  }
+    const currentWordType = getWordTypeFromPartOfSpeech(dictData);
 
-  const createUILockAction = function <T>(action: Promise<T>) {
+    // 基本情報の変更チェック
+    const basicInfoChanged =
+      dictData.surface !== wordAccentPhraseItems.value[0].surface ||
+      dictData.pronunciation !== wordAccentPhraseItems.value[0].pronunciation ||
+      dictData.accentType !== computeRegisteredAccent(0) ||
+      currentWordType !== wordType.value ||
+      dictData.priority !== wordPriority.value;
+
+    // 複数のアクセント句項目の変更チェック
+    const accentPhraseItemsChanged = wordAccentPhraseItems.value.length > 1;
+
+    return basicInfoChanged || accentPhraseItemsChanged;
+  });
+
+  // UI をロックした状態で行う処理をラップする関数
+  const createUILockAction = async function <T>(action: Promise<T>) {
     uiLocked.value = true;
-    return action.finally(() => {
+    try {
+      return await action;
+    } finally {
       uiLocked.value = false;
-    });
-  };
-
-  // 各発音ペアの文字列変更時に全体更新
-  function updateCombinedSurface(): void {
-    combinedSurface.value = pronunciationItems.value.map(item => item.surface).join("");
-    surface.value = combinedSurface.value;
-  }
-
-  // 品詞フィールドから WordTypes を推定する関数
-  const getWordTypeFromPartOfSpeech = (dictData: UserDictWord | undefined): WordTypes => {
-    // 基本ないが、もし dictData が undefined の場合は固有名詞として扱う
-    if (!dictData) return WordTypes.ProperNoun;
-
-    const { partOfSpeech, partOfSpeechDetail1, partOfSpeechDetail2, partOfSpeechDetail3 } = dictData;
-    if (partOfSpeech === "名詞") {
-      if (partOfSpeechDetail1 === "固有名詞") {
-        if (partOfSpeechDetail2 === "地域" && partOfSpeechDetail3 === "一般") {
-          return WordTypes.LocationName;
-        }
-        if (partOfSpeechDetail2 === "組織") {
-          return WordTypes.OrganizationName;
-        }
-        if (partOfSpeechDetail2 === "人名") {
-          if (partOfSpeechDetail3 === "一般") {
-            return WordTypes.PersonName;
-          }
-          if (partOfSpeechDetail3 === "姓") {
-            return WordTypes.PersonFamilyName;
-          }
-          if (partOfSpeechDetail3 === "名") {
-            return WordTypes.PersonGivenName;
-          }
-        }
-        return WordTypes.ProperNoun;
-      }
-      if (partOfSpeechDetail1 === "接尾") return WordTypes.Suffix;
-      return WordTypes.CommonNoun;
     }
-    if (partOfSpeech === "動詞") return WordTypes.Verb;
-    if (partOfSpeech === "形容詞") return WordTypes.Adjective;
-
-    // デフォルトは固有名詞
-    return WordTypes.ProperNoun;
   };
 
-  // accent phraseにあるaccentと実際に登録するアクセントには差が生まれる
+  // accent phrase にある accent と実際に登録するアクセントには差が生まれる
   // アクセントが自動追加される「ガ」に指定されている場合、
-  // 実際に登録するaccentの値は0となるので、そうなるように処理する
-  const computeRegisteredAccent = () => {
-    if (!accentPhrase.value) return 0;  // エラーにさせないために0を返す
-    let accent = accentPhrase.value.accent;
-    accent = accent === accentPhrase.value.moras.length ? 0 : accent;
+  // 実際に登録する accent の値は0となるので、そうなるように処理する
+  const computeRegisteredAccent = (accentPhraseIndex = 0) => {
+    const item = wordAccentPhraseItems.value[accentPhraseIndex];
+    if (!item?.accentPhrase) return 0;  // エラーにさせないために0を返す
+    let accent = item.accentPhrase.accent;
+    accent = accent === item.accentPhrase.moras.length ? 0 : accent;
     return accent;
   };
 
-  // computeの逆
-  // 辞書から得たaccentが0の場合に、自動で追加される「ガ」の位置にアクセントを表示させるように処理する
-  const computeDisplayAccent = () => {
-    if (!accentPhrase.value || !selectedId.value) return 0;  // エラーにさせないために0を返す
+  // computeRegisteredAccent の逆
+  // 辞書から得た accent が0の場合に、自動で追加される「ガ」の位置にアクセントを表示させるように処理する
+  const computeDisplayAccent = (accentPhraseIndex = 0) => {
+    if (!wordAccentPhraseItems.value[accentPhraseIndex]?.accentPhrase || !selectedId.value) return 0;  // エラーにさせないために0を返す
     let accent = userDict.value[selectedId.value].accentType;
-    accent = accent === 0 ? accentPhrase.value.moras.length : accent;
+    accent = accent === 0 ? wordAccentPhraseItems.value[accentPhraseIndex].accentPhrase.moras.length : accent;
     return accent;
   };
 
-  // 読み更新（アクセント句取得の API 呼び出しは内部でラップ）
-  async function setYomi(text: string, changeWord?: boolean): Promise<void> {
-    const userOrderedCharacterInfos = store.getters.USER_ORDERED_CHARACTER_INFOS("talk");
-    if (userOrderedCharacterInfos == undefined)
-      throw new Error("assert USER_ORDERED_CHARACTER_INFOS");
-    if (store.state.engineIds.length === 0)
-      throw new Error("assert engineId.length > 0");
-    const characterInfo = userOrderedCharacterInfos[0].metas;
-    const { engineId, styleId } = characterInfo.styles[0];
-
-    // テキスト長が0の時にエラー表示にならないように、テキスト長を考慮する
-    isOnlyHiraOrKana.value = !text.length || kanaRegex.test(text);
-    // 読みが変更されていない場合は、アクセントフレーズに変更を加えない
-    // ただし、読みが同じで違う単語が存在する場合が考えられるので、changeWord フラグを考慮する
-    // 「ガ」が自動挿入されるので、それを考慮して slice している
-    if (
-      text ==
-        accentPhrase.value?.moras
-          .map((v) => v.text)
-          .join("")
-          .slice(0, -1) &&
-      !changeWord
-    ) {
-      return;
-    }
-    if (isOnlyHiraOrKana.value && text.length) {
-      text = convertHiraToKana(text);
-      text = convertLongVowel(text);
-      accentPhrase.value = (
-        await createUILockAction(
-          store.actions.FETCH_ACCENT_PHRASES({
-            text: text + "ガ'",
-            engineId,
-            styleId,
-            isKana: true,
-          }),
-        )
-      )[0];
-      if (selectedId.value && userDict.value[selectedId.value].yomi === text) {
-        accentPhrase.value.accent = computeDisplayAccent();
-      }
-    } else {
-      accentPhrase.value = undefined;
-    }
-    yomi.value = text;
-
-    // 将来的な複数アクセント句対応のため、現状は最初の項目のみ更新
-    if (pronunciationItems.value.length > 0) {
-      pronunciationItems.value[0].yomi = text;
-      pronunciationItems.value[0].accentPhrase = accentPhrase.value;
-    }
-  }
-
-  // 辞書データから状態を更新する
-  async function loadWord(dictData: UserDictWord): Promise<void> {
-    surface.value = dictData.surface;
-    yomi.value = dictData.yomi;
-    wordType.value = getWordTypeFromPartOfSpeech(dictData);
-    wordPriority.value = dictData.priority;
-
-    // 複数アクセント句対応の準備
-    const stemArray: string[] = Array.isArray(dictData.stem) ? dictData.stem : [dictData.stem];
-    const yomiArray: string[] = Array.isArray(dictData.yomi) ? dictData.yomi : [dictData.yomi];
-    const accentTypeArray: number[] = Array.isArray(dictData.accentType) ? dictData.accentType : [dictData.accentType];
-
-    pronunciationItems.value = [];
-    for (let i = 0; i < Math.max(stemArray.length, yomiArray.length); i++) {
-      const itemSurface = i < stemArray.length ? stemArray[i] : "";
-      const itemYomi = i < yomiArray.length ? yomiArray[i] : "";
-      pronunciationItems.value.push({
-        surface: itemSurface,
-        yomi: itemYomi
-      });
-    }
-
-    // 現状は1つ目の項目のみアクセント句を設定
-    await setYomi(yomi.value, true);
-    updateCombinedSurface();
-  }
-
-  // 辞書操作系関数
+  // 現在エンジン側に保持されているユーザー辞書を読み込む
   async function loadUserDict(): Promise<void> {
     if (store.state.engineIds.length === 0)
       throw new Error("assert engineId.length > 0");
@@ -232,16 +136,17 @@ export function useDictionaryEditor(initialSurface = "", initialYomi = "") {
     loadingDictState.value = null;
   }
 
-  // 単語追加の処理
-  async function addWord(): Promise<string> {
-    if (!accentPhrase.value) throw new Error("accentPhrase === undefined");
-    const accent = computeRegisteredAccent();
+  // 現在状態で保持している単語をエンジン側に追加する
+  async function addWordToEngine(): Promise<string> {
+    if (!wordAccentPhraseItems.value[0]?.accentPhrase)
+      throw new Error("accentPhrase === undefined");
+    const accent = computeRegisteredAccent(0);
 
     try {
       const wordUuid = await createUILockAction(
         store.actions.ADD_WORD({
-          surface: surface.value,
-          pronunciation: yomi.value,
+          surface: wordAccentPhraseItems.value.map(item => item.surface).join(""),
+          pronunciation: wordAccentPhraseItems.value.map(item => item.pronunciation).join(""),
           accentType: accent,
           wordType: wordType.value,
           priority: wordPriority.value,
@@ -257,16 +162,17 @@ export function useDictionaryEditor(initialSurface = "", initialYomi = "") {
     }
   }
 
-  // 単語更新の処理
-  async function updateWord(wordId: string): Promise<void> {
-    if (!accentPhrase.value) throw new Error("accentPhrase === undefined");
-    const accent = computeRegisteredAccent();
+  // 現在状態で保持している単語をエンジン側に反映・更新する
+  async function updateWordToEngine(wordId: string): Promise<void> {
+    if (!wordAccentPhraseItems.value[0]?.accentPhrase)
+      throw new Error("accentPhrase === undefined");
+    const accent = computeRegisteredAccent(0);
 
     try {
       await store.actions.REWRITE_WORD({
         wordUuid: wordId,
-        surface: surface.value,
-        pronunciation: yomi.value,
+        surface: wordAccentPhraseItems.value.map(item => item.surface).join(""),
+        pronunciation: wordAccentPhraseItems.value.map(item => item.pronunciation).join(""),
         accentType: accent,
         wordType: wordType.value,
         priority: wordPriority.value,
@@ -280,8 +186,8 @@ export function useDictionaryEditor(initialSurface = "", initialYomi = "") {
     }
   }
 
-  // 単語削除の処理
-  async function deleteWord(wordId: string): Promise<void> {
+  // 現在状態で保持している単語をエンジン側から削除する
+  async function deleteWordFromEngine(wordId: string): Promise<void> {
     try {
       await createUILockAction(
         store.actions.DELETE_WORD({
@@ -297,55 +203,28 @@ export function useDictionaryEditor(initialSurface = "", initialYomi = "") {
     }
   }
 
-  // 変更状態の判定
-  const isWordChanged = computed((): boolean => {
-    if (selectedId.value === "") {
-      return (
-        surface.value !== "" && yomi.value !== "" && accentPhrase.value != undefined
-      );
-    }
-    // 一旦代入することで、userDictそのものが更新された時もcomputedするようにする
-    const dict = userDict.value;
-    const dictData = dict[selectedId.value];
-    if (!dictData) {
-      return false;
-    }
-    const currentWordType = getWordTypeFromPartOfSpeech(dictData);
-    return (
-      dictData.surface !== surface.value ||
-      dictData.yomi !== yomi.value ||
-      dictData.accentType !== computeRegisteredAccent() ||
-      currentWordType !== wordType.value ||
-      dictData.priority !== wordPriority.value
-    );
-  });
-
-  // 便利関数 - surface入力時の文字変換
-  function convertHankakuToZenkaku(text: string): string {
-    // " "などの目に見えない文字をまとめて全角スペース(0x3000)に置き換える
-    text = text.replace(/\p{Z}/gu, () => String.fromCharCode(0x3000));
-
-    // "!"から"~"までの範囲の文字(数字やアルファベット)を全角に置き換える
-    return text.replace(/[\u0021-\u007e]/g, (s) => {
-      return String.fromCharCode(s.charCodeAt(0) + 0xfee0);
-    });
-  }
-
-  function setSurface(text: string): void {
+  // 指定されたアクセント句の表層形を更新する
+  function updateSurface(text: string, accentPhraseIndex = 0): void {
     // surfaceを全角化する
     // 入力は半角でも問題ないが、登録時に全角に変換され、isWordChangedの判断がおかしくなることがあるので、
     // 入力後に自動で変換するようにする
-    surface.value = convertHankakuToZenkaku(text);
+    const convertedText = convertHankakuToZenkaku(text);
 
-    // 将来的な複数アクセント句対応のため、現状は最初の項目のみ更新
-    if (pronunciationItems.value.length > 0) {
-      pronunciationItems.value[0].surface = surface.value;
+    // 指定されたインデックスが存在しない場合は作成
+    while (wordAccentPhraseItems.value.length <= accentPhraseIndex) {
+      wordAccentPhraseItems.value.push({
+        surface: "",
+        pronunciation: "",
+        isValid: true,
+      });
     }
-    updateCombinedSurface();
+
+    wordAccentPhraseItems.value[accentPhraseIndex].surface = convertedText;
   }
 
-  // アクセント変更の処理
-  async function changeAccent(_: number, accent: number): Promise<void> {
+  // 指定されたアクセント句の発音を更新する
+  async function updatePronunciation(text: string, accentPhraseIndex = 0, changeWord?: boolean): Promise<void> {
+    // ユーザーによるソート順で一番先頭にあたるキャラクターの EngineId, StyleId を取得する
     const userOrderedCharacterInfos = store.getters.USER_ORDERED_CHARACTER_INFOS("talk");
     if (userOrderedCharacterInfos == undefined)
       throw new Error("assert USER_ORDERED_CHARACTER_INFOS");
@@ -354,46 +233,139 @@ export function useDictionaryEditor(initialSurface = "", initialYomi = "") {
     const characterInfo = userOrderedCharacterInfos[0].metas;
     const { engineId, styleId } = characterInfo.styles[0];
 
-    if (accentPhrase.value) {
-      accentPhrase.value.accent = accent;
-      accentPhrase.value = (
+    // テキスト長が0の時にエラー表示にならないように、テキスト長を考慮する
+    const kanaRegex = createKanaRegex();
+    const isValid = !text.length || kanaRegex.test(text);
+
+    // 指定されたインデックスが存在しない場合は作成
+    while (wordAccentPhraseItems.value.length <= accentPhraseIndex) {
+      wordAccentPhraseItems.value.push({
+        surface: "",
+        pronunciation: "",
+        isValid: true,
+      });
+    }
+
+    // 現在の項目
+    const currentItem = wordAccentPhraseItems.value[accentPhraseIndex];
+    currentItem.isValid = isValid;
+
+    // 読みが変更されていない場合は、アクセントフレーズに変更を加えない
+    // ただし、読みが同じで違う単語が存在する場合が考えられるので、changeWord フラグを考慮する
+    // 「ガ」が自動挿入されるので、それを考慮して slice している
+    if (
+      text ===
+        currentItem.accentPhrase?.moras
+          .map((v) => v.text)
+          .join("")
+          .slice(0, -1) &&
+      !changeWord
+    ) {
+      return;
+    }
+
+    if (isValid && text.length) {
+      text = convertHiraToKana(text);
+      text = convertLongVowel(text);
+      const fetchedAccentPhrase = (
+        await store.actions.FETCH_ACCENT_PHRASES({
+          text: text + "ガ'",
+          engineId,
+          styleId,
+          isKana: true,
+        })
+      )[0];
+
+      currentItem.accentPhrase = fetchedAccentPhrase;
+
+      if (selectedId.value && userDict.value[selectedId.value].pronunciation === text && accentPhraseIndex === 0) {
+        currentItem.accentPhrase.accent = computeDisplayAccent(accentPhraseIndex);
+      }
+    } else {
+      currentItem.accentPhrase = undefined;
+    }
+
+    currentItem.pronunciation = text;
+  }
+
+  // 指定されたアクセント句のアクセント位置を変更する
+  async function changeAccentPosition(accentPhraseIndex: number, accent: number): Promise<void> {
+    // ユーザーによるソート順で一番先頭にあたるキャラクターの EngineId, StyleId を取得する
+    const userOrderedCharacterInfos = store.getters.USER_ORDERED_CHARACTER_INFOS("talk");
+    if (userOrderedCharacterInfos == undefined)
+      throw new Error("assert USER_ORDERED_CHARACTER_INFOS");
+    if (store.state.engineIds.length === 0)
+      throw new Error("assert engineId.length > 0");
+    const characterInfo = userOrderedCharacterInfos[0].metas;
+    const { engineId, styleId } = characterInfo.styles[0];
+
+    // 指定されたインデックスが存在する場合のみ処理
+    if (accentPhraseIndex < wordAccentPhraseItems.value.length && wordAccentPhraseItems.value[accentPhraseIndex].accentPhrase) {
+      const item = wordAccentPhraseItems.value[accentPhraseIndex];
+      item.accentPhrase!.accent = accent;
+
+      // アクセント位置変更後の音高・音素長などのモーラ情報を取得し、既存のアクセント句情報を更新する
+      item.accentPhrase = (
         await createUILockAction(
           store.actions.FETCH_MORA_DATA({
-            accentPhrases: [accentPhrase.value],
+            accentPhrases: [item.accentPhrase!],
             engineId,
             styleId,
           }),
         )
       )[0];
-
-      // 将来的な複数アクセント句対応のため、現状は最初の項目のみ更新
-      if (pronunciationItems.value.length > 0) {
-        pronunciationItems.value[0].accentPhrase = accentPhrase.value;
-      }
     }
   }
 
-  // 状態変更系
-  function toWordEditingState(): void {
-    wordEditing.value = true;
+  // 新しいアクセント句を追加する
+  function addWordAccentPhraseItem(): void {
+    wordAccentPhraseItems.value.push({
+      surface: "",
+      pronunciation: "",
+      isValid: true,
+    });
   }
 
+  // 指定されたアクセント句を削除する
+  function removeWordAccentPhraseItem(accentPhraseIndex: number): void {
+    if (wordAccentPhraseItems.value.length > 1) {
+      wordAccentPhraseItems.value.splice(accentPhraseIndex, 1);
+    }
+  }
+
+  // ダイヤログを新規追加状態に変更する
+  function toWordAddingState(): void {
+    // 新規追加状態に設定
+    isNewWordEditing.value = true;
+  }
+
+  // ダイヤログを編集状態に変更する
+  function toWordEditingState(): void {
+    // 編集状態に設定
+    isWordEditing.value = true;
+  }
+
+  // ダイヤログを選択状態に変更する
   function toWordSelectedState(): void {
-    wordEditing.value = false;
+    // 新規追加状態を解除
+    isNewWordEditing.value = false;
+    // 編集状態を解除
+    isWordEditing.value = false;
+    // 選択していた項目を記録
     lastSelectedId.value = selectedId.value;
   }
 
+  // ダイヤログを初期状態に戻す
   function toInitialState(): void {
+    // 編集状態を解除
+    isWordEditing.value = false;
+    // 新規追加状態を解除
     isNewWordEditing.value = false;
-    wordEditing.value = false;
+    // 状態を初期化
     selectedId.value = "";
-    surface.value = "";
-    void setYomi("");
+    wordAccentPhraseItems.value = [{ surface: "", pronunciation: "", isValid: true }];
     wordType.value = defaultWordType;
     wordPriority.value = defaultDictPriority;
-
-    // 初期状態では発音アイテムを初期化
-    pronunciationItems.value = [{ surface: "", yomi: "" }];
 
     // 辞書の最初の項目を選択する
     if (Object.keys(userDict.value).length > 0) {
@@ -405,92 +377,71 @@ export function useDictionaryEditor(initialSurface = "", initialYomi = "") {
     }
   }
 
-  // 選択処理
-  function selectWord(id: string): void {
-    selectedId.value = id;
-    surface.value = userDict.value[id].surface;
-    void setYomi(userDict.value[id].yomi, true);
-    wordType.value = getWordTypeFromPartOfSpeech(userDict.value[id]);
-    wordPriority.value = userDict.value[id].priority;
-    toWordSelectedState();
-    toWordEditingState();
-  }
-
-  // 新規単語追加時の処理
-  function newWord(): void {
-    isNewWordEditing.value = true;
+  // 新しい単語を追加できるように状態を変更する
+  function addNewWord(): void {
+    // 状態を初期化
     selectedId.value = "";
-    surface.value = "";
-    void setYomi("");
+    wordAccentPhraseItems.value = [{
+      surface: "",
+      pronunciation: "",
+      isValid: true,
+    }];
     wordType.value = defaultWordType;
     wordPriority.value = defaultDictPriority;
 
-    // 発音アイテムを初期化
-    pronunciationItems.value = [{ surface: "", yomi: "" }];
-
+    // 新規追加状態に設定
+    toWordAddingState();
+    // 編集状態に設定
     toWordEditingState();
   }
 
-  // 複数アクセント句対応のための追加機能
-  function addPronunciationItem(): void {
-    pronunciationItems.value.push({ surface: "", yomi: "" });
-    updateCombinedSurface();
-  }
+  // 指定された ID の単語を選択する
+  function selectWord(id: string): void {
+    // 選択に合わせて状態を更新
+    selectedId.value = id;
+    wordAccentPhraseItems.value = [{
+      surface: userDict.value[id].surface,
+      pronunciation: userDict.value[id].pronunciation,
+      isValid: true,
+    }];
+    wordType.value = getWordTypeFromPartOfSpeech(userDict.value[id]);
+    wordPriority.value = userDict.value[id].priority;
 
-  function removePronunciationItem(index: number): void {
-    if (pronunciationItems.value.length > 1) {
-      pronunciationItems.value.splice(index, 1);
-      updateCombinedSurface();
-    }
-  }
+    // 選択した項目の発音を設定
+    void updatePronunciation(userDict.value[id].pronunciation, 0, true);
 
-  // キャンセル処理
-  function cancel(): void {
-    toInitialState();
+    // 選択状態に設定
+    toWordSelectedState();
+    // 編集状態に設定
+    toWordEditingState();
   }
 
   // 辞書ダイアログで利用する状態とロジックをまとめて返す
   return {
     // 状態
-    wordEditing,
+    uiLocked,
+    loadingDictState,
+    userDict,
+    isWordEditing,
+    isWordChanged,
     isNewWordEditing,
     selectedId,
-    uiLocked,
-    userDict,
-    isOnlyHiraOrKana,
-    accentPhrase,
-    surface,
-    yomi,
+    wordAccentPhraseItems,
     wordType,
     wordPriority,
-    loadingDictState,
-    combinedSurface,
-    pronunciationItems,
-    isWordChanged,
 
     // 関数
     loadUserDict,
-    createUILockAction,
-    isYomiValid,
-    setSurface,
-    setYomi,
-    updateCombinedSurface,
-    computeRegisteredAccent,
-    getWordTypeFromPartOfSpeech,
-    addWord,
-    updateWord,
-    deleteWord,
-    loadWord,
-    changeAccent,
+    addWordToEngine,
+    updateWordToEngine,
+    deleteWordFromEngine,
+    updateSurface,
+    updatePronunciation,
+    changeAccentPosition,
+    addWordAccentPhraseItem,
+    removeWordAccentPhraseItem,
     toInitialState,
-    toWordEditingState,
-    toWordSelectedState,
-    newWord,
+    addNewWord,
     selectWord,
-    cancel,
-
-    // 複数アクセント句用の追加機能
-    addPronunciationItem,
-    removePronunciationItem,
   };
 }

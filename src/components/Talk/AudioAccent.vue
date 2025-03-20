@@ -50,7 +50,7 @@
         },
       ]"
       :style="{ 'grid-column': `${moraIndex * 2 + 1} / span 1` }"
-      @click="uiLocked || changeAccent(moraIndex + 1)"
+      @click="uiLocked || changeAccentPosition(moraIndex + 1)"
     >
       <svg width="19" height="50" viewBox="0 0 19 50">
         <line x1="9" y1="0" x2="9" y2="50" stroke-width="1" />
@@ -70,7 +70,7 @@ const props = withDefaults(
     accentPhraseIndex: number;
     uiLocked: boolean;
     shiftKeyFlag?: boolean;
-    onChangeAccent: (
+    onChangeAccentPosition: (
       accentPhraseIndex: number,
       accent: number,
     ) => Promise<void>;
@@ -80,11 +80,11 @@ const props = withDefaults(
   },
 );
 
-const changeAccent = (accent: number) =>
-  props.onChangeAccent(props.accentPhraseIndex, accent);
+const changeAccentPosition = (accent: number) =>
+  props.onChangeAccentPosition(props.accentPhraseIndex, accent);
 
 const previewAccentSlider = previewSliderHelper({
-  onChange: changeAccent,
+  onChange: changeAccentPosition,
   modelValue: () => props.accentPhrase.accent,
   disable: () => props.uiLocked,
   disableScroll: () => props.shiftKeyFlag,
