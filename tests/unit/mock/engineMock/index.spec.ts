@@ -75,26 +75,26 @@ describe("createOpenAPIEngineMock", () => {
 
     // 単語の追加
     const wordUuid = await mock.addUserDictWord({
-      surface: "テスト",
-      pronunciation: "テストテスト",
-      accentType: 1,
+      surface: ["テスト"],
+      pronunciation: ["テストテスト"],
+      accentType: [1],
     });
-    response = await mock.getUserDictWords();
+    response = await mock.getUserDictWords({});
     expect(response).toMatchSnapshot();
 
     // 単語の変更
     await mock.rewriteUserDictWord({
       wordUuid,
-      surface: "テスト",
-      pronunciation: "テストテストテスト",
-      accentType: 1,
+      surface: ["テスト"],
+      pronunciation: ["テストテストテスト"],
+      accentType: [1],
     });
-    response = await mock.getUserDictWords();
+    response = await mock.getUserDictWords({});
     expect(response).toMatchSnapshot();
 
     // 単語の削除
     await mock.deleteUserDictWord({ wordUuid });
-    response = await mock.getUserDictWords();
+    response = await mock.getUserDictWords({});
     expect(response).toMatchSnapshot();
   });
 });
