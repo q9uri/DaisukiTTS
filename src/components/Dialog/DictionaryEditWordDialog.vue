@@ -69,16 +69,18 @@
 
           <!-- 右側の追加・削除ボタン -->
           <div class="pronunciation-controls">
+            <!-- 最大 10 個までしか追加できない -->
             <QBtn
               round
               dense
               flat
               icon="sym_r_add"
               color="primary"
-              :disable="uiLocked"
+              :disable="uiLocked || wordAccentPhraseItems.length >= 10"
               class="add-button"
               @click="addWordAccentPhraseItem"
             />
+            <!-- 最低 1 個は残しておく -->
             <QBtn
               round
               dense
@@ -620,6 +622,9 @@ watch(
     display: flex;
     position: relative;
     margin-right: 24px;
+    &:last-child {
+      margin-right: 0;
+    }
   }
 
   .mora-table {
