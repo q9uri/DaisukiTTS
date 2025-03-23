@@ -52,7 +52,7 @@ AivisSpeech を起動するには、PC に 1.5GB 以上の空きメモリ (RAM) 
 
 > [!WARNING]
 > Windows 10 では、バージョン 22H2 での動作確認のみ行っています。  
-> **サポートが終了した Windows 10 の古いバージョンでは、AivisSpeech Engine がクラッシュし起動に失敗する事例が報告されています。**  
+> **サポートが終了した Windows 10 の古いバージョンや LTSC (Long Term Servicing Channel) 版の Windows 10 では、AivisSpeech Engine がクラッシュし起動に失敗する事例が報告されています。**  
 > セキュリティ上の観点からも、Windows 10 環境の方は、最低限バージョン 22H2 まで更新してからの利用を強くおすすめいたします。
 
 ## サポートされている音声合成モデル
