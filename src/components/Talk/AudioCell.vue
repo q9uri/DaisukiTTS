@@ -547,8 +547,8 @@ const contextMenudata = ref<
     MenuItemButton,
     MenuItemSeparator,
     MenuItemButton,
-    MenuItemSeparator,
-    MenuItemButton,
+    // MenuItemSeparator,
+    // MenuItemButton,
   ]
 >([
   // NOTE: audioTextBuffer.value の変更が nativeEl.value に反映されるのはnextTick。
@@ -598,21 +598,21 @@ const contextMenudata = ref<
     },
     disableWhenUiLocked: true,
   },
-  { type: "separator" },
-  {
-    type: "button",
-    label: "読みを変えずに適用",
-    onClick: async () => {
-      contextMenu.value?.hide();
-      isChangeFlag.value = false;
-      await store.actions.COMMAND_CHANGE_DISPLAY_TEXT({
-        audioKey: props.audioKey,
-        text: audioTextBuffer.value,
-      });
-      textField.value?.blur();
-    },
-    disableWhenUiLocked: true,
-  },
+  // { type: "separator" },
+  // {
+  //   type: "button",
+  //   label: "読みを変えずに適用",
+  //   onClick: async () => {
+  //     contextMenu.value?.hide();
+  //     isChangeFlag.value = false;
+  //     await store.actions.COMMAND_CHANGE_DISPLAY_TEXT({
+  //       audioKey: props.audioKey,
+  //       text: audioTextBuffer.value,
+  //     });
+  //     textField.value?.blur();
+  //   },
+  //   disableWhenUiLocked: true,
+  // },
 ]);
 /**
  * コンテキストメニューの開閉によりFocusやBlurが発生する可能性のある間は`true`。
