@@ -191,6 +191,15 @@ registerHotkeyWithCleanup({
 });
 registerHotkeyWithCleanup({
   editor: "talk",
+  name: "テキストをつなげて書き出し",
+  callback: () => {
+    if (!uiLocked.value) {
+      void store.actions.SHOW_CONNECT_AND_EXPORT_TEXT_DIALOG();
+    }
+  },
+});
+registerHotkeyWithCleanup({
+  editor: "talk",
   name: "テキストを読み込む",
   callback: () => {
     if (!uiLocked.value) {
