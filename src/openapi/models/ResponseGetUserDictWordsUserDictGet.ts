@@ -25,6 +25,12 @@ import {
     UserDictWordForCompatFromJSONTyped,
     UserDictWordForCompatToJSON,
 } from './UserDictWordForCompat';
+import type { WordTypes } from './WordTypes';
+import {
+    WordTypesFromJSON,
+    WordTypesFromJSONTyped,
+    WordTypesToJSON,
+} from './WordTypes';
 
 /**
  * 
@@ -74,6 +80,12 @@ export interface ResponseGetUserDictWordsUserDictGet {
      * @memberof ResponseGetUserDictWordsUserDictGet
      */
     partOfSpeechDetail3: any | null;
+    /**
+     * 品詞種別
+     * @type {WordTypes}
+     * @memberof ResponseGetUserDictWordsUserDictGet
+     */
+    wordType?: WordTypes;
     /**
      * 活用型
      * @type {any}
@@ -163,6 +175,7 @@ export function ResponseGetUserDictWordsUserDictGetFromJSONTyped(json: any, igno
         'partOfSpeechDetail1': json['part_of_speech_detail_1'],
         'partOfSpeechDetail2': json['part_of_speech_detail_2'],
         'partOfSpeechDetail3': json['part_of_speech_detail_3'],
+        'wordType': !exists(json, 'word_type') ? undefined : WordTypesFromJSON(json['word_type']),
         'inflectionalType': json['inflectional_type'],
         'inflectionalForm': json['inflectional_form'],
         'stem': json['stem'],
@@ -190,6 +203,7 @@ export function ResponseGetUserDictWordsUserDictGetToJSON(value?: ResponseGetUse
         'part_of_speech_detail_1': value.partOfSpeechDetail1,
         'part_of_speech_detail_2': value.partOfSpeechDetail2,
         'part_of_speech_detail_3': value.partOfSpeechDetail3,
+        'word_type': WordTypesToJSON(value.wordType),
         'inflectional_type': value.inflectionalType,
         'inflectional_form': value.inflectionalForm,
         'stem': value.stem,
