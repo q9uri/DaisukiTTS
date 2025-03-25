@@ -108,22 +108,22 @@ export function useDictionaryEditor(initialSurface = "", initialPronunciation = 
       userDict.value = await createUILockAction(
         store.actions.LOAD_ALL_USER_DICT(),
       );
-    } catch (ex) {
+    } catch (error) {
       await store.actions.SHOW_ALERT_DIALOG({
         title: "辞書の取得に失敗しました",
         message: "音声合成エンジンの再起動をお試しください。",
       });
-      throw ex;
+      throw error;
     }
     loadingDictState.value = "synchronizing";
     try {
       await createUILockAction(store.actions.SYNC_ALL_USER_DICT());
-    } catch (ex) {
+    } catch (error) {
       await store.actions.SHOW_ALERT_DIALOG({
         title: "辞書の同期に失敗しました",
         message: "音声合成エンジンの再起動をお試しください。",
       });
-      throw ex;
+      throw error;
     }
     loadingDictState.value = null;
   }
@@ -148,12 +148,12 @@ export function useDictionaryEditor(initialSurface = "", initialPronunciation = 
         }),
       );
       return wordUuid;
-    } catch (ex) {
+    } catch (error) {
       await store.actions.SHOW_ALERT_DIALOG({
         title: "単語の登録に失敗しました",
         message: "エンジンの再起動をお試しください。",
       });
-      throw ex;
+      throw error;
     }
   }
 
@@ -175,12 +175,12 @@ export function useDictionaryEditor(initialSurface = "", initialPronunciation = 
         wordType: wordType.value,
         priority: wordPriority.value,
       });
-    } catch (ex) {
+    } catch (error) {
       await store.actions.SHOW_ALERT_DIALOG({
         title: "単語の更新に失敗しました",
         message: "エンジンの再起動をお試しください。",
       });
-      throw ex;
+      throw error;
     }
   }
 
@@ -192,12 +192,12 @@ export function useDictionaryEditor(initialSurface = "", initialPronunciation = 
           wordUuid: wordId,
         }),
       );
-    } catch (ex) {
+    } catch (error) {
       await store.actions.SHOW_ALERT_DIALOG({
         title: "単語の削除に失敗しました",
         message: "音声合成エンジンの再起動をお試しください。",
       });
-      throw ex;
+      throw error;
     }
   }
 
@@ -458,6 +458,7 @@ export function useDictionaryEditor(initialSurface = "", initialPronunciation = 
     wordPriority,
 
     // 関数
+    createUILockAction,
     loadUserDict,
     addWordToEngine,
     updateWordToEngine,

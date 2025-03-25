@@ -2342,6 +2342,9 @@ export type DictionaryStoreTypes = {
   DELETE_WORD: {
     action(payload: { wordUuid: string }): Promise<void>;
   };
+  IMPORT_USER_DICT: {
+    action(payload: { importedDict: Record<string, UserDictWord> }): Promise<void>;
+  };
   SYNC_ALL_USER_DICT: {
     action(): Promise<void>;
   };

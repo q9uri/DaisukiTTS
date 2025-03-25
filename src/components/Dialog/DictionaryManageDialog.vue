@@ -22,6 +22,24 @@
               読み方＆アクセント辞書
             </QToolbarTitle>
             <QBtn
+              flat
+              icon="sym_r_file_upload"
+              label="インポート"
+              color="display"
+              class="text-bold q-px-sm q-mr-sm"
+              :disable="uiLocked"
+              @click="handleImportDictionary"
+            />
+            <QBtn
+              flat
+              icon="sym_r_file_download"
+              label="エクスポート"
+              color="display"
+              class="text-bold q-px-sm q-mr-sm"
+              :disable="uiLocked"
+              @click="handleExportDictionary"
+            />
+            <QBtn
               outline
               icon="sym_r_add"
               label="追加"
@@ -110,6 +128,8 @@ import DictionaryEditWordDialog from "./DictionaryEditWordDialog.vue";
 import { hideAllLoadingScreen, showLoadingScreen } from "@/components/Dialog/Dialog";
 import { useDictionaryEditor } from "@/composables/useDictionaryEditor";
 import { getWordTypeFromPartOfSpeech, wordTypeLabels } from "@/domain/japanese";
+import { createLogger } from "@/helpers/log";
+import { ResponseError } from "@/openapi";
 import { useStore } from "@/store";
 
 const props = defineProps<{
@@ -120,6 +140,8 @@ const emit = defineEmits<{
 }>();
 
 const store = useStore();
+
+const log = createLogger("DictionaryManageDialog");
 
 const dictionaryManageDialogOpenedComputed = computed({
   get: () => props.modelValue,
@@ -141,6 +163,7 @@ const {
   wordPriority,
 
   // 関数
+  createUILockAction,
   loadUserDict,
   addWordToEngine,
   updateWordToEngine,
@@ -276,10 +299,92 @@ const handleSaveWord = async () => {
 
     // 変更後の単語を選択
     selectWord(wordId);
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    log.error(error);
   } finally {
     hideAllLoadingScreen();
+  }
+};
+
+const handleImportDictionary = async (): Promise<void> => {
+  try {
+    const filePath = await window.backend.showOpenFileDialog({
+      title: "ユーザー辞書をインポート",
+      name: "ユーザー辞書ファイル (JSON 形式)",
+      mimeType: "application/json",
+      extensions: ["json"],
+      defaultPath: "user_dict.json",
+    });
+    if (!filePath) return;
+
+    const fileResult = await window.backend.readFile({ filePath });
+    if (!fileResult.ok) {
+      throw new Error(`Failed to read file: ${fileResult.error.message}`);
+    }
+
+    const fileContent = new TextDecoder().decode(fileResult.value);
+    const importedDict = JSON.parse(fileContent);
+    await createUILockAction(store.actions.IMPORT_USER_DICT({ importedDict }));
+    // インポート後に辞書を再読み込み
+    await loadUserDict();
+    // エディタ上での変更を破棄するため、selectedId を再度選択する
+    selectWord(selectedId.value);
+    await store.actions.SHOW_MESSAGE_DIALOG({
+      type: "info",
+      title: "ユーザー辞書のインポートが完了しました",
+      message: "ユーザー辞書が正常にインポートされました。",
+    });
+  } catch (error) {
+    log.error(error);
+    if (error instanceof ResponseError) {
+      void store.actions.SHOW_ALERT_DIALOG({
+        title: "ユーザー辞書のインポートに失敗しました",
+        message: "ファイルの形式が正しくありません。\n" +
+                 `(HTTP Error ${error.response.status} / ${await error.response.text()})`,
+      });
+    } else {
+      await store.actions.SHOW_ALERT_DIALOG({
+        title: "ユーザー辞書のインポートに失敗しました",
+        message: "ファイルの形式が正しくありません。",
+      });
+    }
+  }
+};
+
+const handleExportDictionary = async (): Promise<void> => {
+  try {
+    // 辞書を JSON 形式でエクスポート (インデント: 4スペース)
+    const dictJson = JSON.stringify(userDict.value, null, 4);
+    const filePath = await window.backend.showSaveFileDialog({
+      title: "ユーザー辞書をエクスポート",
+      name: "ユーザー辞書ファイル (JSON 形式)",
+      extensions: ["json"],
+      defaultPath: "user_dict.json",
+    });
+    if (!filePath) return;
+    await window.backend.writeFile({
+      filePath,
+      buffer: new TextEncoder().encode(dictJson),
+    });
+    await store.actions.SHOW_MESSAGE_DIALOG({
+      type: "info",
+      title: "ユーザー辞書のエクスポートが完了しました",
+      message: "ユーザー辞書が正常にエクスポートされました。",
+    });
+  } catch (error) {
+    log.error(error);
+    if (error instanceof ResponseError) {
+      void store.actions.SHOW_ALERT_DIALOG({
+        title: "ユーザー辞書のエクスポートに失敗しました",
+        message: "ファイルの書き込みに失敗しました。\n" +
+                 `(HTTP Error ${error.response.status} / ${await error.response.text()})`,
+      });
+    } else {
+      await store.actions.SHOW_ALERT_DIALOG({
+        title: "ユーザー辞書のエクスポートに失敗しました",
+        message: "ファイルの書き込みに失敗しました。",
+      });
+    }
   }
 };
 </script>

@@ -200,6 +200,35 @@ export const dictionaryStore = createPartialStore<DictionaryStoreTypes>({
     },
   },
 
+  IMPORT_USER_DICT: {
+    async action({ actions, getters }, { importedDict }) {
+      const defaultEngineId = getters.DEFAULT_ENGINE_ID;
+      // まずデフォルトエンジン (AivisSpeech Engine) にインポートする
+      await actions.INSTANTIATE_ENGINE_CONNECTOR({
+        engineId: defaultEngineId,
+      }).then((instance) =>
+        instance.invoke("importUserDictWords")({
+          override: true,
+          requestBody: Object.fromEntries(
+            Object.entries(importedDict).map(([k, v]) => [
+              k,
+              (() => {
+                // UserDictWord 型を JSON に変換してからリクエスト
+                return UserDictWordToJSON(v) as { [key: string]: string };
+                // 通常は OpenAPI クライアント側で camelCase から snake_case に変換されるはずだが、
+                // この API の requestBody ではなぜかその変換が行われないため、手動で snake_case に変換している
+                // これにより型が合わなくなるため、やむを得ず any を付与している
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              })() as any,
+            ]),
+          ),
+        }),
+      );
+      // 変更を他の全エンジンに同期する
+      await actions.SYNC_ALL_USER_DICT();
+    },
+  },
+
   SYNC_ALL_USER_DICT: {
     async action({ actions, getters }) {
       const defaultEngineId = getters.DEFAULT_ENGINE_ID;
@@ -241,7 +270,7 @@ export const dictionaryStore = createPartialStore<DictionaryStoreTypes>({
                   (() => {
                     // デフォルトエンジン (AivisSpeech Engine) の場合は UserDictWord 型のままインポートする
                     if (engineId === defaultEngineId) {
-                      // UserDictWord 型を JSON に変換してから返す
+                      // UserDictWord 型を JSON に変換してからリクエスト
                       return UserDictWordToJSON(v) as { [key: string]: string };
                     }
 
@@ -278,7 +307,7 @@ export const dictionaryStore = createPartialStore<DictionaryStoreTypes>({
                       compatWord.partOfSpeechDetail3 = "*";
                     }
 
-                    // UserDictWordForCompat 型を JSON に変換してから返す
+                    // UserDictWordForCompat 型を JSON に変換してからリクエスト
                     return UserDictWordForCompatToJSON(compatWord) as { [key: string]: string };
                   // 通常は OpenAPI クライアント側で camelCase から snake_case に変換されるはずだが、
                   // この API の requestBody ではなぜかその変換が行われないため、手動で snake_case に変換している
