@@ -197,6 +197,20 @@ npm run license:generate
 
 下記ならびに [docs/](docs/) 以下のドキュメントは、[VOICEVOX](https://github.com/VOICEVOX/voicevox) 本家のドキュメントを改変なしでそのまま引き継いでいます。これらのドキュメントの内容が AivisSpeech にも通用するかは保証されません。
 
+## Special Thanks
+
+AivisSpeech / AivisSpeech Engine は、多くの素晴らしいオープンソースソフトウェアとその貢献に深く支えられています。  
+オープンソースソフトウェアを開発してくださった全ての方々、コミュニティの皆様の貢献とサポートに、心より感謝いたします。
+
+- [@litagin02](https://github.com/litagin02)
+- [@Stardust-minus](https://github.com/Stardust-minus)
+- [@tuna2134](https://github.com/tuna2134)
+- [@googlefan256](https://github.com/googlefan256)
+- [@WariHima](https://github.com/WariHima)
+- [VOICEVOX](https://github.com/VOICEVOX/voicevox) Contributors
+- [VOICEVOX ENGINE](https://github.com/VOICEVOX/voicevox_engine) Contributors
+- Everyone in [AI声づくり技術研究会](https://zenn.dev/p/aivoicelab)
+
 -----
 
 # VOICEVOX
