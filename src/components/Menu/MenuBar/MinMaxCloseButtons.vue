@@ -118,9 +118,37 @@ const isFullscreen = computed(() => store.getters.IS_FULLSCREEN);
 
 .title-bar-buttons {
   overflow: visible;
+  ::v-deep(span.q-focus-helper) {
+    background-color: #ffffff !important;
+    transition: opacity 0.15s cubic-bezier(0.25, 0.8, 0.5, 1) !important;
+  }
+  &:hover {
+    ::v-deep(span.q-focus-helper) {
+      opacity: 0.2 !important;
+      &:before {
+        opacity: 0 !important;
+      }
+      &:after {
+        opacity: 0 !important;
+      }
+    }
+  }
+  &.close {
+    margin-right: 4px;
+    ::v-deep(span.q-focus-helper) {
+      background-color: #e81123 !important;
+    }
+    &:hover {
+      ::v-deep(span.q-focus-helper) {
+        opacity: 1 !important;
+      }
+    }
+  }
 }
 
 .close:hover {
-  background-color: red;
+  ::v-deep(.q-focus-helper) {
+    opacity: 1 !important;
+  }
 }
 </style>
