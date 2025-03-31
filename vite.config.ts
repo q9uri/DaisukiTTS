@@ -152,7 +152,7 @@ export default defineConfig((options) => {
           project: "aivisspeech",
           telemetry: false,
           release: {
-            name: process.env.GITHUB_SHA ? `AivisSpeech@${process.env.GITHUB_SHA}` : undefined,
+            name: process.env.RELEASE_VERSION ? `AivisSpeech@${process.env.RELEASE_VERSION}` : undefined,
             setCommits: {
               auto: true,
               ignoreMissing: true,

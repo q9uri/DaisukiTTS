@@ -102,6 +102,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set release version
+        id: set_version
+        run: |
+          echo "RELEASE_VERSION=${{ github.event.release.tag_name || github.event.inputs.version || github.sha }}" >> $GITHUB_ENV
+
       # NOTE: The default sed of macOS is BSD sed.
       #       There is a difference in specification between BSD sed and GNU sed,
       #       so you need to install GNU sed.
@@ -189,7 +194,7 @@ jobs:
           LINUX_ARTIFACT_NAME: ${{ matrix.linux_artifact_name }}
           LINUX_EXECUTABLE_NAME: ${{ matrix.linux_executable_name }}
           MACOS_ARTIFACT_NAME: ${{ matrix.macos_artifact_name }}
-          GITHUB_SHA: ${{ github.sha }}
+          RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
 
           # https://github.com/electron-userland/electron-builder/issues/3179
           USE_HARD_LINKS: false
@@ -341,7 +346,7 @@ jobs:
           NSIS_WEB_ARTIFACT_NAME: ${{ matrix.nsis_web_artifact_name }}
           LINUX_ARTIFACT_NAME: ${{ matrix.linux_artifact_name }}
           LINUX_EXECUTABLE_NAME: ${{ matrix.linux_executable_name }}
-          GITHUB_SHA: ${{ github.sha }}
+          RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
         run: |
           pnpm run electron:build --prepackaged prepackage/
 
@@ -349,7 +354,7 @@ jobs:
         if: endsWith(matrix.installer_artifact_name, '-dmg') # macOS
         env:
           MACOS_ARTIFACT_NAME: ${{ matrix.macos_artifact_name }}
-          GITHUB_SHA: ${{ github.sha }}
+          RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
         run: |
           for i in {1..5}; do
             pnpm run electron:build --prepackaged prepackage/AivisSpeech.app && break || {
