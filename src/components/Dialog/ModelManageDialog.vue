@@ -417,8 +417,8 @@ const installModel = async () => {
       }
     }
   } finally {
+    await getAivmInfos();  // 再取得
     hideAllLoadingScreen();
-    void getAivmInfos();  // 再取得
   }
 };
 
@@ -465,8 +465,8 @@ const unInstallAivmModel = async () => {
         }
       }
     } finally {
+      await getAivmInfos();  // 再取得
       hideAllLoadingScreen();
-      void getAivmInfos();  // 再取得
     }
   }
 };
@@ -504,8 +504,8 @@ const toggleModelLoad = async () => {
       });
     }
   } finally {
+    await getAivmInfos();  // 再取得
     hideAllLoadingScreen();
-    void getAivmInfos();  // 再取得
   }
 };
 
@@ -559,8 +559,8 @@ const updateAivmModel = async () => {
         }
       }
     } finally {
+      await getAivmInfos();  // 再取得
       hideAllLoadingScreen();
-      void getAivmInfos();  // 再取得
     }
   }
 };
