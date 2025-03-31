@@ -65,6 +65,12 @@ importers:
       kuromoji:
         specifier: github:VOICEVOX/kuromoji.js#0.0.1
         version: https://codeload.github.com/VOICEVOX/kuromoji.js/tar.gz/0e8d670cd3df64217d0502d3bb71f431531ff353
+      linkify-html:
+        specifier: 4.2.0
+        version: 4.2.0(linkifyjs@4.2.0)
+      linkifyjs:
+        specifier: 4.2.0
+        version: 4.2.0
       markdown-it:
         specifier: 14.1.0
         version: 14.1.0
@@ -174,6 +180,9 @@ importers:
       '@types/encoding-japanese':
         specifier: 2.2.1
         version: 2.2.1
+      '@types/linkifyjs':
+        specifier: 2.1.7
+        version: 2.1.7
       '@types/markdown-it':
         specifier: 14.1.2
         version: 14.1.2
@@ -2434,6 +2443,9 @@ packages:
   '@types/linkify-it@5.0.0':
     resolution: {integrity: sha512-sVDA58zAw4eWAffKOaQH5/5j3XeayukzDk+ewSsnv3p4yJEZHCCzMDiZM8e0OUrRvmpGZ85jf4yDHkHsgBNr9Q==}
 
+  '@types/linkifyjs@2.1.7':
+    resolution: {integrity: sha512-+SIYXs1lajyD7t/2+V9GLfdFlc/6Nr2tr65kjA2F5oOzBlPH+NiPqySJDHzREoGcL91Au9Qef8M5JdZiRXsaJw==}
+
   '@types/markdown-it@14.1.2':
     resolution: {integrity: sha512-promo4eFwuiW+TfGxhi+0x3czqTYJkG8qB17ZUJiVF10Xm7NLVRSLUsfRTU/6h1e24VvRnXCx+hG7li58lkzog==}
 
@@ -4482,8 +4494,16 @@ packages:
   lie@3.3.0:
     resolution: {integrity: sha512-UaiMJzeWRlEujzAuw5LokY1L5ecNQYZKfmyZ9L7wDHb/p5etKaxXhohBcrw0EYby+G/NA52vRSN4N39dxHAIwQ==}
 
+  linkify-html@4.2.0:
+    resolution: {integrity: sha512-bVXuLiWmGwvlH95hq6q9DFGqTsQeFSGw/nHmvvjGMZv9T3GqkxuW2d2SOgk/a4DV2ajeS4c37EqlF16cjOj7GA==}
+    peerDependencies:
+      linkifyjs: ^4.0.0
+
   linkify-it@5.0.0:
     resolution: {integrity: sha512-5aHCbzQRADcdP+ATqnDuhhJ/MRIqDkZX5pyjFHRRysS8vZ5AbqGEoFIb6pYHPZ+L/OC2Lc+xT8uHVVR5CAK/wQ==}
+
+  linkifyjs@4.2.0:
+    resolution: {integrity: sha512-pCj3PrQyATaoTYKHrgWRF3SJwsm61udVh+vuls/Rl6SptiDhgE7ziUIudAedRY9QEfynmM7/RmLEfPUyw1HPCw==}
 
   locate-path@6.0.0:
     resolution: {integrity: sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==}
@@ -8889,6 +8909,10 @@ snapshots:
 
   '@types/linkify-it@5.0.0': {}
 
+  '@types/linkifyjs@2.1.7':
+    dependencies:
+      '@types/react': 19.0.8
+
   '@types/markdown-it@14.1.2':
     dependencies:
       '@types/linkify-it': 5.0.0
@@ -11343,9 +11367,15 @@ snapshots:
     dependencies:
       immediate: 3.0.6
 
+  linkify-html@4.2.0(linkifyjs@4.2.0):
+    dependencies:
+      linkifyjs: 4.2.0
+
   linkify-it@5.0.0:
     dependencies:
       uc.micro: 2.1.0
+
+  linkifyjs@4.2.0: {}
 
   locate-path@6.0.0:
     dependencies:
