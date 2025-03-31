@@ -151,6 +151,13 @@ export default defineConfig((options) => {
           org: "jpchain",
           project: "aivisspeech",
           telemetry: false,
+          release: {
+            name: process.env.GITHUB_SHA ? `AivisSpeech@${process.env.GITHUB_SHA}` : undefined,
+            setCommits: {
+              auto: true,
+              ignoreMissing: true,
+            },
+          },
         }),
       ],
       isBrowser && injectBrowserPreloadPlugin(),

@@ -189,6 +189,7 @@ jobs:
           LINUX_ARTIFACT_NAME: ${{ matrix.linux_artifact_name }}
           LINUX_EXECUTABLE_NAME: ${{ matrix.linux_executable_name }}
           MACOS_ARTIFACT_NAME: ${{ matrix.macos_artifact_name }}
+          GITHUB_SHA: ${{ github.sha }}
 
           # https://github.com/electron-userland/electron-builder/issues/3179
           USE_HARD_LINKS: false
@@ -340,6 +341,7 @@ jobs:
           NSIS_WEB_ARTIFACT_NAME: ${{ matrix.nsis_web_artifact_name }}
           LINUX_ARTIFACT_NAME: ${{ matrix.linux_artifact_name }}
           LINUX_EXECUTABLE_NAME: ${{ matrix.linux_executable_name }}
+          GITHUB_SHA: ${{ github.sha }}
         run: |
           pnpm run electron:build --prepackaged prepackage/
 
@@ -347,6 +349,7 @@ jobs:
         if: endsWith(matrix.installer_artifact_name, '-dmg') # macOS
         env:
           MACOS_ARTIFACT_NAME: ${{ matrix.macos_artifact_name }}
+          GITHUB_SHA: ${{ github.sha }}
         run: |
           for i in {1..5}; do
             pnpm run electron:build --prepackaged prepackage/AivisSpeech.app && break || {
