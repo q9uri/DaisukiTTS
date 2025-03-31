@@ -92,10 +92,11 @@
                     {{ activeAivmInfo.manifest.creators!.length >= 1 ? activeAivmInfo.manifest.creators!.join(' / ') : '不明' }}
                   </div>
                   <div class="q-mt-md" style="font-size: 13.5px; color: #D2D3D4; white-space: pre-wrap; word-wrap: break-word; line-height: 1.7;">
-                    {{ activeAivmInfo.manifest.description === '' ?
-                      '（この音声合成モデルの説明は提供されていません）' :
-                      activeAivmInfo.manifest.description
-                    }}
+                    <span v-if="activeAivmInfo.manifest.description === ''">
+                      （この音声合成モデルの説明は提供されていません）
+                    </span>
+                    <!-- eslint-disable-next-line vue/no-v-html -->
+                    <span v-else v-html="linkify(activeAivmInfo.manifest.description)"></span>
                   </div>
                   <div class="q-mt-md" style="margin-bottom: 12px; font-size: 17px; font-weight: bold;">ボイスサンプル</div>
                   <div class="row" style="gap: 12px;">
@@ -573,6 +574,63 @@ onUnmounted(() => {
   });
 });
 
+// URL をリンク化する関数
+const linkify = (text: string | undefined): string => {
+  if (!text) return "";
+
+  // 特殊文字をエスケープする
+  const escapeHtml = (unsafe: string): string => {
+    return unsafe
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  };
+
+  // テキスト全体をエスケープ
+  const escapedText = escapeHtml(text);
+
+  // マッチした部分を処理
+  let result = escapedText;
+  const processedUrls = new Set<string>();
+
+  // 括弧で囲まれた URL を処理 (https://example.com)
+  const parenPattern = /\((https?:\/\/[^\s)]+)\)/g;
+  result = result.replace(parenPattern, (match, url) => {
+    processedUrls.add(url);
+    return `(<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>)`;
+  });
+
+  // 残りの URL を処理
+  const urlPattern = /(https?:\/\/[^\s()<>[\]]+)/g;
+  result = result.replace(urlPattern, (match) => {
+    // すでに処理済みの URL は無視
+    if (processedUrls.has(match)) {
+      return match;
+    }
+
+    // 特別な処理が必要かどうかチェック
+    if (match.endsWith(")") && !match.endsWith("/)")) {
+      const lastParenIndex = match.lastIndexOf(")");
+      // 対応する開き括弧があるかチェック
+      const openParenIndex = match.indexOf("(");
+      if (openParenIndex !== -1 && openParenIndex < lastParenIndex) {
+        // URL の内部で括弧が使われている場合（リンクに含める）
+        return `<a href="${match}" target="_blank" rel="noopener noreferrer">${match}</a>`;
+      } else {
+        // 閉じ括弧は URL の一部ではない場合
+        const url = match.substring(0, lastParenIndex);
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>)`;
+      }
+    }
+
+    return `<a href="${match}" target="_blank" rel="noopener noreferrer">${match}</a>`;
+  });
+
+  return result;
+};
+
 </script>
 <style lang="scss" scoped>
 
@@ -735,6 +793,15 @@ onUnmounted(() => {
 .power-icon {
   margin-top: -2px;
   vertical-align: middle;
+}
+
+:deep(a) {
+  color: #41A2EC;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 </style>
