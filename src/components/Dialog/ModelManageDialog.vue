@@ -55,10 +55,9 @@
                 話者{{ index + 1 }} ({{ speaker.name }})
               </QTab>
             </QTabs>
-            <QTabPanels v-model="activeSpeakerIndex"
-              animated class="bg-background">
+            <QTabPanels v-model="activeSpeakerIndex" class="bg-background">
               <QTabPanel v-for="(speaker, index) of activeAivmInfo.manifest.speakers" :key="speaker.uuid" :name="index">
-                <div class="model-detail-content">
+                <div class="model-detail-content" :class="{'model-detail-content--multi-speaker': activeAivmInfo.manifest.speakers.length >= 2}">
                   <div class="q-mt-sm row items-center">
                     <div class="col-auto" style="font-size: 20px; font-weight: bold;">
                       <span>{{ activeAivmInfo.manifest.name }}</span>
@@ -77,7 +76,7 @@
                   </div>
                   <div class="row items-center" style="margin-top: 12px;">
                     <div class="col-auto q-mr-sm" style="font-size: 15px; font-weight: bold;">
-                      {{ activeAivmInfo.manifest.speakers.reduce((acc, speaker) => acc + speaker.styles.length, 0) }}スタイル
+                      {{ speaker.styles.length }}スタイル
                     </div>
                     <div class="col-auto" style="font-size: 13.5px; font-weight: bold; color: #D2D3D4;">
                       {{ speaker.styles.map(style => style.name).join(' / ') }}
@@ -92,7 +91,7 @@
                     {{ activeAivmInfo.manifest.creators!.length >= 2 ? 'Creators: ' : 'Creator: ' }}
                     {{ activeAivmInfo.manifest.creators!.length >= 1 ? activeAivmInfo.manifest.creators!.join(' / ') : '不明' }}
                   </div>
-                  <div class="q-mt-md" style="font-size: 13.5px; color: #D2D3D4; white-space: pre-wrap; word-wrap: break-word;">
+                  <div class="q-mt-md" style="font-size: 13.5px; color: #D2D3D4; white-space: pre-wrap; word-wrap: break-word; line-height: 1.7;">
                     {{ activeAivmInfo.manifest.description === '' ?
                       '（この音声合成モデルの説明は提供されていません）' :
                       activeAivmInfo.manifest.description
@@ -606,6 +605,7 @@ onUnmounted(() => {
 }
 
 .model-detail {
+  user-select: text;
 
   .q-tab-panel {
     padding: 0 !important;
@@ -618,6 +618,13 @@ onUnmounted(() => {
     );
     padding: 16px;
     overflow-y: auto;
+
+    &--multi-speaker {
+      height: calc(
+        100vh - #{vars.$menubar-height + vars.$toolbar-height +
+          vars.$window-border-width} - 66px - 36px
+      );
+    }
   }
 
   .fixed-bottom-buttons {
