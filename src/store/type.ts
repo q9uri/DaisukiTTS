@@ -2329,7 +2329,7 @@ export type DictionaryStoreTypes = {
       priority: number;
     }): Promise<string>;
   };
-  REWRITE_WORD: {
+  UPDATE_WORD: {
     action(payload: {
       wordUuid: string;
       surface: string[];

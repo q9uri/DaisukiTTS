@@ -167,7 +167,7 @@ export function useDictionaryEditor(initialSurface = "", initialPronunciation = 
     }
 
     try {
-      await store.actions.REWRITE_WORD({
+      await store.actions.UPDATE_WORD({
         wordUuid: wordId,
         surface: wordAccentPhraseItems.value.map(item => item.surface),
         pronunciation: wordAccentPhraseItems.value.map(item => item.pronunciation),

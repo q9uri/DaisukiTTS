@@ -83,7 +83,7 @@ describe("createOpenAPIEngineMock", () => {
     expect(response).toMatchSnapshot();
 
     // 単語の変更
-    await mock.rewriteUserDictWord({
+    await mock.updateUserDictWord({
       wordUuid,
       surface: ["テスト"],
       pronunciation: ["テストテストテスト"],

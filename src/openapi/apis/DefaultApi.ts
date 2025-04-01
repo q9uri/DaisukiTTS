@@ -190,15 +190,6 @@ export interface MultiSynthesisRequest {
     coreVersion?: string;
 }
 
-export interface RewriteUserDictWordRequest {
-    wordUuid: string;
-    surface: Array<string>;
-    pronunciation: Array<string>;
-    accentType: Array<number>;
-    wordType?: WordTypes;
-    priority?: number;
-}
-
 export interface SettingPostRequest {
     corsPolicyMode: CorsPolicyMode;
     allowOrigin?: string;
@@ -277,6 +268,15 @@ export interface UpdatePresetRequest {
     preset: Preset;
 }
 
+export interface UpdateUserDictWordRequest {
+    wordUuid: string;
+    surface: Array<string>;
+    pronunciation: Array<string>;
+    accentType: Array<number>;
+    wordType?: WordTypes;
+    priority?: number;
+}
+
 export interface ValidateKanaRequest {
     text: string;
 }
@@ -289,7 +289,7 @@ export interface ValidateKanaRequest {
  */
 export interface DefaultApiInterface {
     /**
-     * テキストからアクセント句を得ます。 is_kanaが`true`のとき、テキストは次の AquesTalk 風記法で解釈されます。デフォルトは`false`です。 * 全てのカナはカタカナで記述される * アクセント句は`/`または`、`で区切る。`、`で区切った場合に限り無音区間が挿入される。 * カナの手前に`_`を入れるとそのカナは無声化される * アクセント位置を`\'`で指定する。全てのアクセント句にはアクセント位置を1つ指定する必要がある。 * アクセント句末に`？`(全角)を入れることにより疑問文の発音ができる。
+     * テキストからアクセント句を得ます。<br> is_kanaが`true`のとき、テキストは次の AquesTalk 風記法で解釈されます。デフォルトは`false`です。 * 全てのカナはカタカナで記述される * アクセント句は`/`または`、`で区切る。`、`で区切った場合に限り無音区間が挿入される。 * カナの手前に`_`を入れるとそのカナは無声化される * アクセント位置を`\'`で指定する。全てのアクセント句にはアクセント位置を1つ指定する必要がある。 * アクセント句末に`？`(全角)を入れることにより疑問文の発音ができる。
      * @summary テキストからアクセント句を得る
      * @param {string} text 
      * @param {number} speaker 
@@ -302,7 +302,7 @@ export interface DefaultApiInterface {
     accentPhrasesRaw(requestParameters: AccentPhrasesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<AccentPhrase>>>;
 
     /**
-     * テキストからアクセント句を得ます。 is_kanaが`true`のとき、テキストは次の AquesTalk 風記法で解釈されます。デフォルトは`false`です。 * 全てのカナはカタカナで記述される * アクセント句は`/`または`、`で区切る。`、`で区切った場合に限り無音区間が挿入される。 * カナの手前に`_`を入れるとそのカナは無声化される * アクセント位置を`\'`で指定する。全てのアクセント句にはアクセント位置を1つ指定する必要がある。 * アクセント句末に`？`(全角)を入れることにより疑問文の発音ができる。
+     * テキストからアクセント句を得ます。<br> is_kanaが`true`のとき、テキストは次の AquesTalk 風記法で解釈されます。デフォルトは`false`です。 * 全てのカナはカタカナで記述される * アクセント句は`/`または`、`で区切る。`、`で区切った場合に限り無音区間が挿入される。 * カナの手前に`_`を入れるとそのカナは無声化される * アクセント位置を`\'`で指定する。全てのアクセント句にはアクセント位置を1つ指定する必要がある。 * アクセント句末に`？`(全角)を入れることにより疑問文の発音ができる。
      * テキストからアクセント句を得る
      */
     accentPhrases(requestParameters: AccentPhrasesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<AccentPhrase>>;
@@ -324,13 +324,13 @@ export interface DefaultApiInterface {
     addPreset(requestParameters: AddPresetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<number>;
 
     /**
-     * ユーザー辞書に単語を追加します。
+     * ユーザー辞書に単語を追加します。<br> 複合語を辞書に追加するには、`?surface=新田&surface=真剣佑&pronunciation=あらた&pronunciation=まっけんゆう&accent_type=1&accent_type=3` のように、`surface`, `pronunciation`, `accent_type` を同じ長さのリストで指定します。
      * @summary ユーザー辞書に単語を追加する
      * @param {Array<string>} surface 単語の表層形
      * @param {Array<string>} pronunciation 単語の発音（カタカナ）
-     * @param {Array<number>} accentType アクセント型（音が下がる場所を指す）
-     * @param {WordTypes} [wordType] PROPER_NOUN（固有名詞）、LOCATION_NAME（地名）、ORGANIZATION_NAME（組織・施設名）、PERSON_NAME（人名）、PERSON_FAMILY_NAME（姓）、PERSON_GIVEN_NAME（名）、COMMON_NOUN（普通名詞）、VERB（動詞）、ADJECTIVE（形容詞）、SUFFIX（語尾）のいずれか
-     * @param {number} [priority] 単語の優先度（0から10までの整数）。数字が大きいほど優先度が高くなる。1から9までの値を指定することを推奨。
+     * @param {Array<number>} accentType 東京式アクセントにおけるアクセント型&lt;br&gt;音高が下がる直前のモーラのインデックスを 1-indexed で指定します。0 は平板型を意味します。&lt;br&gt;例として、&#x60;surface: [\&quot;新田\&quot;, \&quot;真剣佑\&quot;], pronunciation: [\&quot;あらた\&quot;, \&quot;まっけんゆう\&quot;]&#x60; のとき、&#x60;accent_type: [1, 3]&#x60; (新田 → 頭高型, 真剣佑 → 中高型) のように指定します。
+     * @param {WordTypes} [wordType] 単語の品詞&lt;br&gt;固有名詞 / 地名 / 組織・施設名 / 人名 / 人名 (姓) / 人名 (名) / 普通名詞 / 動詞 / 形容詞 / 語尾 のいずれかを指定します。&lt;br&gt;未指定時は &#x60;固有名詞&#x60; が設定されます。
+     * @param {number} [priority] 単語の優先度 (1~9 の範囲を推奨)&lt;br&gt;数値が大きいほど、辞書適用時に優先して利用されます。&lt;br&gt;未指定時は &#x60;5&#x60; が設定されます。
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
@@ -338,13 +338,13 @@ export interface DefaultApiInterface {
     addUserDictWordRaw(requestParameters: AddUserDictWordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<string>>;
 
     /**
-     * ユーザー辞書に単語を追加します。
+     * ユーザー辞書に単語を追加します。<br> 複合語を辞書に追加するには、`?surface=新田&surface=真剣佑&pronunciation=あらた&pronunciation=まっけんゆう&accent_type=1&accent_type=3` のように、`surface`, `pronunciation`, `accent_type` を同じ長さのリストで指定します。
      * ユーザー辞書に単語を追加する
      */
     addUserDictWord(requestParameters: AddUserDictWordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<string>;
 
     /**
-     * 音声合成用のクエリの初期値を得ます。ここで得られたクエリはそのまま音声合成に利用できます。各値の意味は`Schemas`を参照してください。
+     * 音声合成用のクエリの初期値を得ます。ここで得られたクエリはそのまま音声合成に利用できます。<br> 各値の意味は `Schemas` を参照してください。
      * @summary 音声合成用のクエリを作成する
      * @param {string} text 
      * @param {number} speaker 
@@ -356,13 +356,13 @@ export interface DefaultApiInterface {
     audioQueryRaw(requestParameters: AudioQueryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AudioQuery>>;
 
     /**
-     * 音声合成用のクエリの初期値を得ます。ここで得られたクエリはそのまま音声合成に利用できます。各値の意味は`Schemas`を参照してください。
+     * 音声合成用のクエリの初期値を得ます。ここで得られたクエリはそのまま音声合成に利用できます。<br> 各値の意味は `Schemas` を参照してください。
      * 音声合成用のクエリを作成する
      */
     audioQuery(requestParameters: AudioQueryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<AudioQuery>;
 
     /**
-     * 音声合成用のクエリの初期値を得ます。ここで得られたクエリはそのまま音声合成に利用できます。各値の意味は`Schemas`を参照してください。
+     * 音声合成用のクエリの初期値を得ます。ここで得られたクエリはそのまま音声合成に利用できます。<br> 各値の意味は `Schemas` を参照してください。
      * @summary 音声合成用のクエリをプリセットを用いて作成する
      * @param {string} text 
      * @param {number} presetId 
@@ -374,7 +374,7 @@ export interface DefaultApiInterface {
     audioQueryFromPresetRaw(requestParameters: AudioQueryFromPresetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AudioQuery>>;
 
     /**
-     * 音声合成用のクエリの初期値を得ます。ここで得られたクエリはそのまま音声合成に利用できます。各値の意味は`Schemas`を参照してください。
+     * 音声合成用のクエリの初期値を得ます。ここで得られたクエリはそのまま音声合成に利用できます。<br> 各値の意味は `Schemas` を参照してください。
      * 音声合成用のクエリをプリセットを用いて作成する
      */
     audioQueryFromPreset(requestParameters: AudioQueryFromPresetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<AudioQuery>;
@@ -553,9 +553,9 @@ export interface DefaultApiInterface {
     getPresets(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Preset>>;
 
     /**
-     * ユーザー辞書に登録されている単語の一覧を返します。 単語の表層形 (surface) は正規化済みの物を返します。
+     * ユーザー辞書に登録されている単語の一覧を返します。<br> 複合語アクセントのサポートを有効にするか次第で、返されるデータ型が変化します。<br> デフォルトでは、従来の API と互換性のある `UserDictWordForCompat` を返します。<br> `?enable_compound_accent=true` を指定すると、AivisSpeech Engine 1.1.0 以降で利用可能な `UserDictWord` を返します。
      * @summary ユーザー辞書に登録されている単語の一覧を取得する
-     * @param {boolean} [enableCompoundAccent] 複数のアクセント句を持つ単語の扱いを指定します。false の場合は API 互換性のため、最初のアクセント句の情報のみを返します。
+     * @param {boolean} [enableCompoundAccent] 複数のアクセント句を持つ単語の扱いを指定する&lt;br&gt;false の場合は API 互換性のため、最初のアクセント句の情報のみを返します。&lt;br&gt;未指定時は &#x60;false&#x60; が設定されます。
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
@@ -563,14 +563,14 @@ export interface DefaultApiInterface {
     getUserDictWordsRaw(requestParameters: GetUserDictWordsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: ResponseGetUserDictWordsUserDictGet; }>>;
 
     /**
-     * ユーザー辞書に登録されている単語の一覧を返します。 単語の表層形 (surface) は正規化済みの物を返します。
+     * ユーザー辞書に登録されている単語の一覧を返します。<br> 複合語アクセントのサポートを有効にするか次第で、返されるデータ型が変化します。<br> デフォルトでは、従来の API と互換性のある `UserDictWordForCompat` を返します。<br> `?enable_compound_accent=true` を指定すると、AivisSpeech Engine 1.1.0 以降で利用可能な `UserDictWord` を返します。
      * ユーザー辞書に登録されている単語の一覧を取得する
      */
     getUserDictWords(requestParameters: GetUserDictWordsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{ [key: string]: ResponseGetUserDictWordsUserDictGet; }>;
 
     /**
-     * 他のユーザー辞書をインポートします。
-     * @summary 他のユーザー辞書をインポートする
+     * 指定されたユーザー辞書をインポートします。<br> 従来の API と互換性のある `UserDictWordForCompat` と、AivisSpeech Engine 1.1.0 以降で利用可能な `UserDictWord` の両方の型に対応しています。<br> `?override=true` を指定すると、UUID が重複したエントリはインポートしたデータで上書きされます。
+     * @summary ユーザー辞書をインポートする
      * @param {boolean} override 重複したエントリがあった場合、上書きするかどうか
      * @param {{ [key: string]: ResponseGetUserDictWordsUserDictGet; }} requestBody 
      * @param {*} [options] Override http request option.
@@ -580,13 +580,13 @@ export interface DefaultApiInterface {
     importUserDictWordsRaw(requestParameters: ImportUserDictWordsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>>;
 
     /**
-     * 他のユーザー辞書をインポートします。
-     * 他のユーザー辞書をインポートする
+     * 指定されたユーザー辞書をインポートします。<br> 従来の API と互換性のある `UserDictWordForCompat` と、AivisSpeech Engine 1.1.0 以降で利用可能な `UserDictWord` の両方の型に対応しています。<br> `?override=true` を指定すると、UUID が重複したエントリはインポートしたデータで上書きされます。
+     * ユーザー辞書をインポートする
      */
     importUserDictWords(requestParameters: ImportUserDictWordsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
 
     /**
-     * 指定されたスタイル ID に紐づく音声合成モデルをロードします。 実行しなくても他の API は利用できますが、音声合成の初回実行時に時間がかかることがあります。
+     * 指定されたスタイル ID に紐づく音声合成モデルをロードします。<br> 実行しなくても他の API は利用できますが、音声合成の初回実行時に時間がかかることがあります。
      * @summary 指定されたスタイル ID に紐づく音声合成モデルをロードする
      * @param {number} speaker 
      * @param {boolean} [skipReinit] 既にロード済みの音声合成モデルの再ロードをスキップするかどうか
@@ -598,13 +598,13 @@ export interface DefaultApiInterface {
     initializeSpeakerRaw(requestParameters: InitializeSpeakerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>>;
 
     /**
-     * 指定されたスタイル ID に紐づく音声合成モデルをロードします。 実行しなくても他の API は利用できますが、音声合成の初回実行時に時間がかかることがあります。
+     * 指定されたスタイル ID に紐づく音声合成モデルをロードします。<br> 実行しなくても他の API は利用できますが、音声合成の初回実行時に時間がかかることがあります。
      * 指定されたスタイル ID に紐づく音声合成モデルをロードする
      */
     initializeSpeaker(requestParameters: InitializeSpeakerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
 
     /**
-     * 音声合成モデルをインストールします。 ファイルからインストールする場合は `file` を指定してください。 URL からインストールする場合は `url` を指定してください。
+     * 音声合成モデルをインストールします。<br> ファイルからインストールする場合は `file` を指定してください。<br> URL からインストールする場合は `url` を指定してください。
      * @summary 音声合成モデルをインストールする
      * @param {Blob} [file] 
      * @param {string} [url] 
@@ -615,7 +615,7 @@ export interface DefaultApiInterface {
     installModelRaw(requestParameters: InstallModelRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>>;
 
     /**
-     * 音声合成モデルをインストールします。 ファイルからインストールする場合は `file` を指定してください。 URL からインストールする場合は `url` を指定してください。
+     * 音声合成モデルをインストールします。<br> ファイルからインストールする場合は `file` を指定してください。<br> URL からインストールする場合は `url` を指定してください。
      * 音声合成モデルをインストールする
      */
     installModel(requestParameters: InstallModelRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
@@ -638,7 +638,7 @@ export interface DefaultApiInterface {
     isInitializedSpeaker(requestParameters: IsInitializedSpeakerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<boolean>;
 
     /**
-     * 指定された音声合成モデルをロードします。すでにロード済みの場合は何も行われません。 実行しなくても他の API は利用できますが、音声合成の初回実行時に時間がかかることがあります。
+     * 指定された音声合成モデルをロードします。すでにロード済みの場合は何も行われません。<br> 実行しなくても他の API は利用できますが、音声合成の初回実行時に時間がかかることがあります。
      * @summary 指定された音声合成モデルをロードする
      * @param {string} aivmUuid 音声合成モデルの UUID
      * @param {*} [options] Override http request option.
@@ -648,7 +648,7 @@ export interface DefaultApiInterface {
     loadModelRaw(requestParameters: LoadModelRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>>;
 
     /**
-     * 指定された音声合成モデルをロードします。すでにロード済みの場合は何も行われません。 実行しなくても他の API は利用できますが、音声合成の初回実行時に時間がかかることがあります。
+     * 指定された音声合成モデルをロードします。すでにロード済みの場合は何も行われません。<br> 実行しなくても他の API は利用できますが、音声合成の初回実行時に時間がかかることがあります。
      * 指定された音声合成モデルをロードする
      */
     loadModel(requestParameters: LoadModelRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
@@ -737,27 +737,6 @@ export interface DefaultApiInterface {
      * 複数まとめて音声合成する
      */
     multiSynthesis(requestParameters: MultiSynthesisRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Blob>;
-
-    /**
-     * ユーザー辞書に登録されている単語を更新します。
-     * @summary ユーザー辞書に登録されている単語を更新する
-     * @param {string} wordUuid 更新する単語の UUID
-     * @param {Array<string>} surface 単語の表層形
-     * @param {Array<string>} pronunciation 単語の発音（カタカナ）
-     * @param {Array<number>} accentType アクセント型（音が下がる場所を指す）
-     * @param {WordTypes} [wordType] PROPER_NOUN（固有名詞）、LOCATION_NAME（地名）、ORGANIZATION_NAME（組織・施設名）、PERSON_NAME（人名）、PERSON_FAMILY_NAME（姓）、PERSON_GIVEN_NAME（名）、COMMON_NOUN（普通名詞）、VERB（動詞）、ADJECTIVE（形容詞）、SUFFIX（語尾）のいずれか
-     * @param {number} [priority] 単語の優先度（0から10までの整数）。数字が大きいほど優先度が高くなる。1から9までの値を指定することを推奨。
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApiInterface
-     */
-    rewriteUserDictWordRaw(requestParameters: RewriteUserDictWordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>>;
-
-    /**
-     * ユーザー辞書に登録されている単語を更新します。
-     * ユーザー辞書に登録されている単語を更新する
-     */
-    rewriteUserDictWord(requestParameters: RewriteUserDictWordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
 
     /**
      * 設定ページを返します。
@@ -1028,7 +1007,28 @@ export interface DefaultApiInterface {
     updatePreset(requestParameters: UpdatePresetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<number>;
 
     /**
-     * テキストが AquesTalk 風記法に従っているかどうかを判定します。 従っていない場合はエラーが返ります。
+     * ユーザー辞書に登録されている単語を更新します。<br> 複合語を辞書に追加するには、`?surface=新田&surface=真剣佑&pronunciation=あらた&pronunciation=まっけんゆう&accent_type=1&accent_type=3` のように、`surface`, `pronunciation`, `accent_type` を同じ長さのリストで指定します。
+     * @summary ユーザー辞書に登録されている単語を更新する
+     * @param {string} wordUuid 更新する単語の UUID
+     * @param {Array<string>} surface 単語の表層形
+     * @param {Array<string>} pronunciation 単語の発音（カタカナ）
+     * @param {Array<number>} accentType 東京式アクセントにおけるアクセント型&lt;br&gt;音高が下がる直前のモーラのインデックスを 1-indexed で指定します。0 は平板型を意味します。&lt;br&gt;例として、&#x60;surface: [\&quot;新田\&quot;, \&quot;真剣佑\&quot;], pronunciation: [\&quot;あらた\&quot;, \&quot;まっけんゆう\&quot;]&#x60; のとき、&#x60;accent_type: [1, 3]&#x60; (新田 → 頭高型, 真剣佑 → 中高型) のように指定します。
+     * @param {WordTypes} [wordType] 単語の品詞&lt;br&gt;固有名詞 / 地名 / 組織・施設名 / 人名 / 人名 (姓) / 人名 (名) / 普通名詞 / 動詞 / 形容詞 / 語尾 のいずれかを指定します。&lt;br&gt;未指定時は &#x60;固有名詞&#x60; が設定されます。
+     * @param {number} [priority] 単語の優先度 (1~9 の範囲を推奨)&lt;br&gt;数値が大きいほど、辞書適用時に優先して利用されます。&lt;br&gt;未指定時は &#x60;5&#x60; が設定されます。
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    updateUserDictWordRaw(requestParameters: UpdateUserDictWordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>>;
+
+    /**
+     * ユーザー辞書に登録されている単語を更新します。<br> 複合語を辞書に追加するには、`?surface=新田&surface=真剣佑&pronunciation=あらた&pronunciation=まっけんゆう&accent_type=1&accent_type=3` のように、`surface`, `pronunciation`, `accent_type` を同じ長さのリストで指定します。
+     * ユーザー辞書に登録されている単語を更新する
+     */
+    updateUserDictWord(requestParameters: UpdateUserDictWordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
+
+    /**
+     * テキストが AquesTalk 風記法に従っているかどうかを判定します。従っていない場合はエラーが返ります。
      * @summary テキストが AquesTalk 風記法に従っているか判定する
      * @param {string} text 判定する対象の文字列
      * @param {*} [options] Override http request option.
@@ -1038,7 +1038,7 @@ export interface DefaultApiInterface {
     validateKanaRaw(requestParameters: ValidateKanaRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<boolean>>;
 
     /**
-     * テキストが AquesTalk 風記法に従っているかどうかを判定します。 従っていない場合はエラーが返ります。
+     * テキストが AquesTalk 風記法に従っているかどうかを判定します。従っていない場合はエラーが返ります。
      * テキストが AquesTalk 風記法に従っているか判定する
      */
     validateKana(requestParameters: ValidateKanaRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<boolean>;
@@ -1066,7 +1066,7 @@ export interface DefaultApiInterface {
 export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
 
     /**
-     * テキストからアクセント句を得ます。 is_kanaが`true`のとき、テキストは次の AquesTalk 風記法で解釈されます。デフォルトは`false`です。 * 全てのカナはカタカナで記述される * アクセント句は`/`または`、`で区切る。`、`で区切った場合に限り無音区間が挿入される。 * カナの手前に`_`を入れるとそのカナは無声化される * アクセント位置を`\'`で指定する。全てのアクセント句にはアクセント位置を1つ指定する必要がある。 * アクセント句末に`？`(全角)を入れることにより疑問文の発音ができる。
+     * テキストからアクセント句を得ます。<br> is_kanaが`true`のとき、テキストは次の AquesTalk 風記法で解釈されます。デフォルトは`false`です。 * 全てのカナはカタカナで記述される * アクセント句は`/`または`、`で区切る。`、`で区切った場合に限り無音区間が挿入される。 * カナの手前に`_`を入れるとそのカナは無声化される * アクセント位置を`\'`で指定する。全てのアクセント句にはアクセント位置を1つ指定する必要がある。 * アクセント句末に`？`(全角)を入れることにより疑問文の発音ができる。
      * テキストからアクセント句を得る
      */
     async accentPhrasesRaw(requestParameters: AccentPhrasesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<AccentPhrase>>> {
@@ -1109,7 +1109,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * テキストからアクセント句を得ます。 is_kanaが`true`のとき、テキストは次の AquesTalk 風記法で解釈されます。デフォルトは`false`です。 * 全てのカナはカタカナで記述される * アクセント句は`/`または`、`で区切る。`、`で区切った場合に限り無音区間が挿入される。 * カナの手前に`_`を入れるとそのカナは無声化される * アクセント位置を`\'`で指定する。全てのアクセント句にはアクセント位置を1つ指定する必要がある。 * アクセント句末に`？`(全角)を入れることにより疑問文の発音ができる。
+     * テキストからアクセント句を得ます。<br> is_kanaが`true`のとき、テキストは次の AquesTalk 風記法で解釈されます。デフォルトは`false`です。 * 全てのカナはカタカナで記述される * アクセント句は`/`または`、`で区切る。`、`で区切った場合に限り無音区間が挿入される。 * カナの手前に`_`を入れるとそのカナは無声化される * アクセント位置を`\'`で指定する。全てのアクセント句にはアクセント位置を1つ指定する必要がある。 * アクセント句末に`？`(全角)を入れることにより疑問文の発音ができる。
      * テキストからアクセント句を得る
      */
     async accentPhrases(requestParameters: AccentPhrasesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<AccentPhrase>> {
@@ -1157,7 +1157,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * ユーザー辞書に単語を追加します。
+     * ユーザー辞書に単語を追加します。<br> 複合語を辞書に追加するには、`?surface=新田&surface=真剣佑&pronunciation=あらた&pronunciation=まっけんゆう&accent_type=1&accent_type=3` のように、`surface`, `pronunciation`, `accent_type` を同じ長さのリストで指定します。
      * ユーザー辞書に単語を追加する
      */
     async addUserDictWordRaw(requestParameters: AddUserDictWordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<string>> {
@@ -1212,7 +1212,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * ユーザー辞書に単語を追加します。
+     * ユーザー辞書に単語を追加します。<br> 複合語を辞書に追加するには、`?surface=新田&surface=真剣佑&pronunciation=あらた&pronunciation=まっけんゆう&accent_type=1&accent_type=3` のように、`surface`, `pronunciation`, `accent_type` を同じ長さのリストで指定します。
      * ユーザー辞書に単語を追加する
      */
     async addUserDictWord(requestParameters: AddUserDictWordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<string> {
@@ -1221,7 +1221,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 音声合成用のクエリの初期値を得ます。ここで得られたクエリはそのまま音声合成に利用できます。各値の意味は`Schemas`を参照してください。
+     * 音声合成用のクエリの初期値を得ます。ここで得られたクエリはそのまま音声合成に利用できます。<br> 各値の意味は `Schemas` を参照してください。
      * 音声合成用のクエリを作成する
      */
     async audioQueryRaw(requestParameters: AudioQueryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AudioQuery>> {
@@ -1260,7 +1260,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 音声合成用のクエリの初期値を得ます。ここで得られたクエリはそのまま音声合成に利用できます。各値の意味は`Schemas`を参照してください。
+     * 音声合成用のクエリの初期値を得ます。ここで得られたクエリはそのまま音声合成に利用できます。<br> 各値の意味は `Schemas` を参照してください。
      * 音声合成用のクエリを作成する
      */
     async audioQuery(requestParameters: AudioQueryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<AudioQuery> {
@@ -1269,7 +1269,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 音声合成用のクエリの初期値を得ます。ここで得られたクエリはそのまま音声合成に利用できます。各値の意味は`Schemas`を参照してください。
+     * 音声合成用のクエリの初期値を得ます。ここで得られたクエリはそのまま音声合成に利用できます。<br> 各値の意味は `Schemas` を参照してください。
      * 音声合成用のクエリをプリセットを用いて作成する
      */
     async audioQueryFromPresetRaw(requestParameters: AudioQueryFromPresetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AudioQuery>> {
@@ -1308,7 +1308,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 音声合成用のクエリの初期値を得ます。ここで得られたクエリはそのまま音声合成に利用できます。各値の意味は`Schemas`を参照してください。
+     * 音声合成用のクエリの初期値を得ます。ここで得られたクエリはそのまま音声合成に利用できます。<br> 各値の意味は `Schemas` を参照してください。
      * 音声合成用のクエリをプリセットを用いて作成する
      */
     async audioQueryFromPreset(requestParameters: AudioQueryFromPresetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<AudioQuery> {
@@ -1684,7 +1684,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * ユーザー辞書に登録されている単語の一覧を返します。 単語の表層形 (surface) は正規化済みの物を返します。
+     * ユーザー辞書に登録されている単語の一覧を返します。<br> 複合語アクセントのサポートを有効にするか次第で、返されるデータ型が変化します。<br> デフォルトでは、従来の API と互換性のある `UserDictWordForCompat` を返します。<br> `?enable_compound_accent=true` を指定すると、AivisSpeech Engine 1.1.0 以降で利用可能な `UserDictWord` を返します。
      * ユーザー辞書に登録されている単語の一覧を取得する
      */
     async getUserDictWordsRaw(requestParameters: GetUserDictWordsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<{ [key: string]: ResponseGetUserDictWordsUserDictGet; }>> {
@@ -1707,7 +1707,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * ユーザー辞書に登録されている単語の一覧を返します。 単語の表層形 (surface) は正規化済みの物を返します。
+     * ユーザー辞書に登録されている単語の一覧を返します。<br> 複合語アクセントのサポートを有効にするか次第で、返されるデータ型が変化します。<br> デフォルトでは、従来の API と互換性のある `UserDictWordForCompat` を返します。<br> `?enable_compound_accent=true` を指定すると、AivisSpeech Engine 1.1.0 以降で利用可能な `UserDictWord` を返します。
      * ユーザー辞書に登録されている単語の一覧を取得する
      */
     async getUserDictWords(requestParameters: GetUserDictWordsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<{ [key: string]: ResponseGetUserDictWordsUserDictGet; }> {
@@ -1716,8 +1716,8 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 他のユーザー辞書をインポートします。
-     * 他のユーザー辞書をインポートする
+     * 指定されたユーザー辞書をインポートします。<br> 従来の API と互換性のある `UserDictWordForCompat` と、AivisSpeech Engine 1.1.0 以降で利用可能な `UserDictWord` の両方の型に対応しています。<br> `?override=true` を指定すると、UUID が重複したエントリはインポートしたデータで上書きされます。
+     * ユーザー辞書をインポートする
      */
     async importUserDictWordsRaw(requestParameters: ImportUserDictWordsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters.override === null || requestParameters.override === undefined) {
@@ -1750,15 +1750,15 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 他のユーザー辞書をインポートします。
-     * 他のユーザー辞書をインポートする
+     * 指定されたユーザー辞書をインポートします。<br> 従来の API と互換性のある `UserDictWordForCompat` と、AivisSpeech Engine 1.1.0 以降で利用可能な `UserDictWord` の両方の型に対応しています。<br> `?override=true` を指定すると、UUID が重複したエントリはインポートしたデータで上書きされます。
+     * ユーザー辞書をインポートする
      */
     async importUserDictWords(requestParameters: ImportUserDictWordsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.importUserDictWordsRaw(requestParameters, initOverrides);
     }
 
     /**
-     * 指定されたスタイル ID に紐づく音声合成モデルをロードします。 実行しなくても他の API は利用できますが、音声合成の初回実行時に時間がかかることがあります。
+     * 指定されたスタイル ID に紐づく音声合成モデルをロードします。<br> 実行しなくても他の API は利用できますが、音声合成の初回実行時に時間がかかることがあります。
      * 指定されたスタイル ID に紐づく音声合成モデルをロードする
      */
     async initializeSpeakerRaw(requestParameters: InitializeSpeakerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
@@ -1793,7 +1793,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 指定されたスタイル ID に紐づく音声合成モデルをロードします。 実行しなくても他の API は利用できますが、音声合成の初回実行時に時間がかかることがあります。
+     * 指定されたスタイル ID に紐づく音声合成モデルをロードします。<br> 実行しなくても他の API は利用できますが、音声合成の初回実行時に時間がかかることがあります。
      * 指定されたスタイル ID に紐づく音声合成モデルをロードする
      */
     async initializeSpeaker(requestParameters: InitializeSpeakerRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
@@ -1801,7 +1801,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 音声合成モデルをインストールします。 ファイルからインストールする場合は `file` を指定してください。 URL からインストールする場合は `url` を指定してください。
+     * 音声合成モデルをインストールします。<br> ファイルからインストールする場合は `file` を指定してください。<br> URL からインストールする場合は `url` を指定してください。
      * 音声合成モデルをインストールする
      */
     async installModelRaw(requestParameters: InstallModelRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
@@ -1845,7 +1845,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 音声合成モデルをインストールします。 ファイルからインストールする場合は `file` を指定してください。 URL からインストールする場合は `url` を指定してください。
+     * 音声合成モデルをインストールします。<br> ファイルからインストールする場合は `file` を指定してください。<br> URL からインストールする場合は `url` を指定してください。
      * 音声合成モデルをインストールする
      */
     async installModel(requestParameters: InstallModelRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
@@ -1897,7 +1897,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 指定された音声合成モデルをロードします。すでにロード済みの場合は何も行われません。 実行しなくても他の API は利用できますが、音声合成の初回実行時に時間がかかることがあります。
+     * 指定された音声合成モデルをロードします。すでにロード済みの場合は何も行われません。<br> 実行しなくても他の API は利用できますが、音声合成の初回実行時に時間がかかることがあります。
      * 指定された音声合成モデルをロードする
      */
     async loadModelRaw(requestParameters: LoadModelRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
@@ -1920,7 +1920,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * 指定された音声合成モデルをロードします。すでにロード済みの場合は何も行われません。 実行しなくても他の API は利用できますが、音声合成の初回実行時に時間がかかることがあります。
+     * 指定された音声合成モデルをロードします。すでにロード済みの場合は何も行われません。<br> 実行しなくても他の API は利用できますが、音声合成の初回実行時に時間がかかることがあります。
      * 指定された音声合成モデルをロードする
      */
     async loadModel(requestParameters: LoadModelRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
@@ -2144,69 +2144,6 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     async multiSynthesis(requestParameters: MultiSynthesisRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Blob> {
         const response = await this.multiSynthesisRaw(requestParameters, initOverrides);
         return await response.value();
-    }
-
-    /**
-     * ユーザー辞書に登録されている単語を更新します。
-     * ユーザー辞書に登録されている単語を更新する
-     */
-    async rewriteUserDictWordRaw(requestParameters: RewriteUserDictWordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters.wordUuid === null || requestParameters.wordUuid === undefined) {
-            throw new runtime.RequiredError('wordUuid','Required parameter requestParameters.wordUuid was null or undefined when calling rewriteUserDictWord.');
-        }
-
-        if (requestParameters.surface === null || requestParameters.surface === undefined) {
-            throw new runtime.RequiredError('surface','Required parameter requestParameters.surface was null or undefined when calling rewriteUserDictWord.');
-        }
-
-        if (requestParameters.pronunciation === null || requestParameters.pronunciation === undefined) {
-            throw new runtime.RequiredError('pronunciation','Required parameter requestParameters.pronunciation was null or undefined when calling rewriteUserDictWord.');
-        }
-
-        if (requestParameters.accentType === null || requestParameters.accentType === undefined) {
-            throw new runtime.RequiredError('accentType','Required parameter requestParameters.accentType was null or undefined when calling rewriteUserDictWord.');
-        }
-
-        const queryParameters: any = {};
-
-        if (requestParameters.surface) {
-            queryParameters['surface'] = requestParameters.surface;
-        }
-
-        if (requestParameters.pronunciation) {
-            queryParameters['pronunciation'] = requestParameters.pronunciation;
-        }
-
-        if (requestParameters.accentType) {
-            queryParameters['accent_type'] = requestParameters.accentType;
-        }
-
-        if (requestParameters.wordType !== undefined) {
-            queryParameters['word_type'] = requestParameters.wordType;
-        }
-
-        if (requestParameters.priority !== undefined) {
-            queryParameters['priority'] = requestParameters.priority;
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/user_dict_word/{word_uuid}`.replace(`{${"word_uuid"}}`, encodeURIComponent(String(requestParameters.wordUuid))),
-            method: 'PUT',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     * ユーザー辞書に登録されている単語を更新します。
-     * ユーザー辞書に登録されている単語を更新する
-     */
-    async rewriteUserDictWord(requestParameters: RewriteUserDictWordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.rewriteUserDictWordRaw(requestParameters, initOverrides);
     }
 
     /**
@@ -2852,7 +2789,70 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * テキストが AquesTalk 風記法に従っているかどうかを判定します。 従っていない場合はエラーが返ります。
+     * ユーザー辞書に登録されている単語を更新します。<br> 複合語を辞書に追加するには、`?surface=新田&surface=真剣佑&pronunciation=あらた&pronunciation=まっけんゆう&accent_type=1&accent_type=3` のように、`surface`, `pronunciation`, `accent_type` を同じ長さのリストで指定します。
+     * ユーザー辞書に登録されている単語を更新する
+     */
+    async updateUserDictWordRaw(requestParameters: UpdateUserDictWordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.wordUuid === null || requestParameters.wordUuid === undefined) {
+            throw new runtime.RequiredError('wordUuid','Required parameter requestParameters.wordUuid was null or undefined when calling updateUserDictWord.');
+        }
+
+        if (requestParameters.surface === null || requestParameters.surface === undefined) {
+            throw new runtime.RequiredError('surface','Required parameter requestParameters.surface was null or undefined when calling updateUserDictWord.');
+        }
+
+        if (requestParameters.pronunciation === null || requestParameters.pronunciation === undefined) {
+            throw new runtime.RequiredError('pronunciation','Required parameter requestParameters.pronunciation was null or undefined when calling updateUserDictWord.');
+        }
+
+        if (requestParameters.accentType === null || requestParameters.accentType === undefined) {
+            throw new runtime.RequiredError('accentType','Required parameter requestParameters.accentType was null or undefined when calling updateUserDictWord.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.surface) {
+            queryParameters['surface'] = requestParameters.surface;
+        }
+
+        if (requestParameters.pronunciation) {
+            queryParameters['pronunciation'] = requestParameters.pronunciation;
+        }
+
+        if (requestParameters.accentType) {
+            queryParameters['accent_type'] = requestParameters.accentType;
+        }
+
+        if (requestParameters.wordType !== undefined) {
+            queryParameters['word_type'] = requestParameters.wordType;
+        }
+
+        if (requestParameters.priority !== undefined) {
+            queryParameters['priority'] = requestParameters.priority;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/user_dict_word/{word_uuid}`.replace(`{${"word_uuid"}}`, encodeURIComponent(String(requestParameters.wordUuid))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * ユーザー辞書に登録されている単語を更新します。<br> 複合語を辞書に追加するには、`?surface=新田&surface=真剣佑&pronunciation=あらた&pronunciation=まっけんゆう&accent_type=1&accent_type=3` のように、`surface`, `pronunciation`, `accent_type` を同じ長さのリストで指定します。
+     * ユーザー辞書に登録されている単語を更新する
+     */
+    async updateUserDictWord(requestParameters: UpdateUserDictWordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.updateUserDictWordRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * テキストが AquesTalk 風記法に従っているかどうかを判定します。従っていない場合はエラーが返ります。
      * テキストが AquesTalk 風記法に従っているか判定する
      */
     async validateKanaRaw(requestParameters: ValidateKanaRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<boolean>> {
@@ -2883,7 +2883,7 @@ export class DefaultApi extends runtime.BaseAPI implements DefaultApiInterface {
     }
 
     /**
-     * テキストが AquesTalk 風記法に従っているかどうかを判定します。 従っていない場合はエラーが返ります。
+     * テキストが AquesTalk 風記法に従っているかどうかを判定します。従っていない場合はエラーが返ります。
      * テキストが AquesTalk 風記法に従っているか判定する
      */
     async validateKana(requestParameters: ValidateKanaRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<boolean> {

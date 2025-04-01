@@ -151,7 +151,7 @@ export const dictionaryStore = createPartialStore<DictionaryStoreTypes>({
     },
   },
 
-  REWRITE_WORD: {
+  UPDATE_WORD: {
     async action(
       { state, actions, getters },
       { wordUuid, surface, pronunciation, accentType, wordType, priority },
@@ -166,7 +166,7 @@ export const dictionaryStore = createPartialStore<DictionaryStoreTypes>({
           engineId: defaultEngineId,
         })
         .then((instance) =>
-          instance.invoke("rewriteUserDictWord")({
+          instance.invoke("updateUserDictWord")({
             wordUuid,
             surface,
             pronunciation,

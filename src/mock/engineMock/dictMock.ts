@@ -8,7 +8,7 @@ import {
   AddUserDictWordRequest,
   DefaultApiInterface,
   DeleteUserDictWordRequest,
-  RewriteUserDictWordRequest,
+  UpdateUserDictWordRequest,
   UserDictWord,
 } from "@/openapi";
 import { Brand } from "@/type/utility";
@@ -60,7 +60,7 @@ export class DictMock {
     DefaultApiInterface,
     | "getUserDictWords"
     | "addUserDictWord"
-    | "rewriteUserDictWord"
+    | "updateUserDictWord"
     | "deleteUserDictWord"
   > {
     return {
@@ -77,7 +77,7 @@ export class DictMock {
         return id;
       },
 
-      rewriteUserDictWord: async (payload: RewriteUserDictWordRequest) => {
+      updateUserDictWord: async (payload: UpdateUserDictWordRequest) => {
         const word = createWord(payload);
         this.userDictWords.set(payload.wordUuid as UserDictWordId, word);
       },
