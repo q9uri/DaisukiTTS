@@ -18,7 +18,7 @@
             @click="closeDialog"
           />
           <QToolbarTitle class="text-display">
-            デフォルトスタイル -
+            デフォルトスタイルの設定 -
             {{ characterInfo.metas.speakerName }}
           </QToolbarTitle>
         </QToolbar>

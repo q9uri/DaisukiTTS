@@ -10,7 +10,7 @@
       <QHeader class="q-py-sm">
         <QToolbar>
           <QBtn round flat icon="sym_r_close" color="display" @click="closeDialog" />
-          <QToolbarTitle class="text-display">話者リスト</QToolbarTitle>
+          <QToolbarTitle class="text-display">話者の並び替え設定</QToolbarTitle>
         </QToolbar>
       </QHeader>
 
@@ -51,7 +51,7 @@
 
           <div class="character-order-container">
             <div class="text-subtitle1 text-weight-bold text-center q-py-md">
-              話者の並び替え
+              ドラッグで話者を並び替え
             </div>
             <Draggable
               v-model="characterOrder"
@@ -317,7 +317,7 @@ watch(characterOrder, (newOrder) => {
 }
 
 .character-order-container {
-  width: 180px;
+  width: 210px;
   height: 100%;
 
   display: flex;

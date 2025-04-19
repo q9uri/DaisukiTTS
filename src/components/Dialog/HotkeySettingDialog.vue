@@ -16,7 +16,7 @@
             color="display"
             @click="hotkeySettingDialogOpenComputed = false"
           />
-          <QToolbarTitle class="text-display">キー割り当て</QToolbarTitle>
+          <QToolbarTitle class="text-display">ショートカットキーの変更</QToolbarTitle>
           <QInput
             v-model="hotkeyFilter"
             hideBottomSpace

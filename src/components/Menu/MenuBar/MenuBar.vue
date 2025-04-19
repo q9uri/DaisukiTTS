@@ -324,26 +324,6 @@ const engineSubMenuData = computed<MenuItemData[]>(() => {
       disablreloadingLocked: true,
     });
   }
-  subMenu.push( {
-    type: "button",
-    label: "話者リストを再読み込み",
-    async onClick() {
-      // 以下の処理は ModelManageDialog.vue の reloadCharacterAndStyle() 関数と同じ
-      // 話者・スタイル一覧を再読み込み
-      await store.actions.LOAD_CHARACTER({ engineId: store.getters.DEFAULT_ENGINE_ID });
-      await store.actions.LOAD_DEFAULT_STYLE_IDS();
-      // プリセットを再作成
-      await store.actions.CREATE_ALL_DEFAULT_PRESET();
-      // 新しくインストールされた音声合成モデル内話者の UUID が userCharacterOrder にまだ登録されていない場合、
-      // CharacterButton 内メニューで新しい話者が一番上に表示されて煩わしいため、ここで新しい話者の UUID を userCharacterOrder の末尾に登録する
-      const newCharacters = await store.actions.GET_NEW_CHARACTERS();
-      if (newCharacters.length > 0) {
-        const newUserCharacterOrder = [...store.state.userCharacterOrder, ...newCharacters];
-        await store.actions.SET_USER_CHARACTER_ORDER(newUserCharacterOrder);
-      }
-    },
-    disableWhenUiLocked: false,
-  });
 
   return subMenu;
 });
@@ -508,7 +488,7 @@ const menudata = computed<MenuItemData[]>(() => [
   },
   {
     type: "root",
-    label: "設定",
+    label: "音声合成モデル",
     onClick: () => {
       closeAllDialog();
     },
@@ -516,7 +496,7 @@ const menudata = computed<MenuItemData[]>(() => [
     subMenu: [
       {
         type: "button",
-        label: "音声合成モデルの管理",
+        label: "音声合成モデルの一覧",
         onClick() {
           void store.actions.SET_DIALOG_OPEN({
             isModelManageDialogOpen: true,
@@ -526,7 +506,55 @@ const menudata = computed<MenuItemData[]>(() => [
       },
       {
         type: "button",
-        label: "話者リスト",
+        label: "音声合成モデルを探す",
+        onClick() {
+          window.open("https://hub.aivis-project.com/", "_blank");
+        },
+        disableWhenUiLocked: true,
+      },
+      {
+        type: "button",
+        label: "話者一覧を再読み込み・更新",
+        async onClick() {
+          // 以下の処理は ModelManageDialog.vue の reloadCharacterAndStyle() 関数と同じ
+          // 話者・スタイル一覧を再読み込み
+          await store.actions.LOAD_CHARACTER({ engineId: store.getters.DEFAULT_ENGINE_ID });
+          await store.actions.LOAD_DEFAULT_STYLE_IDS();
+          // プリセットを再作成
+          await store.actions.CREATE_ALL_DEFAULT_PRESET();
+          // 新しくインストールされた音声合成モデル内話者の UUID が userCharacterOrder にまだ登録されていない場合、
+          // CharacterButton 内メニューで新しい話者が一番上に表示されて煩わしいため、ここで新しい話者の UUID を userCharacterOrder の末尾に登録する
+          const newCharacters = await store.actions.GET_NEW_CHARACTERS();
+          if (newCharacters.length > 0) {
+            const newUserCharacterOrder = [...store.state.userCharacterOrder, ...newCharacters];
+            await store.actions.SET_USER_CHARACTER_ORDER(newUserCharacterOrder);
+          }
+        },
+        disableWhenUiLocked: false,
+      },
+    ],
+  },
+  {
+    type: "root",
+    label: "設定",
+    onClick: () => {
+      closeAllDialog();
+    },
+    disableWhenUiLocked: false,
+    subMenu: [
+      {
+        type: "button",
+        label: "オプション",
+        onClick() {
+          void store.actions.SET_DIALOG_OPEN({
+            isSettingDialogOpen: true,
+          });
+        },
+        disableWhenUiLocked: false,
+      },
+      {
+        type: "button",
+        label: "話者の並び替え設定",
         onClick() {
           void store.actions.SET_DIALOG_OPEN({
             isCharacterOrderDialogOpen: true,
@@ -536,7 +564,7 @@ const menudata = computed<MenuItemData[]>(() => [
       },
       {
         type: "button",
-        label: "デフォルトスタイル",
+        label: "デフォルトスタイルの設定",
         onClick() {
           void store.actions.SET_DIALOG_OPEN({
             isDefaultStyleSelectDialogOpen: true,
@@ -566,7 +594,7 @@ const menudata = computed<MenuItemData[]>(() => [
       },
       {
         type: "button",
-        label: "キー割り当て",
+        label: "ショートカットキーの変更",
         onClick() {
           void store.actions.SET_DIALOG_OPEN({
             isHotkeySettingDialogOpen: true,
@@ -580,17 +608,6 @@ const menudata = computed<MenuItemData[]>(() => [
         label: "フィードバックを送る",
         onClick() {
           window.open("https://forms.gle/sTsZGfX7aR8ox8Rs7", "_blank");
-        },
-        disableWhenUiLocked: false,
-      },
-      { type: "separator" },
-      {
-        type: "button",
-        label: "オプション",
-        onClick() {
-          void store.actions.SET_DIALOG_OPEN({
-            isSettingDialogOpen: true,
-          });
         },
         disableWhenUiLocked: false,
       },

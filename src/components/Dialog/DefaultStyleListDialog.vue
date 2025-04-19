@@ -23,7 +23,7 @@
         <QToolbar>
           <QBtn round flat icon="sym_r_close" color="display" @click="closeDialog" />
           <QToolbarTitle class="text-display">
-            デフォルトスタイル
+            デフォルトスタイルの設定
           </QToolbarTitle>
         </QToolbar>
       </QHeader>
