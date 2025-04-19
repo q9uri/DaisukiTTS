@@ -598,7 +598,7 @@ const menudata = computed<MenuItemData[]>(() => [
   },
   {
     type: "button",
-    label: "ヘルプ",
+    label: "ヘルプ・使い方",
     onClick: () => {
       if (store.state.isHelpDialogOpen) closeAllDialog();
       else {
