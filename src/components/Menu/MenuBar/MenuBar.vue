@@ -514,7 +514,15 @@ const menudata = computed<MenuItemData[]>(() => [
       },
       {
         type: "button",
-        label: "話者一覧を再読み込み・更新",
+        label: "音声合成モデルの制作を依頼",
+        onClick() {
+          window.open("https://forms.gle/sTsZGfX7aR8ox8Rs7", "_blank");
+        },
+        disableWhenUiLocked: true,
+      },
+      {
+        type: "button",
+        label: "話者リストを更新",
         async onClick() {
           // 以下の処理は ModelManageDialog.vue の reloadCharacterAndStyle() 関数と同じ
           // 話者・スタイル一覧を再読み込み
