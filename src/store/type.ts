@@ -59,6 +59,7 @@ import { IEngineConnectorFactory } from "@/infrastructures/EngineConnector";
 import {
   TextDialogResult,
   NotifyAndNotShowAgainButtonOption,
+  NotifyOption,
   MessageDialogOptions,
   ConfirmDialogOptions,
   WarningDialogOptions,
@@ -2121,6 +2122,10 @@ export type UiStoreTypes = {
 
   SHOW_WARNING_DIALOG: {
     action(payload: WarningDialogOptions): TextDialogResult;
+  };
+
+  SHOW_NOTIFY: {
+    action(payload: NotifyOption): void;
   };
 
   SHOW_NOTIFY_AND_NOT_SHOW_AGAIN_BUTTON: {

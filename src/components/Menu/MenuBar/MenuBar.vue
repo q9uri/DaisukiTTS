@@ -510,10 +510,18 @@ const menudata = computed<MenuItemData[]>(() => [
       },
       {
         type: "button",
-        label: "話者リストを最新の情報に更新",
+        label: "AivisHubで音声合成モデルを探す",
+        onClick() {
+          window.open("https://hub.aivis-project.com/", "_blank");
+        },
+        disableWhenUiLocked: false,
+      },
+      {
+        type: "button",
+        label: "AivisHubで追加した音声合成モデルを反映",
         async onClick() {
           showLoadingScreen({
-            message: "話者リストを最新の情報に更新しています...",
+            message: "音声合成モデル情報を更新中...",
           });
           // 以下の処理は ModelManageDialog.vue の reloadCharacterAndStyle() 関数と同じ
           // 話者・スタイル一覧を再読み込み
@@ -529,18 +537,13 @@ const menudata = computed<MenuItemData[]>(() => [
             await store.actions.SET_USER_CHARACTER_ORDER(newUserCharacterOrder);
           }
           hideAllLoadingScreen();
+          void store.actions.SHOW_NOTIFY({
+            message: "AivisHub で追加した音声合成モデルを反映しました。<br>追加した話者・スタイルは「音声合成モデルの一覧」から確認できます。",
+          });
         },
         disableWhenUiLocked: true,
       },
       { type: "separator" },
-      {
-        type: "button",
-        label: "音声合成モデルを探す",
-        onClick() {
-          window.open("https://hub.aivis-project.com/", "_blank");
-        },
-        disableWhenUiLocked: false,
-      },
       {
         type: "button",
         label: "音声合成モデルの制作を依頼",

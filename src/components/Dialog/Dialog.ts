@@ -47,6 +47,12 @@ export type QuestionDialogOptions = {
   default?: number;
 };
 
+export type NotifyOption = {
+  message: string;
+  isWarning?: boolean;
+  icon?: string;
+};
+
 export type NotifyAndNotShowAgainButtonOption = {
   message: string;
   isWarning?: boolean;
@@ -364,6 +370,34 @@ export const notifyResult = (
 };
 
 const NOTIFY_TIMEOUT = 7000;
+
+export const showNotify = (
+  {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    actions,
+  }: {
+    actions: DotNotationDispatch<AllActions>;
+  },
+  options: NotifyOption,
+) => {
+  options.icon ??= options.isWarning ? "warning" : "info";
+
+  const suffix = options.isWarning ? "-warning" : "";
+  Notify.create({
+    message: options.message,
+    html: true,
+    color: "toast" + suffix,
+    textColor: "toast-display" + suffix,
+    icon: options.isWarning ? "sym_r_warning" : "sym_r_info",
+    timeout: NOTIFY_TIMEOUT,
+    actions: [
+      {
+        label: "閉じる",
+        color: "toast-button-display" + suffix,
+      },
+    ],
+  });
+};
 
 export const showNotifyAndNotShowAgainButton = (
   {

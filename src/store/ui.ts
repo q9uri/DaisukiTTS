@@ -18,6 +18,7 @@ import {
   ConfirmDialogOptions,
   WarningDialogOptions,
   NotifyAndNotShowAgainButtonOption,
+  NotifyOption,
   connectAndExportTextWithDialog,
   generateAndConnectAndSaveAudioWithDialog,
   generateAndSaveOneAudioWithDialog,
@@ -25,6 +26,7 @@ import {
   showAlertDialog,
   showConfirmDialog,
   showMessageDialog,
+  showNotify,
   showNotifyAndNotShowAgainButton,
   showWarningDialog,
 } from "@/components/Dialog/Dialog";
@@ -227,6 +229,12 @@ export const uiStore = createPartialStore<UiStoreTypes>({
     action: createUILockAction(async (_, payload: WarningDialogOptions) => {
       return await showWarningDialog(payload);
     }),
+  },
+
+  SHOW_NOTIFY: {
+    action({ actions }, payload: NotifyOption) {
+      showNotify({ actions }, payload);
+    },
   },
 
   SHOW_NOTIFY_AND_NOT_SHOW_AGAIN_BUTTON: {
