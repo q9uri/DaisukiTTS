@@ -67,7 +67,7 @@ export const useMenuBarData = () => {
       onClick: () => {
         changeShowTextLineNumber(!showTextLineNumber.value);
       },
-      disableWhenUiLocked: true,
+      disableWhenUiLocked: false,
     },
   ]);
 

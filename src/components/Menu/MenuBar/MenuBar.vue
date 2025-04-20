@@ -39,6 +39,10 @@ import MenuButton from "../MenuButton.vue";
 import TitleBarButtons from "./TitleBarButtons.vue";
 import { useStore } from "@/store";
 import { HotkeyAction, useHotkeyManager } from "@/plugins/hotkeyPlugin";
+import {
+  hideAllLoadingScreen,
+  showLoadingScreen,
+} from "@/components/Dialog/Dialog";
 import { useEngineIcons } from "@/composables/useEngineIcons";
 import { getAppInfos } from "@/domain/appInfo";
 
@@ -506,24 +510,11 @@ const menudata = computed<MenuItemData[]>(() => [
       },
       {
         type: "button",
-        label: "音声合成モデルを探す",
-        onClick() {
-          window.open("https://hub.aivis-project.com/", "_blank");
-        },
-        disableWhenUiLocked: true,
-      },
-      {
-        type: "button",
-        label: "音声合成モデルの制作を依頼",
-        onClick() {
-          window.open("https://forms.gle/sTsZGfX7aR8ox8Rs7", "_blank");
-        },
-        disableWhenUiLocked: true,
-      },
-      {
-        type: "button",
-        label: "話者リストを更新",
+        label: "話者リストを最新の情報に更新",
         async onClick() {
+          showLoadingScreen({
+            message: "話者リストを最新の情報に更新しています...",
+          });
           // 以下の処理は ModelManageDialog.vue の reloadCharacterAndStyle() 関数と同じ
           // 話者・スタイル一覧を再読み込み
           await store.actions.LOAD_CHARACTER({ engineId: store.getters.DEFAULT_ENGINE_ID });
@@ -537,6 +528,32 @@ const menudata = computed<MenuItemData[]>(() => [
             const newUserCharacterOrder = [...store.state.userCharacterOrder, ...newCharacters];
             await store.actions.SET_USER_CHARACTER_ORDER(newUserCharacterOrder);
           }
+          hideAllLoadingScreen();
+        },
+        disableWhenUiLocked: true,
+      },
+      { type: "separator" },
+      {
+        type: "button",
+        label: "音声合成モデルを探す",
+        onClick() {
+          window.open("https://hub.aivis-project.com/", "_blank");
+        },
+        disableWhenUiLocked: false,
+      },
+      {
+        type: "button",
+        label: "音声合成モデルの制作を依頼",
+        onClick() {
+          window.open("https://forms.gle/sTsZGfX7aR8ox8Rs7", "_blank");
+        },
+        disableWhenUiLocked: false,
+      },
+      {
+        type: "button",
+        label: "音声合成APIの導入サポートを依頼",
+        onClick() {
+          window.open("https://forms.gle/sTsZGfX7aR8ox8Rs7", "_blank");
         },
         disableWhenUiLocked: false,
       },
@@ -560,6 +577,7 @@ const menudata = computed<MenuItemData[]>(() => [
         },
         disableWhenUiLocked: false,
       },
+      { type: "separator" },
       {
         type: "button",
         label: "話者の並び替え設定",
@@ -737,7 +755,7 @@ registerHotkeyForAllEditors({
 
 .window-title {
   flex-shrink: 0;
-  margin-right: 15%;
+  margin-right: 11%;
   font-size: 14.5px;
   text-overflow: ellipsis;
   overflow: hidden;
