@@ -329,22 +329,27 @@ const updateMenuHeight = () => {
 @use "@/styles/colors" as colors;
 
 .character-button {
+  flex-shrink: 0;
   border: solid 1px;
   border-color: colors.$primary;
   border-radius: 6px;
+  border-width: 1.65px;
+  box-sizing: border-box;
   font-size: 0;
-  height: fit-content;
-
+  width: 40px;
+  height: 40px;
   background: colors.$background;
+  transition: opacity 0.2s ease;
+  overflow: hidden;
+
+  &:hover {
+    opacity: 0.65;
+  }
 
   .icon-container {
-    width: 38px;
-    height: 38px;
-
     img {
       max-height: 100%;
       max-width: 100%;
-      border-radius: 5px;
       object-fit: scale-down;
       background-color: var(--color-splitter);
     }
@@ -406,7 +411,6 @@ const updateMenuHeight = () => {
   }
 
   .character-icon {
-    border-radius: 5px;
     background-color: var(--color-splitter);
   }
 
