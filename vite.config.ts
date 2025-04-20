@@ -148,7 +148,7 @@ export default defineConfig((options) => {
         }),
         sentryVitePlugin({
           authToken: process.env.SENTRY_AUTH_TOKEN,
-          org: "jpchain",
+          org: "aivis-project",
           project: "aivisspeech",
           telemetry: false,
           release: {
