@@ -79,7 +79,7 @@ const props = defineProps<{
   /** 表示するアップデート情報 */
   newUpdateInfos: UpdateInfo[];
 }>();
-const emit = defineEmits<{
+defineEmits<{
   /** スキップするときに呼ばれる */
   (e: "skipThisVersionClick", version: string): void;
 }>();

@@ -1242,7 +1242,7 @@ export const audioStore = createPartialStore<AudioStoreTypes>({
 
       // ファイル名の長さを50文字以内に収める
       const maxLength = 50;
-      const ellipsis = '...';
+      const ellipsis = "...";
       const ellipsisLength = ellipsis.length;
 
       let head = sanitizeFileName(headItemText);
@@ -1260,7 +1260,7 @@ export const audioStore = createPartialStore<AudioStoreTypes>({
         ? head
         : head + ellipsis + tail;
 
-      if (headTailItemText === '') {
+      if (headTailItemText === "") {
         return DEFAULT_PROJECT_NAME;
       }
       return headTailItemText;

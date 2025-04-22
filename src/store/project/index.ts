@@ -26,9 +26,6 @@ import {
   showMessageDialog,
   showQuestionDialog,
 } from "@/components/Dialog/Dialog";
-import { getAppInfos } from "@/domain/appInfo";
-import { errorToMessage } from "@/helpers/errorHelper";
-import { uuid4 } from "@/helpers/random";
 
 export const projectStoreState: ProjectStoreState = {
   savedLastCommandIds: { talk: null, song: null },
