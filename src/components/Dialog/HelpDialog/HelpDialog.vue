@@ -1,6 +1,6 @@
 <template>
   <QDialog
-    v-model="modelValueComputed"
+    v-model="dialogOpened"
     maximized
     transitionShow="jump-up"
     transitionHide="jump-down"
@@ -56,7 +56,7 @@
                       icon="sym_r_close"
                       color="display"
                       aria-label="ヘルプを閉じる"
-                      @click="modelValueComputed = false"
+                      @click="dialogOpened = false"
                     />
                     <QToolbarTitle class="text-display"> ヘルプ </QToolbarTitle>
                     <QBtn
@@ -119,17 +119,7 @@ type PageSeparator = {
 };
 type PageData = PageItem | PageSeparator;
 
-const props = defineProps<{
-  modelValue: boolean;
-}>();
-const emit = defineEmits<{
-  (e: "update:modelValue", val: boolean): void;
-}>();
-
-const modelValueComputed = computed({
-  get: () => props.modelValue,
-  set: (val) => emit("update:modelValue", val),
-});
+const dialogOpened = defineModel<boolean>("dialogOpened", { default: false });
 
 // エディタのアップデート確認
 const store = useStore();

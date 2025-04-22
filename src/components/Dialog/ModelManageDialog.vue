@@ -1,5 +1,5 @@
 <template>
-  <QDialog v-model="engineManageDialogOpenedComputed" maximized transitionShow="jump-up" transitionHide="jump-down"
+  <QDialog v-model="dialogOpened" maximized transitionShow="jump-up" transitionHide="jump-down"
     class="setting-dialog transparent-backdrop">
     <QLayout container view="hHh Lpr fFf" class="bg-background">
       <QPageContainer>
@@ -207,7 +207,6 @@
   </QDialog>
 </template>
 <script setup lang="ts">
-
 import { computed, ref, watch, onUnmounted } from "vue";
 import linkifyHtml from "linkify-html";
 
@@ -220,25 +219,15 @@ import { createLogger } from "@/helpers/log";
 import { AivmInfo, ResponseError } from "@/openapi";
 import { useStore } from "@/store";
 
+const dialogOpened = defineModel<boolean>("dialogOpened", { default: false });
+
 const log = createLogger("ModelManageDialog");
 
 const store = useStore();
 
-const props = defineProps<{
-  modelValue: boolean;
-}>();
-const emit = defineEmits<{
-  (e: "update:modelValue", val: boolean): void;
-}>();
-
-const engineManageDialogOpenedComputed = computed({
-  get: () => props.modelValue,
-  set: (val) => emit("update:modelValue", val),
-});
-
 // ダイアログが閉じている状態
 const toDialogClosedState = () => {
-  engineManageDialogOpenedComputed.value = false;
+  dialogOpened.value = false;
 };
 
 // API インスタンスを取得する関数
@@ -277,8 +266,8 @@ const getAivmInfos = async () => {
 };
 
 // ダイヤログが開かれた時
-watch(engineManageDialogOpenedComputed, () => {
-  if (engineManageDialogOpenedComputed.value) {
+watch(dialogOpened, () => {
+  if (dialogOpened.value) {
     void getAivmInfos();
     installMethod.value = "file";
     selectedFile.value = null;

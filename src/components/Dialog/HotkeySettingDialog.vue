@@ -1,6 +1,6 @@
 <template>
   <QDialog
-    v-model="hotkeySettingDialogOpenComputed"
+    v-model="dialogOpened"
     maximized
     transitionShow="jump-up"
     transitionHide="jump-down"
@@ -14,7 +14,7 @@
             flat
             icon="sym_r_close"
             color="display"
-            @click="hotkeySettingDialogOpenComputed = false"
+            @click="dialogOpened = false"
           />
           <QToolbarTitle class="text-display">ショートカットキーの変更</QToolbarTitle>
           <QInput
@@ -107,7 +107,7 @@
   </QDialog>
 
   <HotkeyRecordingDialog
-    :isHotkeyDialogOpened
+    v-model:dialogOpened="isHotkeyDialogOpened"
     :lastAction
     :lastRecord
     :duplicatedHotkey
@@ -132,19 +132,9 @@ import {
 } from "@/domain/hotkeyAction";
 import { isMac } from "@/helpers/platform";
 
-const props = defineProps<{
-  modelValue: boolean;
-}>();
-const emit = defineEmits<{
-  (e: "update:modelValue", val: boolean): void;
-}>();
+const dialogOpened = defineModel<boolean>("dialogOpened", { default: false });
 
 const store = useStore();
-
-const hotkeySettingDialogOpenComputed = computed({
-  get: () => props.modelValue,
-  set: (val) => emit("update:modelValue", val),
-});
 
 const isHotkeyDialogOpened = ref(false);
 

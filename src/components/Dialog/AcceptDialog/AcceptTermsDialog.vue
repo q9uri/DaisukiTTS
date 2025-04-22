@@ -1,7 +1,7 @@
 <!-- 当面の間 AivisSpeech では利用しないコンポーネント (Quasar で書かれた旧 UI を継続利用する) -->
 <template>
   <AcceptDialog
-    v-model="modelValueComputed"
+    v-model:dialogOpened="dialogOpened"
     title="利用規約に関するお知らせ"
     rejectLabel="同意せずに終了"
     acceptLabel="同意して使用開始"
@@ -17,23 +17,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import AcceptDialog from "./AcceptDialog.vue";
 import { useStore } from "@/store";
 
-const props = defineProps<{
-  modelValue: boolean;
-}>();
-const emit = defineEmits<{
-  (e: "update:modelValue", value: boolean): void;
-}>();
+const dialogOpened = defineModel<boolean>("dialogOpened", { default: false });
 
 const store = useStore();
-
-const modelValueComputed = computed({
-  get: () => props.modelValue,
-  set: (val) => emit("update:modelValue", val),
-});
 
 const handler = (acceptTerms: boolean) => {
   void store.actions.SET_ACCEPT_TERMS({
@@ -45,7 +35,7 @@ const handler = (acceptTerms: boolean) => {
     });
   }
 
-  modelValueComputed.value = false;
+  dialogOpened.value = false;
 };
 
 const terms = ref("");

@@ -40,6 +40,7 @@ implements State<SequencerStateDefinitions, Input, Context>
     context.cursorState.value = "CROSSHAIR";
     // TODO: ScoreSequencer.vueのコードをnowPreview == trueを考慮したコードにする
     context.previewMode.value = "SELECT_NOTES_WITH_RECT";
+    context.enableAutoScrollOnEdge.value = true;
   }
 
   process({
@@ -109,6 +110,7 @@ implements State<SequencerStateDefinitions, Input, Context>
     context.previewRectForRectSelect.value = undefined;
     context.cursorState.value = "UNSET";
     context.previewMode.value = "IDLE";
+    context.enableAutoScrollOnEdge.value = false;
   }
 
   private updatePreviewRect(context: Context) {

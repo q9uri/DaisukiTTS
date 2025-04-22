@@ -1,6 +1,6 @@
 <template>
   <QDialog
-    v-model="engineManageDialogOpenedComputed"
+    v-model="dialogOpened"
     maximized
     transitionShow="jump-up"
     transitionHide="jump-down"
@@ -347,19 +347,10 @@ import { useEngineIcons } from "@/composables/useEngineIcons";
 
 type EngineLoaderType = "dir" | "vvpp";
 
-const props = defineProps<{
-  modelValue: boolean;
-}>();
-const emit = defineEmits<{
-  (e: "update:modelValue", val: boolean): void;
-}>();
+const dialogOpened = defineModel<boolean>("dialogOpened");
 
 const store = useStore();
 
-const engineManageDialogOpenedComputed = computed({
-  get: () => props.modelValue,
-  set: (val) => emit("update:modelValue", val),
-});
 const uiLockedState = ref<null | "addingEngine" | "deletingEngine">(null); // ダイアログ内でstore.getters.UI_LOCKEDは常にtrueなので独自に管理
 const uiLocked = computed(() => uiLockedState.value != null);
 const isAddingEngine = ref(false);
@@ -614,7 +605,7 @@ const selectEngineDir = async () => {
 const vvppFilePath = ref("");
 const selectVvppFile = async () => {
   const path = await window.backend.showOpenFileDialog({
-    title: "vvppファイルを選択",
+    title: "vvpp ファイルを選択",
     name: "VOICEVOX Plugin Package",
     mimeType: "application/octet-stream",
     extensions: ["vvpp", "vvppp"],
@@ -659,11 +650,11 @@ const toAddEngineState = () => {
 };
 // ダイアログが閉じている状態
 const toDialogClosedState = () => {
-  engineManageDialogOpenedComputed.value = false;
+  dialogOpened.value = false;
   isAddingEngine.value = false;
 };
 
-watch(engineManageDialogOpenedComputed, (newVal) => {
+watch(dialogOpened, (newVal) => {
   if (newVal) {
     toInitialState();
   }

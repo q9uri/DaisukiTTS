@@ -1,6 +1,6 @@
 <template>
   <QDialog
-    v-model="settingDialogOpenedComputed"
+    v-model="dialogOpened"
     maximized
     transitionShow="jump-up"
     transitionHide="jump-down"
@@ -17,7 +17,7 @@
               icon="sym_r_close"
               color="display"
               aria-label="設定を閉じる"
-              @click="settingDialogOpenedComputed = false"
+              @click="dialogOpened = false"
             />
             <QToolbarTitle class="text-display">オプション</QToolbarTitle>
           </QToolbar>
@@ -266,23 +266,23 @@
               </QCardActions>
 
               <FileNameTemplateDialog
-                  v-model:openDialog="showAudioFilePatternEditDialog"
-                  :savedTemplate="audioFileNamePattern"
-                  :defaultTemplate="DEFAULT_AUDIO_FILE_NAME_TEMPLATE"
-                  :availableTags="[
-                    'index',
-                    'characterName',
-                    'styleName',
-                    'text',
-                    'date',
-                    'projectName',
-                  ]"
-                  :fileNameBuilder="buildAudioFileNameFromRawData"
-                  extension=".wav"
-                  @update:template="
-                    handleSavingSettingChange('fileNamePattern', $event)
-                  "
-                />
+                v-model:dialogOpened="showAudioFilePatternEditDialog"
+                :savedTemplate="audioFileNamePattern"
+                :defaultTemplate="DEFAULT_AUDIO_FILE_NAME_TEMPLATE"
+                :availableTags="[
+                  'index',
+                  'characterName',
+                  'styleName',
+                  'text',
+                  'date',
+                  'projectName',
+                ]"
+                :fileNameBuilder="buildAudioFileNameFromRawData"
+                extension=".wav"
+                @update:template="
+                  handleSavingSettingChange('fileNamePattern', $event)
+                "
+              />
 
               <QCardActions class="no-wrap q-px-md bg-surface-darken">
                 <div>
@@ -519,20 +519,10 @@ import { useRootMiscSetting } from "@/composables/useRootMiscSetting";
 
 type SamplingRateOption = EngineSettingType["outputSamplingRate"];
 
-const props = defineProps<{
-  modelValue: boolean;
-}>();
-const emit = defineEmits<{
-  (e: "update:modelValue", val: boolean): void;
-}>();
+const dialogOpened = defineModel<boolean>("dialogOpened");
 
 const store = useStore();
 const { warn } = createLogger("SettingDialog");
-
-const settingDialogOpenedComputed = computed({
-  get: () => props.modelValue,
-  set: (val) => emit("update:modelValue", val),
-});
 
 const engineUseGpu = computed({
   get: () => {

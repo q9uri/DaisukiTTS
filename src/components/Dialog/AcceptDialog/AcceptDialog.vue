@@ -1,7 +1,7 @@
 <!-- 当面の間 AivisSpeech では利用しないコンポーネント (Quasar で書かれた旧 UI を継続利用する) -->
 <template>
   <QDialog
-    v-model="modelValueComputed"
+    v-model="dialogOpened"
     maximized
     transitionShow="jump-up"
     transitionHide="jump-down"
@@ -68,8 +68,8 @@ import { useMarkdownIt } from "@/plugins/markdownItPlugin";
 import BaseDocumentView from "@/components/Base/BaseDocumentView.vue";
 import BaseScrollArea from "@/components/Base/BaseScrollArea.vue";
 
+const dialogOpened = defineModel<boolean>("dialogOpened", { default: false });
 const props = defineProps<{
-  modelValue: boolean;
   title: string;
   heading: string;
   terms: string;
@@ -77,16 +77,10 @@ const props = defineProps<{
   acceptLabel: string;
 }>();
 
-const emit = defineEmits<{
-  "update:modelValue": [value: boolean];
+defineEmits<{
   reject: [];
   accept: [];
 }>();
-
-const modelValueComputed = computed({
-  get: () => props.modelValue,
-  set: (val) => emit("update:modelValue", val),
-});
 
 const md = useMarkdownIt();
 const termsHtml = computed(() => md.render(props.terms));

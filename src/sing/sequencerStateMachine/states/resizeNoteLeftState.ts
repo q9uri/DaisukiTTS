@@ -72,6 +72,7 @@ implements State<SequencerStateDefinitions, Input, Context>
     context.cursorState.value = "EW_RESIZE";
     context.guideLineTicks.value = mouseDownNote.position;
     context.previewMode.value = "RESIZE_NOTE_LEFT";
+    context.enableAutoScrollOnEdge.value = true;
 
     const previewIfNeeded = () => {
       if (this.innerContext == undefined) {
@@ -151,6 +152,7 @@ implements State<SequencerStateDefinitions, Input, Context>
     context.previewNotes.value = [];
     context.cursorState.value = "UNSET";
     context.previewMode.value = "IDLE";
+    context.enableAutoScrollOnEdge.value = false;
   }
 
   private previewResizeLeft(context: Context) {

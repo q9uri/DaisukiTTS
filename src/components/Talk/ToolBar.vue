@@ -201,7 +201,7 @@ const generateAndConnectAndSaveAudio = async () => {
 };
 const saveProject = async () => {
   trackToolbarAction("save_project");
-  await store.actions.SAVE_PROJECT_FILE({ overwrite: true });
+  await store.actions.SAVE_PROJECT_FILE_OVERWRITE();
 };
 const importTextFile = () => {
   trackToolbarAction("import_text");

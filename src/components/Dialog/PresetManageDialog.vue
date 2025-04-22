@@ -1,11 +1,10 @@
 <template>
   <QDialog
-    :modelValue="props.openDialog"
+    v-model="dialogOpened"
     maximized
     transitionShow="jump-up"
     transitionHide="jump-down"
     class="setting-dialog transparent-backdrop"
-    @update:modelValue="updateOpenDialog"
   >
     <QLayout container view="hHh Lpr fFf" class="bg-background">
       <QPageContainer>
@@ -210,14 +209,7 @@ import type {
 } from "@/type/preload";
 import { SLIDER_PARAMETERS } from "@/store/utility";
 
-const props = defineProps<{
-  openDialog: boolean;
-}>();
-const emit = defineEmits<{
-  (e: "update:openDialog", val: boolean): void;
-}>();
-
-const updateOpenDialog = (isOpen: boolean) => emit("update:openDialog", isOpen);
+const dialogOpened = defineModel<boolean>("dialogOpened", { default: false });
 
 const store = useStore();
 const { isDefaultPresetKey } = useDefaultPreset();
@@ -275,7 +267,7 @@ const isPresetChanged = computed(() => {
 });
 
 watch(
-  () => props.openDialog,
+  () => dialogOpened.value,
   (newValue) => {
     if (newValue && presetList.value.length > 0) {
       // ダイアログを開いた時に最初のプリセットを選択
@@ -343,10 +335,10 @@ const saveChanges = async () => {
 const closeDialog = () => {
   if (isPresetChanged.value) {
     void discardChangesWithConfirm(() => {
-      emit("update:openDialog", false);
+      dialogOpened.value = false;
     });
   } else {
-    emit("update:openDialog", false);
+    dialogOpened.value = false;
   }
 };
 

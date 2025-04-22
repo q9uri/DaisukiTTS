@@ -210,6 +210,9 @@ importers:
       '@vitest/browser':
         specifier: 3.0.7
         version: 3.0.7(@types/node@22.13.9)(playwright@1.50.1)(typescript@5.8.2)(vite@6.2.0(@types/node@22.13.9)(jiti@2.4.2)(sass-embedded@1.85.1)(terser@5.39.0)(tsx@4.19.3))(vitest@3.0.7)
+      '@vitest/eslint-plugin':
+        specifier: 1.1.38
+        version: 1.1.38(@typescript-eslint/utils@8.26.0(eslint@9.21.0(jiti@2.4.2))(typescript@5.8.2))(eslint@9.21.0(jiti@2.4.2))(typescript@5.8.2)(vitest@3.0.7)
       '@vitest/ui':
         specifier: 3.0.7
         version: 3.0.7(vitest@3.0.7)
@@ -2591,6 +2594,19 @@ packages:
       safaridriver:
         optional: true
       webdriverio:
+        optional: true
+
+  '@vitest/eslint-plugin@1.1.38':
+    resolution: {integrity: sha512-KcOTZyVz8RiM5HyriiDVrP1CyBGuhRxle+lBsmSs6NTJEO/8dKVAq+f5vQzHj1/Kc7bYXSDO6yBe62Zx0t5iaw==}
+    peerDependencies:
+      '@typescript-eslint/utils': ^8.24.0
+      eslint: '>= 8.57.0'
+      typescript: '>= 5.0.0'
+      vitest: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+      vitest:
         optional: true
 
   '@vitest/expect@2.0.5':
@@ -6343,6 +6359,9 @@ packages:
   vue-component-type-helpers@2.2.0:
     resolution: {integrity: sha512-cYrAnv2me7bPDcg9kIcGwjJiSB6Qyi08+jLDo9yuvoFQjzHiPTzML7RnkJB1+3P6KMsX/KbCD4QE3Tv/knEllw==}
 
+  vue-component-type-helpers@2.2.10:
+    resolution: {integrity: sha512-iDUO7uQK+Sab2tYuiP9D1oLujCWlhHELHMgV/cB13cuGbG4qwkLHvtfWb6FzvxrIOPDnU0oHsz2MlQjhYDeaHA==}
+
   vue-component-type-helpers@2.2.8:
     resolution: {integrity: sha512-4bjIsC284coDO9om4HPA62M7wfsTvcmZyzdfR0aUlFXqq4tXxM1APyXpNVxPC8QazKw9OhmZNHBVDA6ODaZsrA==}
 
@@ -8790,7 +8809,7 @@ snapshots:
       ts-dedent: 2.2.0
       type-fest: 2.19.0
       vue: 3.5.13(typescript@5.8.2)
-      vue-component-type-helpers: 2.2.8
+      vue-component-type-helpers: 2.2.10
 
   '@stylistic/eslint-plugin-ts@4.2.0(eslint@9.21.0(jiti@2.4.2))(typescript@5.8.2)':
     dependencies:
@@ -9098,6 +9117,14 @@ snapshots:
       - typescript
       - utf-8-validate
       - vite
+
+  '@vitest/eslint-plugin@1.1.38(@typescript-eslint/utils@8.26.0(eslint@9.21.0(jiti@2.4.2))(typescript@5.8.2))(eslint@9.21.0(jiti@2.4.2))(typescript@5.8.2)(vitest@3.0.7)':
+    dependencies:
+      '@typescript-eslint/utils': 8.26.0(eslint@9.21.0(jiti@2.4.2))(typescript@5.8.2)
+      eslint: 9.21.0(jiti@2.4.2)
+    optionalDependencies:
+      typescript: 5.8.2
+      vitest: 3.0.7(@types/debug@4.1.12)(@types/node@22.13.9)(@vitest/browser@3.0.7)(@vitest/ui@3.0.7)(happy-dom@17.2.2)(jiti@2.4.2)(msw@2.7.3(@types/node@22.13.9)(typescript@5.8.2))(sass-embedded@1.85.1)(terser@5.39.0)(tsx@4.19.3)
 
   '@vitest/expect@2.0.5':
     dependencies:
@@ -13433,6 +13460,8 @@ snapshots:
       typescript: 5.8.2
 
   vue-component-type-helpers@2.2.0: {}
+
+  vue-component-type-helpers@2.2.10: {}
 
   vue-component-type-helpers@2.2.8: {}
 

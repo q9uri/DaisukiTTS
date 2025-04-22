@@ -1,6 +1,6 @@
 <template>
   <QDialog
-    v-model="dictionaryManageDialogOpenedComputed"
+    v-model="dialogOpened"
     maximized
     transitionShow="jump-up"
     transitionHide="jump-down"
@@ -123,7 +123,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from "vue";
+import { watch } from "vue";
 import DictionaryEditWordDialog from "./DictionaryEditWordDialog.vue";
 import { hideAllLoadingScreen, showLoadingScreen } from "@/components/Dialog/Dialog";
 import { useDictionaryEditor } from "@/composables/useDictionaryEditor";
@@ -132,21 +132,11 @@ import { createLogger } from "@/helpers/log";
 import { ResponseError } from "@/openapi";
 import { useStore } from "@/store";
 
-const props = defineProps<{
-  modelValue: boolean;
-}>();
-const emit = defineEmits<{
-  (e: "update:modelValue", v: boolean): void;
-}>();
+const dialogOpened = defineModel<boolean>("dialogOpened", { default: false });
 
 const store = useStore();
 
 const log = createLogger("DictionaryManageDialog");
-
-const dictionaryManageDialogOpenedComputed = computed({
-  get: () => props.modelValue,
-  set: (val) => emit("update:modelValue", val),
-});
 
 // useDictionaryEditorから編集ロジックと状態を取得
 const {
@@ -188,13 +178,13 @@ async function loadingDictProcess() {
       message: "音声合成エンジンの再起動をお試しください。",
     });
     if (result === "OK") {
-      dictionaryManageDialogOpenedComputed.value = false;
+      dialogOpened.value = false;
     }
   }
 }
 
 // ダイアログが開かれた時に辞書を読み込む
-watch(dictionaryManageDialogOpenedComputed, async (newValue) => {
+watch(dialogOpened, async (newValue) => {
   if (newValue) {
     await loadingDictProcess();
     toInitialState();
@@ -203,7 +193,7 @@ watch(dictionaryManageDialogOpenedComputed, async (newValue) => {
 
 // ダイアログを閉じる
 const closeDialog = () => {
-  dictionaryManageDialogOpenedComputed.value = false;
+  dialogOpened.value = false;
 };
 
 // 保存前の変更の破棄を確認

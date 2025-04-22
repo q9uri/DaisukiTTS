@@ -65,6 +65,7 @@ implements State<SequencerStateDefinitions, Input, Context>
     context.cursorState.value = "DRAW";
     context.guideLineTicks.value = noteEndPos;
     context.previewMode.value = "ADD_NOTE";
+    context.enableAutoScrollOnEdge.value = true;
 
     const previewIfNeeded = () => {
       if (this.innerContext == undefined) {
@@ -142,6 +143,7 @@ implements State<SequencerStateDefinitions, Input, Context>
     context.previewNotes.value = [];
     context.cursorState.value = "UNSET";
     context.previewMode.value = "IDLE";
+    context.enableAutoScrollOnEdge.value = false;
   }
 
   private previewAdd(context: Context) {
