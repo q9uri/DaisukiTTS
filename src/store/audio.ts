@@ -1240,16 +1240,30 @@ export const audioStore = createPartialStore<AudioStoreTypes>({
       const tailItemText =
         state.audioItems[state.audioKeys[state.audioKeys.length - 1]].text;
 
-      const headTailItemText =
-        state.audioKeys.length === 1
-          ? headItemText
-          : headItemText + "..." + tailItemText;
+      // ファイル名の長さを50文字以内に収める
+      const maxLength = 50;
+      const ellipsis = '...';
+      const ellipsisLength = ellipsis.length;
 
-      const defaultFileBaseName = sanitizeFileName(headTailItemText);
+      let head = sanitizeFileName(headItemText);
+      let tail = sanitizeFileName(tailItemText);
 
-      return defaultFileBaseName === ""
-        ? DEFAULT_PROJECT_NAME
-        : defaultFileBaseName;
+      if (head.length + tail.length + ellipsisLength > maxLength) {
+        // head, tail をバランスよく切り詰める
+        const headMax = Math.floor((maxLength - ellipsisLength) / 2);
+        const tailMax = maxLength - ellipsisLength - headMax;
+        head = head.substring(0, headMax);
+        tail = tail.substring(tail.length - tailMax);
+      }
+
+      const headTailItemText = state.audioKeys.length === 1
+        ? head
+        : head + ellipsis + tail;
+
+      if (headTailItemText === '') {
+        return DEFAULT_PROJECT_NAME;
+      }
+      return headTailItemText;
     },
   },
 
