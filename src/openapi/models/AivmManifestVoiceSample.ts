@@ -14,7 +14,7 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- * AIVM マニフェストのボイスサンプル情報 
+ * AIVM マニフェストのボイスサンプル情報
  * @export
  * @interface AivmManifestVoiceSample
  */

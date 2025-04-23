@@ -14,7 +14,7 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- * エンジンが持つ機能の一覧
+ * エンジンが持つ機能の一覧。
  * @export
  * @interface SupportedFeatures
  */

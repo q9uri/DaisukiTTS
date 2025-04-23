@@ -21,7 +21,7 @@ import {
 } from './AccentPhrase';
 
 /**
- * 音声合成用のクエリ
+ * 音声合成用のクエリ。
  * @export
  * @interface AudioQuery
  */

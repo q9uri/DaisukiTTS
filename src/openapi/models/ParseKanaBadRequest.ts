@@ -14,7 +14,7 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- * 
+ * 読み仮名のパースに失敗した。
  * @export
  * @interface ParseKanaBadRequest
  */

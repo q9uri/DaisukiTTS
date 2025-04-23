@@ -21,7 +21,7 @@ import {
 } from './AivmManifestVoiceSample';
 
 /**
- * AIVM マニフェストの話者スタイル情報 
+ * AIVM マニフェストの話者スタイル情報
  * @export
  * @interface AivmManifestSpeakerStyle
  */

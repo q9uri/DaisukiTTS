@@ -14,9 +14,10 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- * UserDictWord とほとんど同じだが、ユーザー辞書関連 API の後方互換性を保つための互換レイヤー
- * stem, yomi, pronunciation, accent_type, mora_count はリストではなく文字列/数値で表す
- * 既に UserDictWord にバリデーションが実装されていることから、重複するバリデーション定義は削られている
+ * UserDictWord とほとんど同じだが、ユーザー辞書関連 API の後方互換性を保つための互換レイヤー。
+ * 
+ * stem, yomi, pronunciation, accent_type, mora_count はリストではなく文字列/数値で表す。
+ * 既に UserDictWord にバリデーションが実装されていることから、重複するバリデーション定義は削られている。
  * @export
  * @interface UserDictWordForCompat
  */

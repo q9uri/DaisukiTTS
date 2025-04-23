@@ -14,7 +14,7 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- * 音素の情報
+ * 音素の情報。
  * @export
  * @interface FramePhoneme
  */

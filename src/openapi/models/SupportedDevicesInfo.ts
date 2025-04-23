@@ -14,7 +14,7 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- * 対応しているデバイスの情報
+ * 対応しているデバイスの情報。
  * @export
  * @interface SupportedDevicesInfo
  */

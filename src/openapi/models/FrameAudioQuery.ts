@@ -21,7 +21,7 @@ import {
 } from './FramePhoneme';
 
 /**
- * フレームごとの音声合成用のクエリ
+ * フレームごとの音声合成用のクエリ。
  * @export
  * @interface FrameAudioQuery
  */

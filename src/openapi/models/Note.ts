@@ -14,7 +14,7 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- * 音符ごとの情報
+ * 音符ごとの情報。
  * @export
  * @interface Note
  */

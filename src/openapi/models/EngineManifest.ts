@@ -33,7 +33,7 @@ import {
 } from './UpdateInfo';
 
 /**
- * エンジン自体に関する情報
+ * エンジン自体に関する情報。
  * @export
  * @interface EngineManifest
  */

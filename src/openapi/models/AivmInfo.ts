@@ -27,10 +27,11 @@ import {
 } from './LibrarySpeaker';
 
 /**
- * AIVM (Aivis Voice Model) 仕様に準拠した音声合成モデルのメタデータ情報
- * AIVM マニフェストには、音声合成モデルに関連する全てのメタデータが含まれる
- * speakers フィールド内の話者情報は、VOICEVOX ENGINE との API 互換性のために
- * AIVM マニフェストを元に Speaker / SpeakerStyle / SpeakerInfo / StyleInfo モデルに変換したもの
+ * AIVM (Aivis Voice Model) 仕様に準拠した音声合成モデルのメタデータ情報。
+ * 
+ * AIVM マニフェストには、音声合成モデルに関連する全てのメタデータが含まれる。
+ * speakers フィールド内の話者情報は、VOICEVOX ENGINE との API 互換性のために、
+ * AIVM マニフェストを基に Speaker / SpeakerStyle / SpeakerInfo / StyleInfo モデルに変換したもの。
  * @export
  * @interface AivmInfo
  */

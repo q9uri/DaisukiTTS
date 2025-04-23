@@ -14,7 +14,7 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- * モーラ（子音＋母音）ごとの情報
+ * モーラ（子音＋母音）ごとの情報。
  * @export
  * @interface Mora
  */

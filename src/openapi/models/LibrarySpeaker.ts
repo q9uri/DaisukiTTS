@@ -27,7 +27,7 @@ import {
 } from './SpeakerInfo';
 
 /**
- * 音声ライブラリに含まれるキャラクターの情報
+ * 音声ライブラリに含まれるキャラクターの情報。
  * @export
  * @interface LibrarySpeaker
  */

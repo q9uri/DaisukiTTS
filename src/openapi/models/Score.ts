@@ -21,7 +21,7 @@ import {
 } from './Note';
 
 /**
- * 楽譜情報
+ * 楽譜情報。
  * @export
  * @interface Score
  */

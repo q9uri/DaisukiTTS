@@ -14,7 +14,7 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- * 依存ライブラリのライセンス情報
+ * 依存ライブラリのライセンス情報。
  * @export
  * @interface LicenseInfo
  */

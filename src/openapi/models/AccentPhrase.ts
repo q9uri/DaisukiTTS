@@ -21,7 +21,7 @@ import {
 } from './Mora';
 
 /**
- * アクセント句ごとの情報
+ * アクセント句ごとの情報。
  * @export
  * @interface AccentPhrase
  */

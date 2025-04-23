@@ -14,7 +14,7 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- * プリセット情報
+ * プリセット情報。
  * @export
  * @interface Preset
  */

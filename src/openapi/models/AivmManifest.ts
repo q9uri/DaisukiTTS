@@ -33,7 +33,7 @@ import {
 } from './ModelFormat';
 
 /**
- * AIVM マニフェストのスキーマ 
+ * AIVM マニフェストのスキーマ
  * @export
  * @interface AivmManifest
  */

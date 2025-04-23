@@ -14,7 +14,7 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- * 
+ * モーフィング相手としての情報。
  * @export
  * @interface MorphableTargetInfo
  */

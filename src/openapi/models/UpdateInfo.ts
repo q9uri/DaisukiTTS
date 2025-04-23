@@ -14,7 +14,7 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- * エンジンのアップデート情報
+ * エンジンのアップデート情報。
  * @export
  * @interface UpdateInfo
  */
