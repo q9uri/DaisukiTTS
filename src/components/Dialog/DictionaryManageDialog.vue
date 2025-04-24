@@ -99,7 +99,20 @@
             </QList>
           </div>
 
+          <!-- 辞書が空の場合のプレースホルダ -->
+          <div
+            v-if="!loadingDictState && Object.keys(userDict).length === 0 && !isWordEditing"
+            class="col-8 empty-state"
+          >
+            <div class="empty-state-message">
+              <div class="text-h6">辞書に単語が登録されていません</div>
+              <div class="text-caption q-mt-sm">
+                画面右上の「追加」ボタンから、辞書に登録したい単語を追加できます。
+              </div>
+            </div>
+          </div>
           <DictionaryEditWordDialog
+            v-else
             :uiLocked
             :isWordEditing
             :isWordChanged
@@ -377,6 +390,17 @@ const handleExportDictionary = async (): Promise<void> => {
 <style lang="scss" scoped>
 @use "@/styles/colors" as colors;
 @use "@/styles/variables" as vars;
+
+// Empty state styles
+.empty-state {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: rgba(colors.$display-rgb, 0.7);
+  padding: 16px;
+}
 
 .word-list-col {
   border-right: solid 1px colors.$surface;
