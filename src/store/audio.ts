@@ -2705,6 +2705,51 @@ export const audioCommandStore = transformCommandStore(
       },
     },
 
+    COMMAND_RESET_READING_AND_ACCENT: {
+      async action({ state, actions, mutations }, { audioKey }) {
+        const audioItem = state.audioItems[audioKey];
+        if (!audioItem) return;
+
+        const { engineId, styleId } = audioItem.voice;
+        const text = audioItem.text;
+
+        try {
+          // 現在のテキストで新しいアクセント句を取得
+          const newAccentPhrases = await actions.FETCH_ACCENT_PHRASES({
+            text,
+            engineId,
+            styleId,
+          });
+
+          // 新しいアクセント句でAudioQueryを取得
+          const newAudioQuery = await actions.FETCH_AUDIO_QUERY({
+            text,
+            engineId,
+            styleId,
+          });
+
+          // 更新を反映
+          mutations.COMMAND_CHANGE_AUDIO_TEXT({
+            audioKey,
+            text,
+            update: "AudioQuery",
+            query: newAudioQuery,
+          });
+
+          mutations.COMMAND_CHANGE_AUDIO_TEXT({
+            audioKey,
+            text,
+            update: "AccentPhrases",
+            accentPhrases: newAccentPhrases,
+          });
+
+        } catch (e) {
+          console.error("Failed to reset reading and accent:", e);
+          window.backend.logError("Failed to reset reading and accent:", e);
+        }
+      }
+    },
+
     COMMAND_MULTI_SET_AUDIO_SPEED_SCALE: {
       mutation(draft, payload: { audioKeys: AudioKey[]; speedScale: number }) {
         for (const audioKey of payload.audioKeys) {

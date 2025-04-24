@@ -626,6 +626,10 @@ export type AudioCommandStoreTypes = {
     }): void;
   };
 
+  COMMAND_RESET_READING_AND_ACCENT: {
+    action(payload: { audioKey: AudioKey }): void;
+  };
+
   COMMAND_MULTI_SET_AUDIO_SPEED_SCALE: {
     mutation: { audioKeys: AudioKey[]; speedScale: number };
     action(payload: { audioKeys: AudioKey[]; speedScale: number }): void;

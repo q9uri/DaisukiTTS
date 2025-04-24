@@ -547,8 +547,8 @@ const contextMenudata = ref<
     MenuItemButton,
     MenuItemSeparator,
     MenuItemButton,
-    // MenuItemSeparator,
-    // MenuItemButton,
+    MenuItemSeparator,
+    MenuItemButton,
   ]
 >([
   // NOTE: audioTextBuffer.value の変更が nativeEl.value に反映されるのはnextTick。
@@ -595,6 +595,18 @@ const contextMenudata = ref<
     onClick: async () => {
       contextMenu.value?.hide();
       textField.value?.select();
+    },
+    disableWhenUiLocked: true,
+  },
+  { type: "separator" },
+  {
+    type: "button",
+    label: "読み・アクセントをリセット",
+    onClick: async () => {
+      contextMenu.value?.hide();
+      void store.actions.COMMAND_RESET_READING_AND_ACCENT({
+        audioKey: props.audioKey,
+      });
     },
     disableWhenUiLocked: true,
   },
