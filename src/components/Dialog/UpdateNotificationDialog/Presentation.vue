@@ -1,7 +1,7 @@
 <template>
   <QDialog v-model="dialogOpened">
-    <QCard class="q-py-sm q-px-md dialog-card">
-      <QCardSection>
+    <QCard class="q-py-none dialog-card" style="padding: 0px 28px !important;">
+      <QCardSection class="q-px-none q-py-lg">
         <div class="text-h5">アップデートがあります</div>
         <div class="text-body2 text-grey q-mt-sm">
           公式サイトから AivisSpeech の最新バージョンをダウンロードできます。
@@ -10,13 +10,13 @@
 
       <QSeparator />
 
-      <QCardSection class="q-py-none scroll scrollable-area">
+      <QCardSection class="q-px-none scroll scrollable-area" style="padding: 20px 0px !important;">
         <template
           v-for="(info, infoIndex) of props.newUpdateInfos"
           :key="infoIndex"
         >
-          <h3>バージョン {{ info.version }}</h3>
-          <ul>
+          <h3 class="version-title">バージョン {{ info.version }}</h3>
+          <ul class="q-mb-none q-mt-sm">
             <template
               v-for="(item, descriptionIndex) of info.descriptions"
               :key="descriptionIndex"
@@ -29,15 +29,16 @@
 
       <QSeparator />
 
-      <QCardActions>
+      <QCardActions class="q-px-none q-py-lg">
         <QSpace />
         <QBtn
           padding="xs md"
+          icon="sym_r_close"
           label="閉じる"
           unelevated
           color="surface"
           textColor="display"
-          class="q-mt-sm"
+          class="text-bold"
           @click="closeUpdateNotificationDialog()"
         />
         <!-- <QBtn
@@ -46,7 +47,7 @@
           unelevated
           color="surface"
           textColor="display"
-          class="q-mt-sm"
+          class="text-bold"
           @click="
             emit('skipThisVersionClick', props.latestVersion);
             closeUpdateNotificationDialog();
@@ -54,11 +55,12 @@
         /> -->
         <QBtn
           padding="xs md"
+          icon="sym_r_download"
           label="最新バージョンをダウンロード"
           unelevated
           color="primary"
           textColor="display-on-primary"
-          class="q-mt-sm"
+          class="text-bold"
           @click="
             openOfficialWebsite();
             closeUpdateNotificationDialog();
@@ -112,5 +114,23 @@ const openOfficialWebsite = () => {
       margin: 0;
     }
   }
+
+  .version-title {
+    line-height: 1.5;
+    margin-top: 16px !important;
+
+    &:first-child {
+      margin-top: 0 !important;
+    }
+  }
+
+  li {
+    margin-top: 4px !important;
+
+    &:first-child {
+      margin-top: 0 !important;
+    }
+  }
 }
+
 </style>
