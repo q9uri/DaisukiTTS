@@ -27,8 +27,8 @@
               label="インポート"
               color="display"
               class="text-bold q-px-sm q-mr-sm"
-              :disable="uiLocked"
-              @click="handleImportDictionary"
+              :disable="uiLocked || isNewWordEditing"
+              @click="discardOrNotDialog(handleImportDictionary)"
             />
             <QBtn
               flat
@@ -36,8 +36,8 @@
               label="エクスポート"
               color="display"
               class="text-bold q-px-sm q-mr-sm"
-              :disable="uiLocked"
-              @click="handleExportDictionary"
+              :disable="uiLocked || isNewWordEditing"
+              @click="discardOrNotDialog(handleExportDictionary)"
             />
             <QBtn
               outline
@@ -45,8 +45,8 @@
               label="追加"
               textColor="display"
               class="text-bold"
-              :disable="uiLocked"
-              @click="handleAddNewWord"
+              :disable="uiLocked || isNewWordEditing"
+              @click="discardOrNotDialog(addNewWord)"
             />
           </QToolbar>
         </QHeader>
@@ -80,7 +80,7 @@
                 :active="selectedId === key"
                 class="word-list-item"
                 activeClass="active-word"
-                @click="handleSelectWord(key)"
+                @click="discardOrNotDialog(() => selectWord(key))"
               >
                 <QItemSection>
                   <QItemLabel v-if="value.stem.join('') !== value.surface" class="text-display">
@@ -202,7 +202,8 @@ const closeDialog = () => {
 
 // 保存前の変更の破棄を確認
 async function discardOrNotDialog(okCallback: () => void) {
-  if (isWordChanged.value) {
+  // エントリが変更されているか、新しい単語を追加中の場合
+  if (isWordChanged.value || isNewWordEditing.value) {
     const result = await store.actions.SHOW_WARNING_DIALOG({
       title: "単語の追加・変更を破棄しますか？",
       message: "保存されていない変更内容は失われます。",
@@ -216,22 +217,6 @@ async function discardOrNotDialog(okCallback: () => void) {
     okCallback();
   }
 }
-
-const handleAddNewWord = () => {
-  if (isWordEditing.value && isWordChanged.value) {
-    void discardOrNotDialog(addNewWord);
-  } else {
-    addNewWord();
-  }
-};
-
-const handleSelectWord = (id: string) => {
-  if (isWordEditing.value && isWordChanged.value) {
-    void discardOrNotDialog(() => selectWord(id));
-  } else {
-    selectWord(id);
-  }
-};
 
 const handleResetWord = async (id: string) => {
   const result = await store.actions.SHOW_WARNING_DIALOG({
