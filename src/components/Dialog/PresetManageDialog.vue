@@ -37,8 +37,8 @@
                     clickable
                     :active="selectedPresetKey === item.key"
                     activeClass="active-preset"
-                    @click="selectPreset(item.key)"
                     class="preset-item"
+                    @click="selectPreset(item.key)"
                   >
                     <QItemSection>
                       <QItemLabel class="text-display">{{ item.name }}</QItemLabel>
@@ -185,10 +185,27 @@
                   icon="sym_r_save"
                   label="保存"
                   textColor="primary"
-                  class="text-no-wrap text-bold"
+                  class="text-no-wrap text-bold q-mr-sm"
                   :disabled="!isPresetChanged"
                   @click="saveChanges"
-                />
+                >
+                  <QTooltip :delay="150" :offset="[0, 8]">
+                    変更の保存のみを行う
+                  </QTooltip>
+                </QBtn>
+                <QBtn
+                  outline
+                  icon="sym_r_save"
+                  label="保存して適用"
+                  textColor="primary"
+                  class="text-no-wrap text-bold"
+                  :disabled="!isPresetChanged"
+                  @click="saveAndApplyChanges"
+                >
+                  <QTooltip :delay="150" :offset="[0, 8]">
+                    変更を保存し、このプリセットが設定されたテキスト欄すべてに適用する
+                  </QTooltip>
+                </QBtn>
               </div>
             </template>
           </div>
@@ -317,6 +334,21 @@ const saveChanges = async () => {
 
   await store.actions.UPDATE_PRESET({
     presetData: editingPreset.value,
+    presetKey: selectedPresetKey.value,
+  });
+};
+
+const saveAndApplyChanges = async () => {
+  if (!selectedPresetKey.value || !editingPreset.value) return;
+
+  // プリセットを更新
+  await store.actions.UPDATE_PRESET({
+    presetData: editingPreset.value,
+    presetKey: selectedPresetKey.value,
+  });
+
+  // 更新したプリセットを使用しているすべての音声アイテムに適用
+  await store.actions.COMMAND_FULLY_APPLY_AUDIO_PRESET({
     presetKey: selectedPresetKey.value,
   });
 };
