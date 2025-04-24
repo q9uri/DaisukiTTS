@@ -26,7 +26,7 @@
           <div class="col-4" style="position: relative; min-width: 260px; flex-shrink: 0; border-right: solid 1px var(--color-surface);">
             <QList v-if="presetList.length > 0" class="preset-list">
               <Draggable
-                :modelValue="previewPresetList"
+                :modelValue="presetList"
                 itemKey="key"
                 handle=".drag-handle"
                 @update:modelValue="reorderPreset"
@@ -230,22 +230,6 @@ const presetList = computed(() =>
       key,
       ...presetItems.value[key],
     }))
-    .sort((a, b) => a.name.localeCompare(b.name, "ja")),
-);
-
-const isPreview = ref(false);
-const previewPresetKeys = ref(store.state.presetKeys);
-
-const previewPresetList = computed(() =>
-  isPreview.value
-    ? previewPresetKeys.value
-      .filter((key) => presetItems.value[key] != undefined)
-      .filter((key) => !isDefaultPresetKey(key))
-      .map((key) => ({
-        key,
-        ...presetItems.value[key],
-      }))
-    : presetList.value,
 );
 
 type ParameterType = Exclude<PresetSliderKey, "morphingRate">;
@@ -349,17 +333,13 @@ const closeDialog = () => {
 
 const reorderPreset = (featurePresetList: (Preset & { key: PresetKey })[]) => {
   const newPresetKeys = featurePresetList.map((item) => item.key);
-  previewPresetKeys.value = newPresetKeys;
-  isPreview.value = true;
 
-  // デフォルトプリセットは表示するlistから除外しているので、末尾に追加しておかないと失われる
+  // ストアのアクションを呼び出して順序を保存
+  // デフォルトプリセットは表示するlistから除外しているので、元のキーリストから取得して末尾に追加する
   const defaultPresetKeys = presetKeys.value.filter(isDefaultPresetKey);
-
-  void store.actions
-    .SAVE_PRESET_ORDER({
-      presetKeys: [...newPresetKeys, ...defaultPresetKeys],
-    })
-    .finally(() => (isPreview.value = false));
+  void store.actions.SAVE_PRESET_ORDER({
+    presetKeys: [...newPresetKeys, ...defaultPresetKeys],
+  });
 };
 
 const deletePreset = async (key: PresetKey | undefined) => {
