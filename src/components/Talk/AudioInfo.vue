@@ -21,7 +21,7 @@
                   ></QAvatar>
                 </QItemSection>
                 <QItemSection>
-                  <QItemLabel>プリセットに登録</QItemLabel>
+                  <QItemLabel>プリセットを新規登録</QItemLabel>
                 </QItemSection>
               </QItem>
               <QItem v-close-popup clickable @click="openPresetManageDialog()">
@@ -86,7 +86,7 @@
       <QDialog v-model="showsPresetNameDialog" @beforeHide="closeAllDialog">
         <QCard class="q-pa-sm" style="min-width: 350px">
           <QCardSection>
-            <div class="text-h6">プリセットに登録</div>
+            <div class="text-h6">プリセットを新規登録</div>
           </QCardSection>
 
           <QForm @submit.prevent="checkRewritePreset">
