@@ -383,7 +383,7 @@ export function useDictionaryEditor(initialSurface = "", initialPronunciation = 
     wordType.value = defaultWordType;
     wordPriority.value = defaultDictPriority;
 
-    // 辞書の最初の項目を選択する
+    // 辞書に単語が1個以上登録されている場合のみ
     if (Object.keys(userDict.value).length > 0) {
       // 前回選択していた項目があればそれを選択、なければ最初の項目を選択
       const targetKey = lastSelectedId.value && userDict.value[lastSelectedId.value]
@@ -413,6 +413,12 @@ export function useDictionaryEditor(initialSurface = "", initialPronunciation = 
 
   // 指定された ID の単語を選択する
   function selectWord(id: string): void {
+    // id が空文字または辞書データが存在しないときは初期状態に戻す
+    if (id === "" || !userDict.value[id]) {
+      toInitialState();
+      return;
+    }
+
     // 選択に合わせて状態を更新
     selectedId.value = id;
     wordAccentPhraseItems.value = [];
