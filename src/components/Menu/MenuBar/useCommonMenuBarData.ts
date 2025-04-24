@@ -329,7 +329,7 @@ export const useCommonMenuBarData = (store: Store) => {
         },
         {
           type: "button",
-          label: "プリセットの管理",
+          label: "プリセットを編集",
           onClick() {
             void store.actions.SET_DIALOG_OPEN({
               isPresetManageDialogOpen: true,

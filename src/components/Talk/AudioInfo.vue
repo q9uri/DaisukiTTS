@@ -21,7 +21,7 @@
                   ></QAvatar>
                 </QItemSection>
                 <QItemSection>
-                  <QItemLabel>プリセット新規登録</QItemLabel>
+                  <QItemLabel>プリセットに登録</QItemLabel>
                 </QItemSection>
               </QItem>
               <QItem v-close-popup clickable @click="openPresetManageDialog()">
@@ -33,7 +33,7 @@
                   ></QAvatar>
                 </QItemSection>
                 <QItemSection>
-                  <QItemLabel>プリセット管理</QItemLabel>
+                  <QItemLabel>プリセットを編集</QItemLabel>
                 </QItemSection>
               </QItem>
             </QList>
@@ -86,7 +86,7 @@
       <QDialog v-model="showsPresetNameDialog" @beforeHide="closeAllDialog">
         <QCard class="q-pa-sm" style="min-width: 350px">
           <QCardSection>
-            <div class="text-h6">プリセット登録</div>
+            <div class="text-h6">プリセットに登録</div>
           </QCardSection>
 
           <QForm @submit.prevent="checkRewritePreset">

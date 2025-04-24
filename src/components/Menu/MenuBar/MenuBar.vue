@@ -138,7 +138,7 @@ const menudata = computed<(MenuItemButton | MenuItemRoot)[]>(() => [
     subMenu: [
       {
         type: "button",
-        label: "音声合成モデルの一覧",
+        label: "音声合成モデルのインストール・管理",
         onClick() {
           void store.actions.SET_DIALOG_OPEN({
             isModelManageDialogOpen: true,
@@ -176,7 +176,7 @@ const menudata = computed<(MenuItemButton | MenuItemRoot)[]>(() => [
           }
           hideAllLoadingScreen();
           void store.actions.SHOW_NOTIFY({
-            message: "AivisHub で追加した音声合成モデルを反映しました。<br>追加した話者・スタイルは「音声合成モデルの一覧」から確認できます。",
+            message: "AivisHub で追加した音声合成モデルを反映しました。<br>追加した話者・スタイルは「音声合成モデルのインストール・管理」から確認できます。",
           });
         },
         disableWhenUiLocked: true,

@@ -8,7 +8,7 @@
             <!-- close button -->
             <QBtn round flat icon="sym_r_close" color="display" @click="toDialogClosedState" />
             <QToolbarTitle class="text-display">
-              音声合成モデルの一覧 <span class="q-ml-sm text-caption">合計 {{ aivmCount }} モデル</span>
+              音声合成モデルの管理 <span class="q-ml-sm text-caption">合計 {{ aivmCount }} モデル</span>
             </QToolbarTitle>
             <QBtn outline icon="sym_r_search" label="音声合成モデルを探す" textColor="display"
               class="text-bold q-mr-sm" @click="openExternalLink" />

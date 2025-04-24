@@ -195,7 +195,7 @@ const isImportSongProjectDialogOpenComputed = computed({
 });
 useDialogAnalytics("import_song_project", isImportSongProjectDialogOpenComputed);
 
-// プリセット管理ダイアログ
+// プリセット編集ダイアログ
 const isPresetManageDialogOpenComputed = computed({
   get: () => store.state.isPresetManageDialogOpen,
   set: (val) =>

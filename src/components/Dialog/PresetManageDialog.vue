@@ -17,7 +17,7 @@
               color="display"
               @click="closeDialog"
             />
-            <QToolbarTitle class="text-display">プリセットの管理</QToolbarTitle>
+            <QToolbarTitle class="text-display">プリセットを編集</QToolbarTitle>
           </QToolbar>
         </QHeader>
 
