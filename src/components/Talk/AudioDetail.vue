@@ -286,10 +286,15 @@ const scrollToActivePoint = () => {
   if (
     activePoint.value == undefined ||
     !audioDetail.value ||
-    accentPhraseComponents.value.length === 0
+    accentPhraseComponents.value.length === 0 ||
+    // activePoint が配列範囲外の場合や、該当要素がまだマウントされていない場合は何もしない
+    activePoint.value >= accentPhraseComponents.value.length ||
+    !accentPhraseComponents.value[activePoint.value] ||
+    !accentPhraseComponents.value[activePoint.value].container
   )
     return;
-  const elem = accentPhraseComponents.value[activePoint.value].container;
+
+  const elem = accentPhraseComponents.value[activePoint.value].container as HTMLElement;
   if (elem == undefined) throw new Error("elem == undefined");
 
   if (activePointScrollMode.value === "CONTINUOUSLY") {
