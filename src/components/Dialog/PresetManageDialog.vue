@@ -28,6 +28,7 @@
               <Draggable
                 :modelValue="previewPresetList"
                 itemKey="key"
+                handle=".drag-handle"
                 @update:modelValue="reorderPreset"
               >
                 <template #item="{ element: item }">
@@ -37,9 +38,13 @@
                     :active="selectedPresetKey === item.key"
                     activeClass="active-preset"
                     @click="selectPreset(item.key)"
+                    class="preset-item"
                   >
                     <QItemSection>
                       <QItemLabel class="text-display">{{ item.name }}</QItemLabel>
+                    </QItemSection>
+                    <QItemSection avatar class="drag-handle">
+                      <QIcon name="sym_r_drag_indicator" size="xs" color="grey" />
                     </QItemSection>
                   </QItem>
                 </template>
@@ -467,8 +472,31 @@ const getParameterLabel = (sliderKey: PresetSliderKey): string => {
 }
 
 .active-preset {
+  padding-right: 12px;
   background: hsl(206 66% 32% / 1);
   border-right: 4px solid colors.$primary;
+}
+
+.preset-item {
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: hsla(0, 0%, 50%, 0.1);
+  }
+}
+
+.drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  min-width: 32px;
+  max-width: 32px;
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
 }
 
 .preset-detail {
