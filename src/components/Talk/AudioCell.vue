@@ -137,6 +137,8 @@ const emit = defineEmits<{
     e: "focusCell",
     payload: { audioKey: AudioKey; focusTarget?: "textField" | "root" },
   ): void;
+  // テキスト欄の複製を TalkEditor に依頼するためのイベント
+  (e: "duplicateCell", payload: { audioKey: AudioKey }): void;
 }>();
 
 defineExpose({
@@ -549,6 +551,8 @@ const contextMenudata = ref<
     MenuItemButton,
     MenuItemSeparator,
     MenuItemButton,
+    MenuItemButton,
+    MenuItemButton,
   ]
 >([
   // NOTE: audioTextBuffer.value の変更が nativeEl.value に反映されるのはnextTick。
@@ -601,7 +605,26 @@ const contextMenudata = ref<
   { type: "separator" },
   {
     type: "button",
-    label: "読み・アクセントをリセット",
+    label: "テキスト欄を複製",
+    onClick: async () => {
+      contextMenu.value?.hide();
+      // TalkEditor に複製を依頼
+      emit("duplicateCell", { audioKey: props.audioKey });
+    },
+    disableWhenUiLocked: true,
+  },
+  {
+    type: "button",
+    label: "テキスト欄を削除",
+    onClick: async () => {
+      contextMenu.value?.hide();
+      void removeCell();
+    },
+    disableWhenUiLocked: true,
+  },
+  {
+    type: "button",
+    label: "読み/アクセントをリセット",
     onClick: async () => {
       contextMenu.value?.hide();
       void store.actions.COMMAND_RESET_READING_AND_ACCENT({
