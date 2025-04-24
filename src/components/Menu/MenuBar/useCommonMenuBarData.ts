@@ -329,6 +329,16 @@ export const useCommonMenuBarData = (store: Store) => {
         },
         {
           type: "button",
+          label: "プリセットの管理",
+          onClick() {
+            void store.actions.SET_DIALOG_OPEN({
+              isPresetManageDialogOpen: true,
+            });
+          },
+          disableWhenUiLocked: true,
+        },
+        {
+          type: "button",
           label: "読み方＆アクセント辞書",
           onClick() {
             void store.actions.SET_DIALOG_OPEN({
