@@ -278,6 +278,10 @@ watch(
     if (newValue && presetList.value.length > 0) {
       // ダイアログを開いた時に最初のプリセットを選択
       selectPreset(presetList.value[0].key);
+    } else if (!newValue) {
+      // ダイアログが閉じられた時に状態をリセット
+      selectedPresetKey.value = undefined;
+      editingPreset.value = undefined;
     }
   },
 );
@@ -322,10 +326,11 @@ const discardChangesWithConfirm = async (callback: () => void) => {
 const discardChanges = () => {
   if (!selectedPresetKey.value) return;
   void discardChangesWithConfirm(() => {
-    editingPreset.value = { ...presetItems.value[selectedPresetKey.value!] };
-    if (editingPreset.value.morphingInfo) {
-      editingPreset.value.morphingInfo = { ...editingPreset.value.morphingInfo };
-    }
+    if (!selectedPresetKey.value) return;
+
+    // プリセットのディープコピーを作成
+    const originalPreset = presetItems.value[selectedPresetKey.value];
+    editingPreset.value = JSON.parse(JSON.stringify(originalPreset));
   });
 };
 
