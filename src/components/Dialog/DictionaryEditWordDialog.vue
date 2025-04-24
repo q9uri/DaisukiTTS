@@ -97,8 +97,9 @@
       <div class="row no-wrap q-px-md q-mb-md desc-row" style="align-items: center; margin-top: 24px; white-space: normal;">
         <QIcon name="sym_r_warning" color="warning-light" size="19px" class="q-mr-sm" />
         <div>
-          一般的な英単語・日時・計量単位・記号を含む単語は、辞書に反映されない可能性が高いです。<br>
-          英単語は「チャットジーピーティー」のようにカタカナ表記で登録すると反映されやすいですが、必ずしも反映されるとは限りません。
+          音声合成エンジンは、読み上げやすくするために内部でテキストを変換しています。<br>
+          この際、英単語はカタカナに、一部の日時・記号・単位などは日本語の読み方に置き換えられます。<br>
+          ユーザー辞書はこの変換後のテキストに適用されるため、元の単語に日時・記号・単位などが含まれていると、意図通りに反映されない場合があります。
         </div>
       </div>
       <div class="row q-px-md q-mt-md text-h6">品詞</div>
