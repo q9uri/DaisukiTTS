@@ -86,8 +86,8 @@ export const dictionaryStore = createPartialStore<DictionaryStoreTypes>({
 
       // まずデフォルトエンジンの辞書をすべて登録
       for (const [id, dictItem] of Object.entries(defaultUserDict)) {
-        // キーは 読み(発音表記)-表層形 のペアとする
-        const pairKey = `${dictItem.pronunciation.join("")}-${dictItem.surface}`;
+        // キーは 表層形-原型-読み(発音表記) のペアとする
+        const pairKey = `${dictItem.surface}-${dictItem.stem.join("")}-${dictItem.pronunciation.join("")}`;
         mergedUserDictMap.set(id, [id, dictItem]);
         usedPairs.add(pairKey);
       }
@@ -99,8 +99,8 @@ export const dictionaryStore = createPartialStore<DictionaryStoreTypes>({
         if (i === defaultEngineIndex) continue;  // デフォルトエンジンはスキップ
         const dict = allUserDict[i];
         for (const [id, dictItem] of Object.entries(dict)) {
-          // キーは 読み(発音表記)-表層形 のペアとする
-          const pairKey = `${dictItem.pronunciation.join("")}-${dictItem.surface}`;
+          // キーは 表層形-原型-読み(発音表記) のペアとする
+          const pairKey = `${dictItem.surface}-${dictItem.stem.join("")}-${dictItem.pronunciation.join("")}`;
           // 既存の項目がない場合のみ追加（新規項目）
           // ただし、その 読み(発音表記)-表層形 のペアが既に使用されている場合は追加しない
           if (!mergedUserDictMap.has(id) && !usedPairs.has(pairKey)) {

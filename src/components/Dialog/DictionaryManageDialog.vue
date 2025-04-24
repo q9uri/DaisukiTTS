@@ -83,9 +83,13 @@
                 @click="handleSelectWord(key)"
               >
                 <QItemSection>
-                  <QItemLabel class="text-display">{{
-                    value.surface
-                  }}</QItemLabel>
+                  <QItemLabel v-if="value.stem.join('') !== value.surface" class="text-display">
+                    <!-- stem を連結した文字列と surface (エンジンによって正規化される) が異なる場合のみ両方を表示する -->
+                    {{ value.stem.join("") }} ({{ value.surface }})
+                  </QItemLabel>
+                  <QItemLabel v-else class="text-display">
+                    {{ value.surface }}
+                  </QItemLabel>
                   <QItemLabel caption class="row">
                     <span>{{ value.pronunciation.join("") }} [{{ wordTypeLabels[getWordTypeFromPartOfSpeech(value)] }}]</span>
                     <span class="q-ml-auto">優先度:{{ value.priority }}</span>
@@ -245,7 +249,7 @@ const handleResetWord = async (id: string) => {
 const handleDeleteWord = async () => {
   const result = await store.actions.SHOW_WARNING_DIALOG({
     title: "単語を削除しますか？",
-    message: `単語「${userDict.value[selectedId.value].surface}」を削除します。`,
+    message: `単語「${userDict.value[selectedId.value].stem.join("")}」を削除します。`,
     actionName: "削除する",
     isWarningColorButton: true,
     cancel: "削除しない",

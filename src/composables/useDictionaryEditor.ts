@@ -61,7 +61,10 @@ export function useDictionaryEditor(initialSurface = "", initialPronunciation = 
     }
 
     // 現在保存されているデータとの差分があれば true を返す
-    return dictData.surface !== wordAccentPhraseItems.value.map(item => item.surface).join("") ||
+    // dictData.surface (string) はエンジン側で正規化されているため、
+    // dictData.stem (string[]) を連結した文字列と、WordAccentPhraseItem.surface を連結した文字列が一致しない場合がある
+    // そのため、ここでは dictData.stem を連結した文字列と、WordAccentPhraseItem.surface を連結した文字列を比較して差分を判定する
+    return dictData.stem.join("") !== wordAccentPhraseItems.value.map(item => item.surface).join("") ||
       dictData.pronunciation.join("") !== wordAccentPhraseItems.value.map(item => item.pronunciation).join("") ||
       !dictData.accentType.every((accent, index) => accent === computeRegisteredAccent(index)) ||
       getWordTypeFromPartOfSpeech(dictData) !== wordType.value ||
