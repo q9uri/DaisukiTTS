@@ -959,7 +959,7 @@ const presetPartsFromParameter = computed<Omit<Preset, "name">>(() => {
   )
     throw new Error("slider value is null");
 
-  return {
+  const result = {
     ...parameters.value.reduce(
       (acc, parameter) => ({
         ...acc,
@@ -982,6 +982,14 @@ const presetPartsFromParameter = computed<Omit<Preset, "name">>(() => {
         }
         : undefined,
   };
+
+  // AivisSpeech Engine では「間の長さ」(pauseLengthScale) に対応していないので、デフォルトで1を設定
+  // Zod 側の型定義も pauseLengthScale: z.number().default(1) に変更してはいるが、念のため
+  if (result.pauseLengthScale == undefined) {
+    result.pauseLengthScale = 1;
+  }
+
+  return result;
 });
 
 const createPresetData = (name: string): Preset => {

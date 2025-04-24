@@ -461,7 +461,7 @@ export function getConfigSchema({ isMac }: { isMac: boolean }) {
                 tempoDynamicsScale: z.number().optional(), // AivisSpeech 固有のフィールド
                 pitchScale: z.number(),
                 volumeScale: z.number(),
-                pauseLengthScale: z.number(),
+                pauseLengthScale: z.number().default(1), // バージョン更新での追加フィールドなので、保険としてデフォルトで1を設定
                 prePhonemeLength: z.number(),
                 postPhonemeLength: z.number(),
                 morphingInfo: z
