@@ -1339,6 +1339,16 @@ export const audioStore = createPartialStore<AudioStoreTypes>({
       { actions, state },
       { audioKey, ...options }: { audioKey: AudioKey; cacheOnly?: boolean },
     ) {
+      // タイミングの関係で 0.2 秒待つ
+      // 再生開始ボタンを押す → テキストボックスのフォーカスが外れ IME 変換が確定 →
+      // テキストが AudioItem に反映されるまでには若干のラグがあり、
+      // タイミング次第ではテキストの反映より先にこの処理が実行され、変更前のテキストで音声合成されてしまうことがある
+      // 0.2 秒はヒューリスティックな実測値
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      // この時点でまだ AudioItem.text が空ならさらに 0.5 秒待つ
+      if (state.audioItems[audioKey].text === "") {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      }
       const audioItem: AudioItem = cloneWithUnwrapProxy(
         state.audioItems[audioKey],
       );
