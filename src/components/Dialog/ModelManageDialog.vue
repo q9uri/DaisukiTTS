@@ -69,9 +69,11 @@
                     <div class="col-auto q-ml-auto" style="font-size: 13.5px; color: #D2D3D4;">
                       <span>Version {{ activeAivmInfo.manifest.version }} / </span>
                       <span>{{ formatBytes(activeAivmInfo.fileSize) }}</span>
-                      <span v-if="activeAivmInfo.isUpdateAvailable" class="q-ml-xs text-primary">
+                      <a v-if="activeAivmInfo.isUpdateAvailable" class="q-ml-xs text-primary"
+                        :href="`https://hub.aivis-project.com/aivm-models/${activeAivmInfo.manifest.uuid}`"
+                        target="_blank">
                         (Version {{ activeAivmInfo.latestVersion }} に更新できます)
-                      </span>
+                      </a>
                     </div>
                   </div>
                   <div class="row items-center" style="margin-top: 12px;">
