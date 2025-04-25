@@ -1244,12 +1244,27 @@ export const audioStore = createPartialStore<AudioStoreTypes>({
 
       // ファイル名の長さを50文字以内に収める
       const maxLength = 50;
-      const ellipsis = "...";
+      const ellipsis = "…";
       const ellipsisLength = ellipsis.length;
 
       let head = sanitizeFileName(headItemText);
       let tail = sanitizeFileName(tailItemText);
 
+      // 1行しか存在しない場合
+      if (state.audioKeys.length === 1) {
+        // 50文字を超える場合は末尾を省略
+        if (head.length > maxLength) {
+          head = head.substring(0, maxLength - ellipsisLength) + ellipsis;
+        }
+        const headTailItemText = head;
+
+        if (headTailItemText === "") {
+          return DEFAULT_PROJECT_NAME;
+        }
+        return headTailItemText;
+      }
+
+      // 複数行の場合は従来通りの処理
       if (head.length + tail.length + ellipsisLength > maxLength) {
         // head, tail をバランスよく切り詰める
         const headMax = Math.floor((maxLength - ellipsisLength) / 2);
@@ -1258,9 +1273,7 @@ export const audioStore = createPartialStore<AudioStoreTypes>({
         tail = tail.substring(tail.length - tailMax);
       }
 
-      const headTailItemText = state.audioKeys.length === 1
-        ? head
-        : head + ellipsis + tail;
+      const headTailItemText = head + ellipsis + tail;
 
       if (headTailItemText === "") {
         return DEFAULT_PROJECT_NAME;

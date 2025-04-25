@@ -407,8 +407,9 @@ export function buildAudioFileNameFromRawData(
   }
 
   let text = sanitizeFileName(vars.text);
-  if (text.length > 10) {
-    text = text.substring(0, 9) + "…";
+  // 最大30文字を超える場合は末尾を省略
+  if (text.length > 30) {
+    text = text.substring(0, 29) + "…";
   }
 
   const commonVars = formatCommonFileNameFromRawData(vars);
