@@ -734,6 +734,12 @@ const linkify = (text: string | undefined): string => {
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    background: rgb(130, 201, 255);
+    transform: scale(1.05);
+  }
 }
 
 .sample-transcript {

@@ -86,7 +86,7 @@
       <QDialog v-model="showsPresetNameDialog" @beforeHide="closeAllDialog">
         <QCard class="q-pa-sm" style="min-width: 350px">
           <QCardSection>
-            <div class="text-h6">プリセットを新規登録</div>
+            <div class="text-h6">現在のパラメータでプリセットを登録</div>
           </QCardSection>
 
           <QForm @submit.prevent="checkRewritePreset">
