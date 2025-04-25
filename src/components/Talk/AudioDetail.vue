@@ -33,7 +33,7 @@
               @click="playWithClearCache"
             >
               <QTooltip anchor="top middle" :offset="[0, 30]" :delay="150">
-                音声合成結果を再生成して再生します（結果がわずかに変わることがあります）
+                音声を再生成して再生します（声のトーンや発声を微調整できます）
               </QTooltip>
             </QBtn>
             <QBtn
