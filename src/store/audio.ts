@@ -30,6 +30,8 @@ import { determineNextPresetKey } from "./preset";
 import {
   fetchAudioFromAudioItem,
   generateLabFromAudioQuery,
+  generateUniqueIdAndQuery,
+  clearAudioBlobCache,
   handlePossiblyNotMorphableError,
   isMorphable,
 } from "./audioGenerate";
@@ -1788,7 +1790,7 @@ export const audioStore = createPartialStore<AudioStoreTypes>({
       async ({ mutations, actions }, { audioKey }: { audioKey: AudioKey }) => {
         await actions.STOP_AUDIO();
 
-        // 音声用意
+        // 音声の用意
         let fetchAudioResult: FetchAudioResult;
         mutations.SET_AUDIO_NOW_GENERATING({
           audioKey,
@@ -1811,6 +1813,28 @@ export const audioStore = createPartialStore<AudioStoreTypes>({
           audioBlob: blob,
           audioKey,
         });
+      },
+    ),
+  },
+
+  PLAY_AUDIO_WITH_CLEAR_CACHE: {
+    action: createUILockAction(
+      async ({ actions, state }, { audioKey }: { audioKey: AudioKey }) => {
+
+        // audioKey に対応する AudioItem を取得
+        const audioItem = state.audioItems[audioKey];
+        if (!audioItem) {
+          throw new Error(`AudioItem not found for key: ${audioKey}`);
+        }
+
+        // AudioItem に対応するキャッシュ ID を取得し、キャッシュをクリア
+        // キャッシュが存在しない場合は何も行われない
+        const [cacheId] = await generateUniqueIdAndQuery(state, audioItem);
+        clearAudioBlobCache(cacheId);
+
+        // 音声の用意 (キャッシュがクリアされているので必ず再生成される)
+        // 以降の処理は PLAY_AUDIO と同じ
+        return actions.PLAY_AUDIO({ audioKey });
       },
     ),
   },

@@ -469,6 +469,10 @@ export type AudioStoreTypes = {
     action(payload: { audioKey: AudioKey }): boolean;
   };
 
+  PLAY_AUDIO_WITH_CLEAR_CACHE: {
+    action(payload: { audioKey: AudioKey }): boolean;
+  };
+
   PLAY_AUDIO_BLOB: {
     action(payload: { audioBlob: Blob; audioKey?: AudioKey }): boolean;
   };

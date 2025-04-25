@@ -285,28 +285,48 @@ export async function generateLabFromAudioQuery(
   return labString;
 }
 
-async function generateUniqueIdAndQuery(
+/**
+ * AudioItem からキャッシュ ID と AudioQuery を生成する。
+ * @param state 設定ストアの状態
+ * @param audioItem 対象の AudioItem
+ * @returns [キャッシュID, AudioQuery | undefined]
+ */
+export async function generateUniqueIdAndQuery(
   state: SettingStoreState,
   audioItem: AudioItem,
 ): Promise<[string, EditorAudioQuery | undefined]> {
-  audioItem = JSON.parse(JSON.stringify(audioItem)) as AudioItem;
-  const audioQuery = audioItem.query;
+  // 影響を与えないようにディープコピー
+  const copiedAudioItem = JSON.parse(JSON.stringify(audioItem)) as AudioItem;
+  const audioQuery = copiedAudioItem.query;
   if (audioQuery != undefined) {
     audioQuery.outputSamplingRate =
-      state.engineSettings[audioItem.voice.engineId].outputSamplingRate;
+      state.engineSettings[copiedAudioItem.voice.engineId].outputSamplingRate;
     audioQuery.outputStereo = state.savingSetting.outputStereo;
     // AivisSpeech では音声合成時に AudioQuery.kana に読み上げテキストを指定する必要がある
-    audioQuery.kana = audioItem.text;
+    audioQuery.kana = copiedAudioItem.text;
   }
 
   const id = await generateTempUniqueId([
-    audioItem.text,
+    copiedAudioItem.text,
     audioQuery,
-    audioItem.voice,
-    audioItem.morphingInfo,
+    copiedAudioItem.voice,
+    copiedAudioItem.morphingInfo,
     state.experimentalSetting.enableInterrogativeUpspeak, // このフラグが違うと、同じAudioQueryで違う音声が生成されるので追加
   ]);
   return [id, audioQuery];
+}
+
+/**
+ * 指定されたキャッシュ ID に対応するキャッシュを削除する。
+ * @param id 削除するキャッシュのID
+ */
+export function clearAudioBlobCache(id: string): void {
+  if (Object.prototype.hasOwnProperty.call(audioBlobCache, id)) {
+    delete audioBlobCache[id];
+    log.info(`Cache cleared for id: ${id}`);
+  } else {
+    log.info(`Cache not found for id: ${id}, no need to clear.`);
+  }
 }
 
 export function isMorphable(

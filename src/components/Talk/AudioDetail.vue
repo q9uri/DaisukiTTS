@@ -22,6 +22,34 @@
           </QTabs>
         </div>
         <div class="play-button-wrapper">
+          <div class="sub-button-row">
+            <QBtn
+              round
+              flat
+              size="sm"
+              color="primary"
+              icon="sym_r_casino"
+              :disable="nowGenerating || uiLocked"
+              @click="playWithClearCache"
+            >
+              <QTooltip anchor="top middle" :offset="[0, 30]" :delay="150">
+                音声合成結果を再生成して再生します（結果がわずかに変わることがあります）
+              </QTooltip>
+            </QBtn>
+            <QBtn
+              round
+              flat
+              size="sm"
+              color="primary"
+              icon="sym_r_restart_alt"
+              :disable="nowGenerating || uiLocked"
+              @click="resetReadingAndAccent"
+            >
+              <QTooltip anchor="top middle" :offset="[0, 30]" :delay="150">
+                単語の読みとアクセントをデフォルトに戻します
+              </QTooltip>
+            </QBtn>
+          </div>
           <QBtn
             v-if="!nowPlaying && !nowGenerating"
             fab
@@ -244,7 +272,7 @@ watch(accentPhrases, async () => {
   scrollToActivePoint();
 });
 
-// audio play
+// 音声の再生
 const play = async () => {
   try {
     await store.actions.PLAY_AUDIO({
@@ -266,6 +294,46 @@ const play = async () => {
         message: msg ?? "音声合成エンジンの再起動をお試しください。",
       });
     }
+  }
+};
+
+// 音声の再生成と再生
+const playWithClearCache = async () => {
+  try {
+    await store.actions.PLAY_AUDIO_WITH_CLEAR_CACHE({
+      audioKey: props.activeAudioKey,
+    });
+  } catch (e) {
+    const msg = handlePossiblyNotMorphableError(e);
+    // AivisSpeech Engine から音声合成エラーが返された
+    if (e instanceof Error && e.message === "Response returned an error code") {
+      void store.actions.SHOW_ALERT_DIALOG({
+        title: "音声合成に失敗しました",
+        message:
+          msg ??
+          "現在のテキストや読み方では音声合成できない可能性があります。\nテキストや読み方を変更して再度お試しください。",
+      });
+    } else {
+      void store.actions.SHOW_ALERT_DIALOG({
+        title: "再生に失敗しました",
+        message: msg ?? "音声合成エンジンの再起動をお試しください。",
+      });
+    }
+  }
+};
+
+// 読み上げとアクセントをリセット
+const resetReadingAndAccent = async () => {
+  try {
+    await store.actions.COMMAND_RESET_READING_AND_ACCENT({
+      audioKey: props.activeAudioKey,
+    });
+  } catch (e) {
+    window.backend.logError(e);
+    void store.actions.SHOW_ALERT_DIALOG({
+      title: "読み・アクセントのリセットに失敗しました",
+      message: "想定外のエラーが発生しました。",
+    });
   }
 };
 
@@ -411,12 +479,18 @@ const isAltKeyDown = useAltKey();
     .play-button-wrapper {
       align-self: center;
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       flex-wrap: nowrap;
-      flex-direction: row-reverse;
-      justify-content: space-between;
-      margin: 10px;
-      gap: 0 5px;
+      flex-direction: column;
+      justify-content: center;
+      padding-bottom: 8px;
+      gap: 2px;
+
+      .sub-button-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+      }
     }
   }
 
