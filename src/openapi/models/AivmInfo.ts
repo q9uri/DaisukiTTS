@@ -49,7 +49,7 @@ export interface AivmInfo {
      */
     isUpdateAvailable: boolean;
     /**
-     * AivisHub で公開されておらず、ユーザーがローカルからインストールしたモデルの場合は True (ネットワークエラーなどで AivisHub から情報を取得できなかった場合も True を返す)
+     * 
      * @type {boolean}
      * @memberof AivmInfo
      */
