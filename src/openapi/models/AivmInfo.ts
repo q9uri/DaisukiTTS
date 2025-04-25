@@ -49,6 +49,12 @@ export interface AivmInfo {
      */
     isUpdateAvailable: boolean;
     /**
+     * AivisHub で公開されておらず、ユーザーがローカルからインストールしたモデルの場合は True (ネットワークエラーなどで AivisHub から情報を取得できなかった場合も True を返す)
+     * @type {boolean}
+     * @memberof AivmInfo
+     */
+    isPrivateModel: boolean;
+    /**
      * 
      * @type {string}
      * @memberof AivmInfo
@@ -87,6 +93,7 @@ export function instanceOfAivmInfo(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "isLoaded" in value;
     isInstance = isInstance && "isUpdateAvailable" in value;
+    isInstance = isInstance && "isPrivateModel" in value;
     isInstance = isInstance && "latestVersion" in value;
     isInstance = isInstance && "filePath" in value;
     isInstance = isInstance && "fileSize" in value;
@@ -108,6 +115,7 @@ export function AivmInfoFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
         
         'isLoaded': json['is_loaded'],
         'isUpdateAvailable': json['is_update_available'],
+        'isPrivateModel': json['is_private_model'],
         'latestVersion': json['latest_version'],
         'filePath': json['file_path'],
         'fileSize': json['file_size'],
@@ -127,6 +135,7 @@ export function AivmInfoToJSON(value?: AivmInfo | null): any {
         
         'is_loaded': value.isLoaded,
         'is_update_available': value.isUpdateAvailable,
+        'is_private_model': value.isPrivateModel,
         'latest_version': value.latestVersion,
         'file_path': value.filePath,
         'file_size': value.fileSize,
