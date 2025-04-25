@@ -67,8 +67,16 @@
                       </span>
                     </div>
                     <div class="col-auto q-ml-auto" style="font-size: 13.5px; color: #D2D3D4;">
-                      <span>Version {{ activeAivmInfo.manifest.version }} / </span>
-                      <span>{{ formatBytes(activeAivmInfo.fileSize) }}</span>
+                      <span>Version {{ activeAivmInfo.manifest.version }}</span>
+                      <!-- プライベートモデルでない場合は AivisHub へのリンクを表示 -->
+                      <a v-if="!activeAivmInfo.isPrivateModel"
+                         :href="`https://hub.aivis-project.com/aivm-models/${activeAivmInfo.manifest.uuid}`"
+                         target="_blank"
+                         class="q-ml-xs">(AivisHub)</a>
+                      <!-- プライベートモデルの場合は (Private) を表示 -->
+                      <span v-else class="q-ml-xs">(Private)</span>
+                      <span> / {{ formatBytes(activeAivmInfo.fileSize) }}</span>
+                      <!-- アップデートがある場合は更新メッセージを表示 -->
                       <a v-if="activeAivmInfo.isUpdateAvailable" class="q-ml-xs text-primary"
                         :href="`https://hub.aivis-project.com/aivm-models/${activeAivmInfo.manifest.uuid}`"
                         target="_blank">
