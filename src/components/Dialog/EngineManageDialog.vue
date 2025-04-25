@@ -563,6 +563,9 @@ const restartSelectedEngine = () => {
   void store.actions.RESTART_ENGINES({
     engineIds: [selectedId.value],
   });
+  // ダイヤログを表示したままだと「音声合成エンジン起動中...」と表示している
+  // EngineStartupOverlay.vue が隠れて見えないので、ダイヤログを閉じる
+  dialogOpened.value = false;
 };
 
 const requireReload = async (message: string) => {
