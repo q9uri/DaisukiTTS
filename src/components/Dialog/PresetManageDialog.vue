@@ -468,7 +468,7 @@ const shouldShowParameter = (sliderKey: PresetSliderKey) => {
 const getParameterLabel = (sliderKey: PresetSliderKey): string => {
   if (isAivisSpeechEngine.value) {
     // AivisSpeech Engine での特殊なラベル
-    if (sliderKey === "intonationScale") return "スタイルの強さ";
+    if (sliderKey === "intonationScale") return "感情表現の強さ";
   }
   return parameterLabels[sliderKey as ParameterType] ?? "";
 };

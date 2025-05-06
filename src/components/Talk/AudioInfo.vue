@@ -411,21 +411,21 @@ const parameterConfigs = computed<ParameterConfig[]>(() => [
     key: "speedScale",
   },
   {
-    // 「スタイルの強さ」は AivisSpeech Engine 以外の音声合成エンジンでは「抑揚」と表示
+    // 「感情表現の強さ」は AivisSpeech Engine 以外の音声合成エンジンでは「抑揚」と表示
     label:
       audioItem.value.voice.engineId === store.getters.DEFAULT_ENGINE_ID
-        ? "スタイルの強さ"
+        ? "感情表現の強さ"
         : "抑揚",
     tooltip:
       audioItem.value.voice.engineId === store.getters.DEFAULT_ENGINE_ID
-        ? "話者スタイルの声色の強弱を調整できます\n" +
-          "強くするとよりそのスタイルに近い抑揚がついた声になります\n" +
-          "強くしすぎるとスタイル次第では棒読みになるため注意\n" +
-          "（ノーマルスタイルでは変更できません）"
+        ? "選択した話者スタイルの感情表現の強弱を調整できます\n" +
+          "強くするとよりその話者スタイルに近い感情表現が込められた声になります\n" +
+          "強くしすぎると話者やスタイル次第では棒読みで不自然な声になるため注意\n" +
+          "（ノーマルスタイルでは自動で適切な感情表現が選択されるため変更できません）"
         : "抑揚の強弱を調整できます",
     sliderProps: {
       modelValue: () => query.value?.intonationScale ?? null,
-      // デフォルトスタイルでは「スタイルの強さ」は効果がないので無効化
+      // デフォルトスタイルでは「感情表現の強さ」は効果がないので無効化
       disable: () =>
         uiLocked.value ||
         !supportedFeatures.value?.adjustIntonationScale ||

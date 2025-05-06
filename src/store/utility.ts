@@ -66,7 +66,7 @@ export const SLIDER_PARAMETERS: Record<PresetSliderKey, SliderParameter> = {
     scrollMinStep: () => 0.01,
   },
   /**
-   * スタイルの強さパラメータの定義
+   * 感情表現の強さパラメータの定義
    */
   intonationScale: {
     max: () => 2,
