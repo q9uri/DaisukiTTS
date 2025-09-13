@@ -1,19 +1,24 @@
 
 # AivisSpeech
 
-[![Releases](https://img.shields.io/github/v/release/Aivis-Project/AivisSpeech?label=Release)](https://github.com/Aivis-Project/AivisSpeech/releases)
 [![License: LGPL-3.0](https://img.shields.io/badge/License-LGPL3-blue.svg)](LICENSE)
-[![CI: Build](https://github.com/Aivis-Project/AivisSpeech/actions/workflows/build.yml/badge.svg)](https://github.com/Aivis-Project/AivisSpeech/actions/workflows/build.yml)
-<!-- [![CI: Test](https://github.com/Aivis-Project/AivisSpeech/actions/workflows/test.yml/badge.svg)](https://github.com/Aivis-Project/AivisSpeech/actions/workflows/test.yml) -->
 
-💠 **AivisSpeech:** **AI** **V**oice **I**mitation **S**ystem - Text to **Speech** Software
+DaisukiTTS
 
------
+## Special Thanks
 
-**AivisSpeech は、[VOICEVOX](https://github.com/VOICEVOX/voicevox) のエディター UI をベースにした、日本語音声合成ソフトウェアです。**  
-日本語音声合成エンジンの [AivisSpeech Engine](https://github.com/Aivis-Project/AivisSpeech-Engine) を組み込んでおり、かんたんに感情豊かな音声を生成できます。
+Daisuki / DaisukiTTS Engine は、多くの素晴らしいオープンソースソフトウェアとその貢献に深く支えられています。  
+オープンソースソフトウェアを開発してくださった全ての方々、コミュニティの皆様の貢献とサポートに、心より感謝いたします。
 
-#### [💠 AivisSpeech をダウンロード](https://aivis-project.com/speech/) ／ [💠 AivisSpeech Engine をダウンロード](https://github.com/Aivis-Project/AivisSpeech-Engine/releases)
+- [@litagin02](https://github.com/litagin02)
+- [@Stardust-minus](https://github.com/Stardust-minus)
+- [@tuna2134](https://github.com/tuna2134)
+- [@googlefan256](https://github.com/googlefan256)
+- [@WariHima aka. q9uri](https://github.com/Wq9uri)
+- [VOICEVOX](https://github.com/VOICEVOX/voicevox) Contributors
+- [VOICEVOX ENGINE](https://github.com/VOICEVOX/voicevox_engine) Contributors
+- Everyone in [AI声づくり技術研究会](https://zenn.dev/p/aivoicelab)
+- [aivis-project](https://github.com/aivis-project)
 
 -----
 
@@ -29,7 +34,6 @@
 
 ## ユーザーの方へ
 
-**AivisSpeech の使い方をお探しの方は、[AivisSpeech 公式サイト](https://aivis-project.com/speech/) をご覧ください。**
 
 このページでは、主に開発者向けの情報を掲載しています。  
 以下はユーザーの方向けのドキュメントです。
@@ -57,11 +61,11 @@ AivisSpeech を起動するには、PC に 1.5GB 以上の空きメモリ (RAM) 
 
 ## サポートされている音声合成モデル
 
-**AivisSpeech に組み込まれている AivisSpeech Engine は、[AIVMX (**Ai**vis **V**oice **M**odel for ONN**X**)](https://github.com/Aivis-Project/aivmlib#aivmx-file-format-specification) (拡張子 `.aivmx`) フォーマットの音声合成モデルファイルをサポートしています。**
+**DaisukiTTS に組み込まれている DaisukiTTS Engine は、[AIVMX (**Ai**vis **V**oice **M**odel for ONN**X**)](https://github.com/Aivis-Project/aivmlib#aivmx-file-format-specification) (拡張子 `.aivmx`) フォーマットの音声合成モデルファイルをサポートしています。**
 
 **AIVM** (**Ai**vis **V**oice **M**odel) / **AIVMX** (**Ai**vis **V**oice **M**odel for ONN**X**) は、**学習済みモデル・ハイパーパラメータ・スタイルベクトル・話者メタデータ（名前・概要・ライセンス・アイコン・ボイスサンプル など）を 1 つのファイルにギュッとまとめた、AI 音声合成モデル用オープンファイルフォーマット**です。  
 
-AIVM 仕様や AIVM / AIVMX ファイルについての詳細は、Aivis Project にて策定した **[AIVM 仕様](https://github.com/Aivis-Project/aivmlib#aivm-specification)** をご参照ください。
+AIVM 仕様や AIVM / AIVMX ファイルについての詳細は、Aivis Project さんが策定した **[AIVM 仕様](https://github.com/Aivis-Project/aivmlib#aivm-specification)** をご参照ください。
 
 > [!NOTE]  
 > **「AIVM」は、AIVM / AIVMX 両方のフォーマット仕様・メタデータ仕様の総称でもあります。**  
@@ -69,7 +73,7 @@ AIVM 仕様や AIVM / AIVMX ファイルについての詳細は、Aivis Project
 > 「AIVM メタデータ」とは、AIVM 仕様に定義されている、学習済みモデルに紐づく各種メタデータのことをいいます。
 
 > [!IMPORTANT]  
-> **AivisSpeech Engine は AIVM 仕様のリファレンス実装でもありますが、敢えて AIVMX ファイルのみをサポートする設計としています。**  
+> **DaisukiTTS　は 敢えて AIVMX ファイルのみをサポートする設計としています。**  
 > これにより、PyTorch への依存を排除してインストールサイズを削減し、ONNX Runtime による高速な CPU 推論を実現しています。
 
 > [!TIP]  
@@ -83,7 +87,7 @@ AIVM 仕様や AIVM / AIVMX ファイルについての詳細は、Aivis Project
 - `Style-Bert-VITS2 (JP-Extra)`
 
 > [!NOTE]
-> AIVM メタデータの仕様上は多言語対応の話者を定義できますが、AivisSpeech Engine は VOICEVOX ENGINE と同様に、日本語音声合成のみに対応しています。  
+> AIVM メタデータの仕様上は多言語対応の話者を定義できますが、現時点 は VOICEVOX ENGINE と同様に、日本語音声合成のみに対応しています。  
 > そのため、英語や中国語に対応した音声合成モデルであっても、日本語以外の音声合成はできません。
 
 ### モデルファイルの配置場所
@@ -94,32 +98,15 @@ AIVMX ファイルは、OS ごとに以下のフォルダに配置してくだ�
 - **macOS:** `~/Library/Application Support/AivisSpeech-Engine/Models`
 - **Linux:** `~/.local/share/AivisSpeech-Engine/Models`
 
-実際のフォルダパスは、AivisSpeech Engine の起動直後のログに `Models directory:` として表示されます。
+実際のフォルダパスは、DaisukiTTS Engine の起動直後のログに `Models directory:` として表示されます。
 
 > [!TIP]  
-> **AivisSpeech 利用時は、AivisSpeech の UI 画面から簡単に音声合成モデルを追加できます！**  
+> **DaisukiTTS 利用時は、DaisukiTTS の UI 画面から簡単に音声合成モデルを追加できます！**  
 > エンドユーザーの方は、基本的にこちらの方法で音声合成モデルを追加することをおすすめします。
 
 > [!IMPORTANT]
-> 開発版 (PyInstaller でビルドされていない状態で AivisSpeech Engine を実行している場合) の配置フォルダは、`AivisSpeech-Engine` 以下ではなく `AivisSpeech-Engine-Dev` 以下となります。
+> 開発版 (PyInstaller でビルドされていない状態で ADaisukiTTS Engine を実行している場合) の配置フォルダは、`AivisSpeech-Engine` 以下ではなく `AivisSpeech-Engine-Dev` 以下となります。
 
-## 開発方針
-
-[VOICEVOX](https://github.com/VOICEVOX) は非常に巨大なソフトウェアであり、現在も活発に開発が続けられています。  
-そのため、AivisSpeech では VOICEVOX の最新版をベースに、以下の方針で開発を行っています。
-
-- VOICEVOX 最新版への追従を容易にするため、できるだけ改変を必要最小限に留める
-  - VOICEVOX から AivisSpeech へのリブランディングは必要な箇所のみ行う
-- リファクタリングを行わない
-  - VOICEVOX とのコンフリクトが発生することが容易に予想される上、コード全体に精通しているわけではないため
-- AivisSpeech で利用しない機能 (歌声合成機能など) であっても、コードの削除は行わない
-  - これもコンフリクトを回避するため
-  - 利用しないコードの無効化は削除ではなく、コメントアウトで行う
-- 保守や追従が困難なため、ドキュメントの更新は行わない
-  - このため各ドキュメントは一切更新されておらず、AivisSpeech での変更を反映していない
-- AivisSpeech 向けの改変にともないテストコードの維持が困難なため、テストコードの更新は行わない
-  - 特に E2E テストは UI が大きく改変されているためまともに動作しない
-  - テストコードの一部は AivisSpeech に合わせて修正されているが、動作検証は行っておらず放置されている
 
 ## 開発環境の構築
 
@@ -165,30 +152,30 @@ poetry run task serve
 
 ```bash
 # 開発環境で Electron 版 AivisSpeech を起動
-npm run electron:serve
+pnpm run electron:serve
 
 # 開発環境でブラウザ版 AivisSpeech を起動
-npm run browser:serve
+pnpm run browser:serve
 
 # Electron 版 AivisSpeech をビルド
-npm run electron:build
+pnpm run electron:build
 
 # ブラウザ版 AivisSpeech (WIP) をビルド
-npm run browser:build
+pnpm run browser:build
 
 # コードフォーマットを自動修正
-npm run format
+pnpm run format
 
 # コードフォーマットをチェック
-npm run lint
+pnpm run lint
 
 # OpenAPI Generator による自動生成コードを更新
-npm run openapi:generate
+pnpm run openapi:generate
 
 # 依存ライブラリのライセンス情報を生成
 ## VOICEVOX と異なり、音声合成エンジンとのライセンス情報との統合は行わない
 ## エディタ側で別途エンジンマニフェストから取得したライセンス情報を表示できるようにしているため不要
-npm run license:generate
+pnpm run license:generate
 ```
 
 ## ライセンス
@@ -197,19 +184,6 @@ npm run license:generate
 
 下記ならびに [docs/](docs/) 以下のドキュメントは、[VOICEVOX](https://github.com/VOICEVOX/voicevox) 本家のドキュメントを改変なしでそのまま引き継いでいます。これらのドキュメントの内容が AivisSpeech にも通用するかは保証されません。
 
-## Special Thanks
-
-AivisSpeech / AivisSpeech Engine は、多くの素晴らしいオープンソースソフトウェアとその貢献に深く支えられています。  
-オープンソースソフトウェアを開発してくださった全ての方々、コミュニティの皆様の貢献とサポートに、心より感謝いたします。
-
-- [@litagin02](https://github.com/litagin02)
-- [@Stardust-minus](https://github.com/Stardust-minus)
-- [@tuna2134](https://github.com/tuna2134)
-- [@googlefan256](https://github.com/googlefan256)
-- [@WariHima](https://github.com/WariHima)
-- [VOICEVOX](https://github.com/VOICEVOX/voicevox) Contributors
-- [VOICEVOX ENGINE](https://github.com/VOICEVOX/voicevox_engine) Contributors
-- Everyone in [AI声づくり技術研究会](https://zenn.dev/p/aivoicelab)
 
 -----
 
@@ -313,23 +287,6 @@ pnpm run storybook
 main ブランチの Storybook は[VOICEVOX/preview-pages](https://github.com/VOICEVOX/preview-pages)から確認できます。  
 <https://voicevox.github.io/preview-pages/preview/editor/branch-main/storybook/index.html>
 
-### ブラウザ版の実行（開発中）
-
-別途音声合成エンジンを起動し、以下を実行して表示された localhost へアクセスします。
-
-```bash
-pnpm run browser:serve
-```
-
-また、main ブランチのビルド結果が[VOICEVOX/preview-pages](https://github.com/VOICEVOX/preview-pages)にデプロイされています。  
-<https://voicevox.github.io/preview-pages/preview/editor/branch-main/editor/index.html>  
-今はローカル PC 上で音声合成エンジンを起動する必要があります。
-
-## ビルド
-
-```bash
-pnpm run electron:build
-```
 
 ### Github Actions でビルド
 

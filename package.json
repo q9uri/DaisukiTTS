@@ -1,7 +1,7 @@
 {
-  "name": "AivisSpeech",
+  "name": "DaisukiTTS",
   "version": "999.999.999",
-  "author": "Aivis Project",
+  "author": "DaisukiTTS",
   "private": true,
   "main": "./dist/main.js",
   "type": "module",

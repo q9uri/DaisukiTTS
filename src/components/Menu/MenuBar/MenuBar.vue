@@ -88,7 +88,7 @@ const titleText = computed(
   () =>
     (isEdited.value ? "*" : "") +
     (projectName.value != undefined ? projectName.value + " - " : "") +
-    "AivisSpeech " +
+    "DaisukiTTS " +
     (getAppInfos().version) +
     (extraVersionInfo ? ` (${extraVersionInfo})` : "") +
     (isMultiEngineOffMode.value ? " - マルチエンジンオフ" : "") +
@@ -148,15 +148,15 @@ const menudata = computed<(MenuItemButton | MenuItemRoot)[]>(() => [
       },
       {
         type: "button",
-        label: "AivisHubで音声合成モデルを探す",
+        label: "every1koe Hubで音声合成モデルを探す",
         onClick() {
-          window.open("https://hub.aivis-project.com/", "_blank");
+          window.open("https://hub.every1koe.pj.ymhk.jp/", "_blank");
         },
         disableWhenUiLocked: false,
       },
       {
         type: "button",
-        label: "AivisHubで追加した音声合成モデルを反映",
+        label: "音声合成モデルをリロード",
         async onClick() {
           showLoadingScreen({
             message: "音声合成モデル情報を更新中...",
@@ -176,27 +176,10 @@ const menudata = computed<(MenuItemButton | MenuItemRoot)[]>(() => [
           }
           hideAllLoadingScreen();
           void store.actions.SHOW_NOTIFY({
-            message: "AivisHub で追加した音声合成モデルを反映しました。<br>追加した話者・スタイルは「音声合成モデルのインストール・管理」から確認できます。",
+            message: "追加した音声合成モデルを反映しました。<br>追加した話者・スタイルは「音声合成モデルのインストール・管理」から確認できます。",
           });
         },
         disableWhenUiLocked: true,
-      },
-      { type: "separator" },
-      {
-        type: "button",
-        label: "音声合成モデルの制作を依頼",
-        onClick() {
-          window.open("https://forms.gle/sTsZGfX7aR8ox8Rs7", "_blank");
-        },
-        disableWhenUiLocked: false,
-      },
-      {
-        type: "button",
-        label: "音声合成APIの導入サポートを依頼",
-        onClick() {
-          window.open("https://forms.gle/sTsZGfX7aR8ox8Rs7", "_blank");
-        },
-        disableWhenUiLocked: false,
       },
     ],
   },

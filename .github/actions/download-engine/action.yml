@@ -1,17 +1,17 @@
-name: "Download AivisSpeech Engine"
+name: "Download DaisukiTTS Engine"
 description: |
-  AivisSpeech Engine をダウンロードし、指定したディレクトリに展開する。
+  DaisukiTTS Engine をダウンロードし、指定したディレクトリに展開する。
 inputs:
   repo:
-    description: "リポジトリ名。デフォルトは Aivis-Project/AivisSpeech-Engine 。"
+    description: "リポジトリ名。デフォルトは q9uri/DaisukiTTS 。"
     required: false
-    default: "Aivis-Project/AivisSpeech-Engine"
+    default: "q9uri/DaisukiTTS"
   version:
-    description: "AivisSpeech Engine のバージョン。latest (デフォルト) 、prerelease-latest、バージョン番号 (例: 1.0.0) で指定できる。"
+    description: "DaisukiTTS Engine のバージョン。latest (デフォルト) 、prerelease-latest、バージョン番号 (例: 1.0.0) で指定できる。"
     required: false
     default: "latest"
   dest:
-    description: "AivisSpeech Engine を展開するディレクトリ。"
+    description: "DaisukiTTS Engine を展開するディレクトリ。"
     required: true
   target:
     description: "ダウンロードする対象。"
@@ -27,7 +27,7 @@ outputs:
     description: "run.exe or run のパス。"
     value: ${{ steps.result.outputs.run_path }}
   version:
-    description: "AivisSpeech Engine のバージョン。"
+    description: "DaisukiTTS Engine のバージョン。"
     value: ${{ steps.result.outputs.version }}
 runs:
   using: "composite"

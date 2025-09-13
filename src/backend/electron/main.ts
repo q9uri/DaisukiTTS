@@ -7,7 +7,6 @@ import { pathToFileURL } from "url";
 import { app, dialog, Menu, net, protocol, shell } from "electron";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 
-import * as Sentry from "@sentry/electron/main";
 import electronLog from "electron-log/main";
 import dayjs from "dayjs";
 import { initializeEngineInfoManager } from "./manager/engineInfoManager";
@@ -75,16 +74,7 @@ if (!isDevelopment) {
   configMigration014({ fixedUserDataDir, beforeUserDataDir }); // 以前のファイルがあれば持ってくる
 }
 
-// Sentry によるエラートラッキングを開始 (production 環境のみ有効)
-// app.setPath("userData") を設定した後に呼ぶ必要がある
-// ref: https://docs.sentry.io/platforms/javascript/guides/electron/
-if (isProduction) {
-  Sentry.init({
-    dsn: "https://ab3b3a5b0e9d1c90dae483f740dbc78b@o4508551725383680.ingest.us.sentry.io/4508555292901376",
-    release: `AivisSpeech@${app.getVersion() === "999.999.999" ? "latest" : app.getVersion()}`,
-    environment: "production",
-  });
-}
+
 
 electronLog.initialize({ preload: false });
 // silly 以上のログをコンソールに出力

@@ -26,7 +26,7 @@ on:
         default: false
 
 env:
-  AIVISSPEECH_ENGINE_VERSION: "1.1.0-dev"
+  AIVISSPEECH_ENGINE_VERSION: "20250914.post1"
   AIVISSPEECH_EDITOR_VERSION:
     |- # releaseタグ名か、workflow_dispatchでのバージョン名か、999.999.999-developが入る
     ${{ github.event.release.tag_name || github.event.inputs.version || '999.999.999-develop' }}
@@ -59,43 +59,43 @@ jobs:
           - artifact_name: windows-x64-prepackage
             artifact_path: dist_electron/win-unpacked
             aivisspeech_engine_asset_name: Windows-x64
-            package_name: AivisSpeech
-            compressed_artifact_name: AivisSpeech-Windows-x64
+            package_name: DaisukiTTS
+            compressed_artifact_name: DaisukiTTS-Windows-x64
             app_asar_dir: prepackage/resources
             installer_artifact_name: windows-x64-nsis-web
-            nsis_web_artifact_name: "AivisSpeech-Windows-x64-${version}.${ext}"
+            nsis_web_artifact_name: "DaisukiTTS-Windows-x64-${version}.${ext}"
             os: windows-2022
           # macOS x64 (Intel Mac)
           - artifact_name: macos-x64-prepackage
             artifact_path: dist_electron/mac
             aivisspeech_engine_asset_name: macOS-x64
-            package_name: AivisSpeech
-            compressed_artifact_name: AivisSpeech-macOS-x64
-            app_asar_dir: prepackage/AivisSpeech.app/Contents/Resources
+            package_name: DaisukiTTS
+            compressed_artifact_name: DaisukiTTS-macOS-x64
+            app_asar_dir: prepackage/DaisukiTTS.app/Contents/Resources
             installer_artifact_name: macos-x64-dmg
-            macos_artifact_name: "AivisSpeech-macOS-x64-${version}.${ext}"
+            macos_artifact_name: "DaisukiTTS-macOS-x64-${version}.${ext}"
             os: macos-13
           # macOS arm64 (Apple Silicon Mac)
           - artifact_name: macos-arm64-prepackage
             artifact_path: dist_electron/mac-arm64
             aivisspeech_engine_asset_name: macOS-arm64
-            package_name: AivisSpeech
-            compressed_artifact_name: AivisSpeech-macOS-arm64
-            app_asar_dir: prepackage/AivisSpeech.app/Contents/Resources
+            package_name: DaisukiTTS
+            compressed_artifact_name: DaisukiTTS-macOS-arm64
+            app_asar_dir: prepackage/DaisukiTTS.app/Contents/Resources
             installer_artifact_name: macos-arm64-dmg
-            macos_artifact_name: "AivisSpeech-macOS-arm64-${version}.${ext}"
+            macos_artifact_name: "DaisukiTTS-macOS-arm64-${version}.${ext}"
             os: macos-14
           # Linux x64
           - artifact_name: linux-x64-prepackage
             artifact_path: dist_electron/linux-unpacked
             aivisspeech_engine_asset_name: Linux-x64
-            package_name: AivisSpeech
-            compressed_artifact_name: AivisSpeech-Linux-x64
+            package_name: DaisukiTTS
+            compressed_artifact_name: DaisukiTTS-Linux-x64
             app_asar_dir: prepackage/resources
             installer_artifact_name: linux-x64-appimage
-            linux_artifact_name: "AivisSpeech.${ext}"
-            linux_executable_name: AivisSpeech
-            linux_appimage_7z_name: AivisSpeech.AppImage
+            linux_artifact_name: "DaisukiTTS.${ext}"
+            linux_executable_name: DaisukiTTS
+            linux_appimage_7z_name: DaisukiTTS.AppImage
             os: ubuntu-22.04
 
     runs-on: ${{ matrix.os }}
@@ -124,7 +124,7 @@ jobs:
       #       so different package/product names should be used for CPU/DirectML/GPU builds.
       - name: Replace package name & version
         run: |
-          $sed -i 's/"name": "AivisSpeech"/"name": "${{ matrix.package_name }}"/' package.json
+          $sed -i 's/"name": "DaisukiTTS"/"name": "${{ matrix.package_name }}"/' package.json
 
           $sed -i 's/"version": "999.999.999"/"version": "${{ env.AIVISSPEECH_EDITOR_VERSION }}"/' package.json
 
@@ -164,7 +164,7 @@ jobs:
       - name: Overwrite .env.production for macOS
         if: startsWith(matrix.os, 'macos-')
         run: |
-          $sed -i 's|AivisSpeech-Engine/run.exe|../Resources/AivisSpeech-Engine/run|g' .env.production
+          $sed -i 's|DaisukiTTS-Engine/run.exe|../Resources/DaisukiTTS-Engine/run|g' .env.production
 
       - name: Generate public/licenses.json
         run: pnpm run license:generate
@@ -214,57 +214,57 @@ jobs:
         run: |
           mv ${{ matrix.artifact_path }} ./prepackage
 
-      # Download AivisSpeech Engine
-      - name: Download AivisSpeech Engine
+      # Download DaisukiTTS Engine
+      - name: Download DaisukiTTS Engine
         id: download-engine
         uses: ./.github/actions/download-engine
         with:
           version: ${{ env.AIVISSPEECH_ENGINE_VERSION }}
-          dest: ${{ github.workspace }}/AivisSpeech-Engine
+          dest: ${{ github.workspace }}/DaisukiTTS-Engine
           target: ${{ matrix.aivisspeech_engine_asset_name }}
           token: ${{ secrets.ENGINE_DOWNLOADER_TOKEN }}
 
-      - name: Merge AivisSpeech Engine into prepackage/
+      - name: Merge DaisukiTTS Engine into prepackage/
         if: startsWith(matrix.artifact_name, 'windows-') || startsWith(matrix.artifact_name, 'linux-')
         run: |
-          mv AivisSpeech-Engine/ prepackage/AivisSpeech-Engine/
+          mv DaisukiTTS-Engine/ prepackage/DaisukiTTS-Engine/
 
-      - name: Merge AivisSpeech Engine into prepackage/AivisSpeech.app/Contents/Resources/
+      - name: Merge DaisukiTTS Engine into prepackage/DaisukiTTS.app/Contents/Resources/
         if: startsWith(matrix.artifact_name, 'macos-')
         run: |
-          mv AivisSpeech-Engine/ prepackage/AivisSpeech.app/Contents/Resources/AivisSpeech-Engine/
+          mv DaisukiTTS-Engine/ prepackage/DaisukiTTS.app/Contents/Resources/DaisukiTTS-Engine/
 
       - name: Recover file permissions
         if: startsWith(matrix.artifact_name, 'linux-') # linux
         run: |
           chmod +x "prepackage/${{ matrix.linux_executable_name }}"
-          chmod +x "prepackage/AivisSpeech-Engine/run"
+          chmod +x "prepackage/DaisukiTTS-Engine/run"
 
       - name: Recover file permissions for macOS build
         if: startsWith(matrix.artifact_name, 'macos-') # macOS
         run: |
-          chmod +x "prepackage/AivisSpeech.app/Contents/Resources/AivisSpeech-Engine/run"
-          chmod +x "prepackage/AivisSpeech.app/Contents/Frameworks/AivisSpeech Helper (GPU).app/Contents/MacOS/AivisSpeech Helper (GPU)"
-          chmod +x "prepackage/AivisSpeech.app/Contents/Frameworks/AivisSpeech Helper (Plugin).app/Contents/MacOS/AivisSpeech Helper (Plugin)"
-          chmod +x "prepackage/AivisSpeech.app/Contents/Frameworks/AivisSpeech Helper (Renderer).app/Contents/MacOS/AivisSpeech Helper (Renderer)"
-          chmod +x "prepackage/AivisSpeech.app/Contents/Frameworks/AivisSpeech Helper.app/Contents/MacOS/AivisSpeech Helper"
+          chmod +x "prepackage/DaisukiTTS.app/Contents/Resources/DaisukiTTS-Engine/run"
+          chmod +x "prepackage/DaisukiTTS.app/Contents/Frameworks/DaisukiTTS Helper (GPU).app/Contents/MacOS/DaisukiTTS Helper (GPU)"
+          chmod +x "prepackage/DaisukiTTS.app/Contents/Frameworks/DaisukiTTS Helper (Plugin).app/Contents/MacOS/DaisukiTTS Helper (Plugin)"
+          chmod +x "prepackage/DaisukiTTS.app/Contents/Frameworks/DaisukiTTS Helper (Renderer).app/Contents/MacOS/DaisukiTTS Helper (Renderer)"
+          chmod +x "prepackage/DaisukiTTS.app/Contents/Frameworks/DaisukiTTS Helper.app/Contents/MacOS/DaisukiTTS Helper"
 
       # NOTE: actions/upload-artifact@v4 does not upload `**.lproj` directories, which are an empty directory.
       #       Make `ja.lproj` directory because it is necessary for Japanese localization on macOS.
-      - name: Make .lproj directories in Resources directory of AivisSpeech.app
+      - name: Make .lproj directories in Resources directory of DaisukiTTS.app
         if: startsWith(matrix.artifact_name, 'macos-')
-        run: mkdir -p prepackage/AivisSpeech.app/Contents/Resources/ja.lproj prepackage/AivisSpeech.app/Contents/Resources/en.lproj
+        run: mkdir -p prepackage/DaisukiTTS.app/Contents/Resources/ja.lproj prepackage/DaisukiTTS.app/Contents/Resources/en.lproj
 
       - name: Ad hoc code signing
         if: endsWith(matrix.installer_artifact_name, '-dmg') # macOS
-        run: codesign --force --deep -s - prepackage/AivisSpeech.app
+        run: codesign --force --deep -s - prepackage/DaisukiTTS.app
 
       # - name: Create Linux tar.gz (without nvidia)
       #   if: startsWith(matrix.artifact_name, 'linux-') && !contains(matrix.artifact_name, 'nvidia')
       #   run: |
       #     name="${{ matrix.compressed_artifact_name }}-${{ env.AIVISSPEECH_EDITOR_VERSION }}"
       #     7z a -ttar $name.tar prepackage/
-      #     7z rn $name.tar prepackage/ AivisSpeech/
+      #     7z rn $name.tar prepackage/ DaisukiTTS/
       #     7z a -tgzip $name.tar.gz $name.tar
       #     rm $name.tar
 
@@ -296,7 +296,7 @@ jobs:
         run: |
           name="${{ matrix.compressed_artifact_name }}-${{ env.AIVISSPEECH_EDITOR_VERSION }}"
           7z a -tzip $name.zip prepackage/
-          7z rn $name.zip prepackage/ AivisSpeech/
+          7z rn $name.zip prepackage/ DaisukiTTS/
 
       - name: Upload Windows & Mac zip (without nvidia) to Artifacts
         if: (startsWith(matrix.artifact_name, 'windows-') || startsWith(matrix.artifact_name, 'macos-')) && !contains(matrix.artifact_name, 'nvidia') && github.event.inputs.upload_artifact == 'true'
@@ -357,7 +357,7 @@ jobs:
           RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
         run: |
           for i in {1..5}; do
-            pnpm run electron:build --prepackaged prepackage/AivisSpeech.app && break || {
+            pnpm run electron:build --prepackaged prepackage/DaisukiTTS.app && break || {
               if [ $i -lt 5 ]; then
                 echo "Attempt $i failed! Retrying in 10 seconds..."
                 sleep 10
@@ -396,7 +396,7 @@ jobs:
 
             paste -d '\t' archives_name.txt archives_size.txt archives_hash.txt > archives.txt
 
-            mv archives.txt "AivisSpeech.AppImage.7z.txt"
+            mv archives.txt "DaisukiTTS.AppImage.7z.txt"
           done
 
       - name: Upload Linux AppImage split to Artifacts
