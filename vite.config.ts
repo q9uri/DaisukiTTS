@@ -8,7 +8,6 @@ import vue from "@vitejs/plugin-vue";
 import checker from "vite-plugin-checker";
 import { BuildOptions, defineConfig, loadEnv, Plugin } from "vite";
 import { quasar } from "@quasar/vite-plugin";
-import { sentryVitePlugin } from "@sentry/vite-plugin";
 import { z } from "zod";
 
 import {
@@ -142,19 +141,6 @@ export default defineConfig((options) => {
                 outDir: path.resolve(import.meta.dirname, "dist"),
                 sourcemap,
               },
-            },
-          },
-        }),
-        sentryVitePlugin({
-          authToken: process.env.SENTRY_AUTH_TOKEN,
-          org: "aivis-project",
-          project: "aivisspeech",
-          telemetry: false,
-          release: {
-            name: process.env.RELEASE_VERSION ? `AivisSpeech@${process.env.RELEASE_VERSION}` : undefined,
-            setCommits: {
-              auto: true,
-              ignoreMissing: true,
             },
           },
         }),
