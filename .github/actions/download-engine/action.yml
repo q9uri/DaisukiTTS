@@ -5,7 +5,7 @@ inputs:
   repo:
     description: "リポジトリ名。デフォルトは q9uri/DaisukiTTS 。"
     required: false
-    default: "q9uri/DaisukiTTS"
+    default: "q9uri/DaisukiTTS-engine"
   version:
     description: "DaisukiTTS Engine のバージョン。latest (デフォルト) 、prerelease-latest、バージョン番号 (例: 1.0.0) で指定できる。"
     required: false
