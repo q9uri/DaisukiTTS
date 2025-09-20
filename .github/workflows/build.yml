@@ -51,9 +51,6 @@ jobs:
       matrix:
         artifact_name:
           - windows-x64-prepackage
-          - macos-x64-prepackage
-          - macos-arm64-prepackage
-          # - linux-x64-prepackage
         include:
           # Windows x64
           - artifact_name: windows-x64-prepackage
