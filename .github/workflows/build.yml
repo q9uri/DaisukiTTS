@@ -26,7 +26,7 @@ on:
         default: false
 
 env:
-  AIVISSPEECH_ENGINE_VERSION: "0.1.0"
+  AIVISSPEECH_ENGINE_VERSION: "0.2.0"
   AIVISSPEECH_EDITOR_VERSION:
     |- # releaseタグ名か、workflow_dispatchでのバージョン名か、999.999.999-developが入る
     ${{ github.event.release.tag_name || github.event.inputs.version || '999.999.999-develop' }}
@@ -65,38 +65,6 @@ jobs:
             installer_artifact_name: windows-x64-nsis-web
             nsis_web_artifact_name: "DaisukiTTS-Windows-x64-${version}.${ext}"
             os: windows-2022
-          # macOS x64 (Intel Mac)
-          - artifact_name: macos-x64-prepackage
-            artifact_path: dist_electron/mac
-            aivisspeech_engine_asset_name: macOS-x64
-            package_name: DaisukiTTS
-            compressed_artifact_name: DaisukiTTS-macOS-x64
-            app_asar_dir: prepackage/DaisukiTTS.app/Contents/Resources
-            installer_artifact_name: macos-x64-dmg
-            macos_artifact_name: "DaisukiTTS-macOS-x64-${version}.${ext}"
-            os: macos-13
-          # macOS arm64 (Apple Silicon Mac)
-          - artifact_name: macos-arm64-prepackage
-            artifact_path: dist_electron/mac-arm64
-            aivisspeech_engine_asset_name: macOS-arm64
-            package_name: DaisukiTTS
-            compressed_artifact_name: DaisukiTTS-macOS-arm64
-            app_asar_dir: prepackage/DaisukiTTS.app/Contents/Resources
-            installer_artifact_name: macos-arm64-dmg
-            macos_artifact_name: "DaisukiTTS-macOS-arm64-${version}.${ext}"
-            os: macos-14
-          # Linux x64
-          - artifact_name: linux-x64-prepackage
-            artifact_path: dist_electron/linux-unpacked
-            aivisspeech_engine_asset_name: Linux-x64
-            package_name: DaisukiTTS
-            compressed_artifact_name: DaisukiTTS-Linux-x64
-            app_asar_dir: prepackage/resources
-            installer_artifact_name: linux-x64-appimage
-            linux_artifact_name: "DaisukiTTS.${ext}"
-            linux_executable_name: DaisukiTTS
-            linux_appimage_7z_name: DaisukiTTS.AppImage
-            os: ubuntu-22.04
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -107,13 +75,6 @@ jobs:
         run: |
           echo "RELEASE_VERSION=${{ github.event.release.tag_name || github.event.inputs.version || github.sha }}" >> $GITHUB_ENV
 
-      # NOTE: The default sed of macOS is BSD sed.
-      #       There is a difference in specification between BSD sed and GNU sed,
-      #       so you need to install GNU sed.
-      - name: Install GNU sed on macOS
-        if: startsWith(matrix.os, 'macos-')
-        run: |
-          brew install gnu-sed
 
       # Rename executable file
       # NOTE: If the CPU/DirectML/GPU builds have the same package name,
@@ -156,11 +117,6 @@ jobs:
       - name: Install dependencies
         run: pnpm i --frozen-lockfile
 
-      - name: Overwrite .env.production for Linux
-        if: startsWith(matrix.os, 'ubuntu-')
-        run: |
-          $sed -i 's|run.exe|./run|g' .env.production
-
       - name: Overwrite .env.production for macOS
         if: startsWith(matrix.os, 'macos-')
         run: |
@@ -191,9 +147,6 @@ jobs:
       - name: Build Electron
         env:
           NSIS_WEB_ARTIFACT_NAME: ${{ matrix.nsis_web_artifact_name }}
-          LINUX_ARTIFACT_NAME: ${{ matrix.linux_artifact_name }}
-          LINUX_EXECUTABLE_NAME: ${{ matrix.linux_executable_name }}
-          MACOS_ARTIFACT_NAME: ${{ matrix.macos_artifact_name }}
           RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
 
           # https://github.com/electron-userland/electron-builder/issues/3179
@@ -228,68 +181,6 @@ jobs:
         if: startsWith(matrix.artifact_name, 'windows-') || startsWith(matrix.artifact_name, 'linux-')
         run: |
           mv DaisukiTTS-Engine/ prepackage/DaisukiTTS-Engine/
-
-      - name: Merge DaisukiTTS Engine into prepackage/DaisukiTTS.app/Contents/Resources/
-        if: startsWith(matrix.artifact_name, 'macos-')
-        run: |
-          mv DaisukiTTS-Engine/ prepackage/DaisukiTTS.app/Contents/Resources/DaisukiTTS-Engine/
-
-      - name: Recover file permissions
-        if: startsWith(matrix.artifact_name, 'linux-') # linux
-        run: |
-          chmod +x "prepackage/${{ matrix.linux_executable_name }}"
-          chmod +x "prepackage/DaisukiTTS-Engine/run"
-
-      - name: Recover file permissions for macOS build
-        if: startsWith(matrix.artifact_name, 'macos-') # macOS
-        run: |
-          chmod +x "prepackage/DaisukiTTS.app/Contents/Resources/DaisukiTTS-Engine/run"
-          chmod +x "prepackage/DaisukiTTS.app/Contents/Frameworks/DaisukiTTS Helper (GPU).app/Contents/MacOS/DaisukiTTS Helper (GPU)"
-          chmod +x "prepackage/DaisukiTTS.app/Contents/Frameworks/DaisukiTTS Helper (Plugin).app/Contents/MacOS/DaisukiTTS Helper (Plugin)"
-          chmod +x "prepackage/DaisukiTTS.app/Contents/Frameworks/DaisukiTTS Helper (Renderer).app/Contents/MacOS/DaisukiTTS Helper (Renderer)"
-          chmod +x "prepackage/DaisukiTTS.app/Contents/Frameworks/DaisukiTTS Helper.app/Contents/MacOS/DaisukiTTS Helper"
-
-      # NOTE: actions/upload-artifact@v4 does not upload `**.lproj` directories, which are an empty directory.
-      #       Make `ja.lproj` directory because it is necessary for Japanese localization on macOS.
-      - name: Make .lproj directories in Resources directory of DaisukiTTS.app
-        if: startsWith(matrix.artifact_name, 'macos-')
-        run: mkdir -p prepackage/DaisukiTTS.app/Contents/Resources/ja.lproj prepackage/DaisukiTTS.app/Contents/Resources/en.lproj
-
-      - name: Ad hoc code signing
-        if: endsWith(matrix.installer_artifact_name, '-dmg') # macOS
-        run: codesign --force --deep -s - prepackage/DaisukiTTS.app
-
-      # - name: Create Linux tar.gz (without nvidia)
-      #   if: startsWith(matrix.artifact_name, 'linux-') && !contains(matrix.artifact_name, 'nvidia')
-      #   run: |
-      #     name="${{ matrix.compressed_artifact_name }}-${{ env.AIVISSPEECH_EDITOR_VERSION }}"
-      #     7z a -ttar $name.tar prepackage/
-      #     7z rn $name.tar prepackage/ DaisukiTTS/
-      #     7z a -tgzip $name.tar.gz $name.tar
-      #     rm $name.tar
-
-      # - name: Upload Linux tar.gz (without nvidia) to Artifacts
-      #   if: startsWith(matrix.artifact_name, 'linux-') && !contains(matrix.artifact_name, 'nvidia') && github.event.inputs.upload_artifact == 'true'
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: ${{ matrix.artifact_name }}-targz
-      #     path: |-
-      #       ${{ matrix.compressed_artifact_name }}-${{ env.AIVISSPEECH_EDITOR_VERSION }}.tar.gz
-
-      # - name: Upload Linux tar.gz (without nvidia) to Release Assets
-      #   if: startsWith(matrix.artifact_name, 'linux-') && !contains(matrix.artifact_name, 'nvidia') && (github.event.release.tag_name || github.event.inputs.version) != ''
-      #   uses: softprops/action-gh-release@v2
-      #   with:
-      #     prerelease: ${{ github.event.inputs.prerelease }}
-      #     tag_name: ${{ env.AIVISSPEECH_EDITOR_VERSION }}
-      #     files: |-
-      #       ${{ matrix.compressed_artifact_name }}-${{ env.AIVISSPEECH_EDITOR_VERSION }}.tar.gz
-      #     target_commitish: ${{ github.sha }}
-
-      # - name: Delete Linux tar.gz (without nvidia)
-      #   if: startsWith(matrix.artifact_name, 'linux-') && !contains(matrix.artifact_name, 'nvidia')
-      #   run: |
-      #     rm ${{ matrix.compressed_artifact_name }}-${{ env.AIVISSPEECH_EDITOR_VERSION }}.tar.gz
 
       - name: Create Windows & Mac zip (without nvidia)
         if: (startsWith(matrix.artifact_name, 'windows-') || startsWith(matrix.artifact_name, 'macos-')) && !contains(matrix.artifact_name, 'nvidia')
@@ -344,29 +235,9 @@ jobs:
         if: endsWith(matrix.installer_artifact_name, '-nsis-web') || endsWith(matrix.installer_artifact_name, '-appimage') # windows and linux
         env:
           NSIS_WEB_ARTIFACT_NAME: ${{ matrix.nsis_web_artifact_name }}
-          LINUX_ARTIFACT_NAME: ${{ matrix.linux_artifact_name }}
-          LINUX_EXECUTABLE_NAME: ${{ matrix.linux_executable_name }}
           RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
         run: |
           pnpm run electron:build --prepackaged prepackage/
-
-      - name: Build Electron (for macOS)
-        if: endsWith(matrix.installer_artifact_name, '-dmg') # macOS
-        env:
-          MACOS_ARTIFACT_NAME: ${{ matrix.macos_artifact_name }}
-          RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
-        run: |
-          for i in {1..5}; do
-            pnpm run electron:build --prepackaged prepackage/DaisukiTTS.app && break || {
-              if [ $i -lt 5 ]; then
-                echo "Attempt $i failed! Retrying in 10 seconds..."
-                sleep 10
-              else
-                echo "All attempts failed!"
-                exit 1
-              fi
-            }
-          done
 
       - name: Reset Code Signing Envs
         if: startsWith(matrix.os, 'windows-') && github.event.inputs.code_signing == 'true'
@@ -377,63 +248,6 @@ jobs:
           echo 'SIGNTOOL_PATH=' >> $GITHUB_ENV
         env:
           THUMBPRINT_PATH: /tmp/esignercka_thumbprint.txt
-
-      - name: Create Linux AppImage split
-        if: endsWith(matrix.installer_artifact_name, '-appimage')
-        run: |
-          cd dist_electron/
-
-          for appImageFile in *.AppImage; do
-            echo "Splitting ${appImageFile}"
-
-            # compressed to MyArtifact.AppImage.7z.001, MyArtifact.AppImage.7z.002, ...
-            7z -v1g a "${{ matrix.linux_appimage_7z_name }}.7z" "${appImageFile}"
-
-            # Output split archive name<TAB>size<TAB>hash list to myartifact.7z.txt
-            ls "${{ matrix.linux_appimage_7z_name }}.7z".* > archives_name.txt
-            stat --printf="%s\n" "${{ matrix.linux_appimage_7z_name }}.7z".* > archives_size.txt
-            md5sum "${{ matrix.linux_appimage_7z_name }}.7z".* | awk '{print $1}' | tr a-z A-Z > archives_hash.txt
-
-            paste -d '\t' archives_name.txt archives_size.txt archives_hash.txt > archives.txt
-
-            mv archives.txt "DaisukiTTS.AppImage.7z.txt"
-          done
-
-      - name: Upload Linux AppImage split to Artifacts
-        if: endsWith(matrix.installer_artifact_name, '-appimage') && github.event.inputs.upload_artifact == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.installer_artifact_name }}-release
-          path: |-
-            dist_electron/*.7z.*
-
-      - name: Upload Linux AppImage split to Release Assets
-        if: endsWith(matrix.installer_artifact_name, '-appimage') && (github.event.release.tag_name || github.event.inputs.version) != ''
-        uses: softprops/action-gh-release@v2
-        with:
-          prerelease: ${{ github.event.inputs.prerelease }}
-          tag_name: ${{ env.AIVISSPEECH_EDITOR_VERSION }}
-          files: |-
-            dist_electron/*.7z.*
-          target_commitish: ${{ github.sha }}
-
-      - name: Upload macOS dmg to Artifacts
-        if: endsWith(matrix.installer_artifact_name, '-dmg') && github.event.inputs.upload_artifact == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.installer_artifact_name }}-release
-          path: |-
-            dist_electron/*.dmg
-
-      - name: Upload macOS dmg to Release Assets
-        if: endsWith(matrix.installer_artifact_name, '-dmg') && (github.event.release.tag_name || github.event.inputs.version) != ''
-        uses: softprops/action-gh-release@v2
-        with:
-          prerelease: ${{ github.event.inputs.prerelease }}
-          tag_name: ${{ env.AIVISSPEECH_EDITOR_VERSION }}
-          files: |-
-            dist_electron/*.dmg
-          target_commitish: ${{ github.sha }}
 
       - name: Upload Windows NSIS Web to Artifacts
         if: endsWith(matrix.installer_artifact_name, '-nsis-web') && github.event.inputs.upload_artifact == 'true'
