@@ -26,7 +26,7 @@ on:
         default: false
 
 env:
-  AIVISSPEECH_ENGINE_VERSION: "0.2.0"
+  AIVISSPEECH_ENGINE_VERSION: "0.2.1"
   AIVISSPEECH_EDITOR_VERSION:
     |- # releaseタグ名か、workflow_dispatchでのバージョン名か、999.999.999-developが入る
     ${{ github.event.release.tag_name || github.event.inputs.version || '999.999.999-develop' }}
