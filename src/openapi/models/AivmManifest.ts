@@ -1,8 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * AivisSpeech Engine
- * AivisSpeech の音声合成エンジンです。
+ * DaisukiTTS Engine
+ * DaisukiTTS の音声合成エンジンです。
  *
  * The version of the OpenAPI document: latest
  * 
@@ -43,7 +43,7 @@ export interface AivmManifest {
      * @type {string}
      * @memberof AivmManifest
      */
-    manifestVersion: string;
+    manifestVersion: AivmManifestManifestVersionEnum;
     /**
      * 
      * @type {string}
@@ -111,6 +111,16 @@ export interface AivmManifest {
      */
     speakers: Array<AivmManifestSpeaker>;
 }
+
+
+/**
+ * @export
+ */
+export const AivmManifestManifestVersionEnum = {
+    _10: '1.0'
+} as const;
+export type AivmManifestManifestVersionEnum = typeof AivmManifestManifestVersionEnum[keyof typeof AivmManifestManifestVersionEnum];
+
 
 /**
  * Check if a given object implements the AivmManifest interface.

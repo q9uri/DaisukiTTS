@@ -1,8 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * AivisSpeech Engine
- * AivisSpeech の音声合成エンジンです。
+ * DaisukiTTS Engine
+ * DaisukiTTS の音声合成エンジンです。
  *
  * The version of the OpenAPI document: latest
  * 
@@ -39,7 +39,7 @@ export interface AccentPhrase {
      */
     accent: number;
     /**
-     * 後ろに無音を付けるかどうか
+     * 
      * @type {Mora}
      * @memberof AccentPhrase
      */

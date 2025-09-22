@@ -1,8 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * AivisSpeech Engine
- * AivisSpeech の音声合成エンジンです。
+ * DaisukiTTS Engine
+ * DaisukiTTS の音声合成エンジンです。
  *
  * The version of the OpenAPI document: latest
  * 
@@ -71,7 +71,7 @@ export interface UserDictWord {
      */
     partOfSpeechDetail3: string;
     /**
-     * 品詞種別
+     * 
      * @type {WordTypes}
      * @memberof UserDictWord
      */
