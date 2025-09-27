@@ -186,7 +186,7 @@ jobs:
           #7z a -tzip $name.zip prepackage/
           # 7z rn $name.zip prepackage/ DaisukiTTS/
           # Compress to artifact.7z.001, artifact.7z.002, ...
-          7z -r -v1900m a "$name.7z" "${{ matrix.target }}/"
+          7z -r -v1900m a "$name.7z" prepackage/
 
       - name: Upload Windows & Mac zip (without nvidia) to Artifacts
         if: (startsWith(matrix.artifact_name, 'windows-') || startsWith(matrix.artifact_name, 'macos-')) && !contains(matrix.artifact_name, 'nvidia') && github.event.inputs.upload_artifact == 'true'
