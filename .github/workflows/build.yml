@@ -183,16 +183,18 @@ jobs:
         if: (startsWith(matrix.artifact_name, 'windows-') || startsWith(matrix.artifact_name, 'macos-')) && !contains(matrix.artifact_name, 'nvidia')
         run: |
           name="${{ matrix.compressed_artifact_name }}-${{ env.AIVISSPEECH_EDITOR_VERSION }}"
-          7z a -tzip $name.zip prepackage/
-          7z rn $name.zip prepackage/ DaisukiTTS/
+          #7z a -tzip $name.zip prepackage/
+          # 7z rn $name.zip prepackage/ DaisukiTTS/
+          # Compress to artifact.7z.001, artifact.7z.002, ...
+          7z -r -v1900m a "$name.7z" "${{ matrix.target }}/"
 
       - name: Upload Windows & Mac zip (without nvidia) to Artifacts
         if: (startsWith(matrix.artifact_name, 'windows-') || startsWith(matrix.artifact_name, 'macos-')) && !contains(matrix.artifact_name, 'nvidia') && github.event.inputs.upload_artifact == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.artifact_name }}-zip
+          name: ${{ matrix.artifact_name }}-7z.*
           path: |-
-            ${{ matrix.compressed_artifact_name }}-${{ env.AIVISSPEECH_EDITOR_VERSION }}.zip
+            ${{ matrix.compressed_artifact_name }}-${{ env.AIVISSPEECH_EDITOR_VERSION }}.7z.*
 
       - name: Upload Windows & Mac zip (without nvidia) to Release Assets
         if: (startsWith(matrix.artifact_name, 'windows-') || startsWith(matrix.artifact_name, 'macos-')) && !contains(matrix.artifact_name, 'nvidia') && (github.event.release.tag_name || github.event.inputs.version) != ''
@@ -201,13 +203,13 @@ jobs:
           prerelease: ${{ github.event.inputs.prerelease }}
           tag_name: ${{ env.AIVISSPEECH_EDITOR_VERSION }}
           files: |-
-            ${{ matrix.compressed_artifact_name }}-${{ env.AIVISSPEECH_EDITOR_VERSION }}.zip
+            ${{ matrix.compressed_artifact_name }}-${{ env.AIVISSPEECH_EDITOR_VERSION }}.7z.*
           target_commitish: ${{ github.sha }}
 
       - name: Delete Windows & Mac zip (without nvidia)
         if: (startsWith(matrix.artifact_name, 'windows-') || startsWith(matrix.artifact_name, 'macos-')) && !contains(matrix.artifact_name, 'nvidia')
         run: |
-          rm ${{ matrix.compressed_artifact_name }}-${{ env.AIVISSPEECH_EDITOR_VERSION }}.zip
+          rm ${{ matrix.compressed_artifact_name }}-${{ env.AIVISSPEECH_EDITOR_VERSION }}.7z.*
 
       - name: Define Code Signing Envs
         if: startsWith(matrix.os, 'windows-') && github.event.inputs.code_signing == 'true'
